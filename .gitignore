@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+
+# env files — NEVER commit these
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# logs
+*.log
+dev*.log
+dev*.err
+server_start.log
+
+# misc
+.DS_Store
+*.pem
+test.txt
+test_server.js
+
+# prisma
+prisma/migrations/
