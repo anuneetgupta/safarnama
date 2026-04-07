@@ -24,8 +24,21 @@ export default function LoginPage() {
         setErrors(newErrors)
         if (!newErrors.email && !newErrors.password) {
             setLoading(true)
-            await new Promise(r => setTimeout(r, 800))
-            router.push('/dashboard')
+            const result = await signIn('credentials', {
+                email,
+                password,
+                redirect: false,
+            })
+            setLoading(false)
+            if (result?.error) {
+                setErrors({ email: '', password: 'Invalid email or password' })
+            } else {
+                // Check role and redirect accordingly
+                const res = await fetch('/api/auth/session')
+                const session = await res.json()
+                const role = session?.user?.role
+                router.push(role === 'admin' ? '/admin' : '/dashboard')
+            }
         }
     }
 
@@ -201,7 +214,7 @@ export default function LoginPage() {
                         <div>
                             <div className="flex justify-between mb-2">
                                 <label className="text-slate-300 text-sm font-medium">Password</label>
-                                <a href="#" className="text-xs text-sky-400 hover:text-sky-300 transition-colors">Forgot?</a>
+                                <a href="/auth/forgot-password" className="text-xs text-sky-400 hover:text-sky-300 transition-colors">Forgot?</a>
                             </div>
                             <div className="relative">
                                 <input

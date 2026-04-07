@@ -12,7 +12,7 @@ const REVIEWS = [
         rating: 5,
         date: 'Jan 2026',
         avatar: 'R',
-        color: 'from-sky-500 to-teal-500',
+        color: 'from-lime-500 to-amber-500',
         title: 'Most spiritual experience of my life!',
         review: 'I had zero expectations going in, but Banaras completely blew my mind. The Ganga Aarti at night was something I will never forget. Safarnama handled everything — transport, stay, food — perfectly. The group was amazing and we all became friends by day 2. Highly recommend to every student!',
         photos: [
@@ -45,7 +45,7 @@ const REVIEWS = [
         rating: 5,
         date: 'Jan 2026',
         avatar: 'P',
-        color: 'from-purple-500 to-sky-500',
+        color: 'from-purple-500 to-lime-500',
         title: 'Safe, fun, and perfectly organized',
         review: 'As a solo female traveler, safety was my top concern. Safarnama made me feel completely secure throughout the trip. The trip leader was always available, the group was respectful, and the entire experience was seamless. The street food tour in Varanasi was an absolute highlight. 10/10!',
         photos: [
@@ -62,7 +62,7 @@ const REVIEWS = [
         rating: 5,
         date: 'Jan 2026',
         avatar: 'K',
-        color: 'from-emerald-500 to-teal-500',
+        color: 'from-emerald-500 to-lime-500',
         title: 'Made 20 new friends in 3 days!',
         review: 'I went alone and came back with a whole friend group. That is the magic of Safarnama. The team creates an environment where everyone feels welcome. Banaras itself is incredible — the energy, the culture, the food. Already waiting for the Manali trip announcement!',
         photos: [],
@@ -80,24 +80,24 @@ export default function BlogPage() {
     const [expanded, setExpanded] = useState<string | null>(null)
 
     return (
-        <main className="min-h-screen bg-[#020817]">
+        <main className="min-h-screen" style={{ background: '#0d150b' }}>
 
             {/* Hero */}
             <section className="relative min-h-[420px] flex items-center pb-16 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628] via-[#020817] to-[#020817]" />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, #111a0f, #0d150b)' }} />
                 <div className="absolute inset-0 grid-pattern opacity-50" />
-                <div className="absolute -top-40 right-1/4 w-[500px] h-[400px] bg-teal-500/8 rounded-full blur-[120px]" />
+                <div className="absolute -top-40 right-1/4 w-[500px] h-[400px] bg-lime-500/6 rounded-full blur-[120px]" />
 
                 <div className="container-main relative z-10 text-center">
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                        <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] text-teal-400 bg-teal-500/10 border border-teal-500/20 px-4 py-2 rounded-full mb-6">
-                            <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+                        <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] text-lime-400 bg-lime-500/10 border border-lime-500/20 px-4 py-2 rounded-full mb-6">
+                            <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse" />
                             Traveler Stories
                         </div>
                         <h1 className="text-[56px] md:text-[68px] font-[var(--font-outfit)] font-extrabold text-white leading-[1.0] tracking-[-0.03em] mb-5">
-                            Real <span className="bg-gradient-to-r from-teal-400 to-sky-400 bg-clip-text text-transparent">Reviews</span>
+                            Real <span className="bg-gradient-to-r from-lime-400 to-amber-400 bg-clip-text text-transparent">Reviews</span>
                         </h1>
-                        <p className="text-[17px] text-slate-400 leading-[1.75] max-w-[480px] mx-auto">
+                        <p className="text-[17px] leading-[1.75] max-w-[480px] mx-auto" style={{ color: 'rgba(180,200,140,0.6)' }}>
                             Honest stories from students who&apos;ve traveled with us. No filters, just real experiences.
                         </p>
                     </motion.div>
@@ -114,10 +114,10 @@ export default function BlogPage() {
                     viewport={{ once: true }}
                 >
                     {STATS.map((s) => (
-                        <div key={s.label} className="text-center glass-card p-5 border border-white/[0.07]">
+                        <div key={s.label} className="text-center glass-card p-5 border border-lime-400/10">
                             <div className="text-2xl mb-1">{s.icon}</div>
                             <p className="text-xl font-extrabold text-white font-[var(--font-outfit)]">{s.value}</p>
-                            <p className="text-slate-500 text-xs mt-0.5">{s.label}</p>
+                            <p className="text-xs mt-0.5" style={{ color: 'rgba(180,200,140,0.4)' }}>{s.label}</p>
                         </div>
                     ))}
                 </motion.div>
@@ -127,7 +127,7 @@ export default function BlogPage() {
                     {REVIEWS.map((r, i) => (
                         <motion.div
                             key={r.id}
-                            className="glass-card border border-white/[0.08] p-7 hover:border-white/[0.15] transition-all duration-300"
+                            className="glass-card border border-lime-400/10 p-7 hover:border-lime-400/30 transition-all duration-300"
                             initial={{ opacity: 0, y: 24 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -151,7 +151,7 @@ export default function BlogPage() {
                                                 </span>
                                             )}
                                         </div>
-                                        <p className="text-slate-500 text-xs">{r.college} · {r.date}</p>
+                                        <p className="text-xs" style={{ color: 'rgba(180,200,140,0.4)' }}>{r.college} · {r.date}</p>
                                     </div>
                                 </div>
                                 <div className="flex flex-col items-end gap-1">
@@ -160,7 +160,7 @@ export default function BlogPage() {
                                             <span key={i} className="text-amber-400 text-sm">★</span>
                                         ))}
                                     </div>
-                                    <span className="text-[10px] text-sky-400 bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 rounded-md font-semibold">
+                                    <span className="text-[10px] text-lime-400 bg-lime-500/10 border border-lime-500/20 px-2 py-0.5 rounded-md font-semibold">
                                         {r.trip}
                                     </span>
                                 </div>
@@ -170,12 +170,12 @@ export default function BlogPage() {
                             <h3 className="text-white font-bold text-base mb-3">&ldquo;{r.title}&rdquo;</h3>
 
                             {/* Review text */}
-                            <p className="text-slate-400 text-sm leading-relaxed">
+                            <p className="text-sm leading-relaxed" style={{ color: 'rgba(180,200,140,0.6)' }}>
                                 {expanded === r.id ? r.review : r.review.slice(0, 140) + '...'}
                             </p>
                             <button
                                 onClick={() => setExpanded(expanded === r.id ? null : r.id)}
-                                className="text-sky-400 text-xs font-semibold mt-2 hover:text-sky-300 transition-colors"
+                                className="text-lime-400 text-xs font-semibold mt-2 hover:text-lime-300 transition-colors"
                             >
                                 {expanded === r.id ? 'Show less ↑' : 'Read more ↓'}
                             </button>
@@ -184,7 +184,7 @@ export default function BlogPage() {
                             {r.photos.length > 0 && (
                                 <div className="flex gap-2 mt-4">
                                     {r.photos.map((p, pi) => (
-                                        <div key={pi} className="w-20 h-16 rounded-lg overflow-hidden border border-white/[0.08] flex-shrink-0">
+                                        <div key={pi} className="w-20 h-16 rounded-lg overflow-hidden border border-lime-400/10 flex-shrink-0">
                                             <img src={p} alt="Trip photo" className="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
                                         </div>
                                     ))}
@@ -201,16 +201,16 @@ export default function BlogPage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                 >
-                    <div className="glass-card border border-teal-500/20 p-10">
-                        <div className="w-14 h-14 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center mx-auto mb-5">
-                            <svg className="w-7 h-7 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="glass-card border border-lime-500/20 p-10">
+                        <div className="w-14 h-14 rounded-2xl bg-lime-500/10 border border-lime-500/20 flex items-center justify-center mx-auto mb-5">
+                            <svg className="w-7 h-7 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                         </div>
                         <h3 className="text-white font-extrabold text-2xl font-[var(--font-outfit)] mb-2">
                             Traveled with us?
                         </h3>
-                        <p className="text-slate-400 text-base mb-6 max-w-md mx-auto">
+                        <p className="text-base mb-6 max-w-md mx-auto" style={{ color: 'rgba(180,200,140,0.6)' }}>
                             Share your experience and help other students discover the joy of group travel. Your story matters!
                         </p>
                         <a

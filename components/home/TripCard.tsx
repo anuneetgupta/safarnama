@@ -25,27 +25,27 @@ interface TripCardProps {
 const STATUS_CONFIG: Record<TripStatus, { label: string; badge: string; border: string; overlay: string }> = {
     completed: {
         label: 'COMPLETED',
-        badge: 'bg-slate-600/90 text-slate-200',
-        border: 'border-slate-600/30',
-        overlay: 'bg-black/40',
+        badge: 'bg-stone-700/90 text-stone-300',
+        border: 'border-stone-600/20',
+        overlay: 'bg-black/50',
     },
     coming_soon: {
         label: 'COMING SOON',
-        badge: 'bg-sky-500/90 text-white animate-pulse',
-        border: 'border-sky-500/30 hover:border-sky-500/60',
+        badge: 'bg-lime-500/90 text-black font-bold animate-pulse',
+        border: 'border-lime-500/30 hover:border-lime-500/60',
         overlay: '',
     },
     booking_open: {
         label: 'BOOKING OPEN',
-        badge: 'bg-emerald-500/90 text-white animate-pulse',
-        border: 'border-emerald-500/30 hover:border-emerald-500/60',
+        badge: 'bg-amber-500/90 text-black font-bold animate-pulse',
+        border: 'border-amber-500/30 hover:border-amber-500/60',
         overlay: '',
     },
     yet_to_announce: {
         label: 'YET TO ANNOUNCE',
-        badge: 'bg-slate-700/90 text-slate-400',
-        border: 'border-white/[0.07]',
-        overlay: 'bg-black/20',
+        badge: 'bg-stone-800/90 text-stone-500',
+        border: 'border-stone-700/20',
+        overlay: 'bg-black/30',
     },
 }
 
@@ -68,7 +68,7 @@ export default function TripCard({
     return (
         <>
             <motion.div
-                className={`group relative flex flex-col rounded-2xl overflow-hidden border bg-[#0a1628]/60 backdrop-blur-sm transition-all duration-300 hover:shadow-[0_8px_40px_rgba(0,0,0,0.4)] ${cfg.border}`}
+                className={`group relative flex flex-col rounded-2xl overflow-hidden border bg-[#0a150a]/80 backdrop-blur-sm transition-all duration-500 hover:shadow-[0_8px_60px_rgba(0,0,0,0.7)] hover:-translate-y-1 ${cfg.border}`}
                 initial={{ opacity: 0, y: 32 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}

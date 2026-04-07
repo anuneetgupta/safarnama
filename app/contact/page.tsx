@@ -39,14 +39,14 @@ export default function ContactPage() {
     }
 
     return (
-        <main className="min-h-screen bg-[#020817]">
+        <main className="min-h-screen" style={{ background: '#0d150b' }}>
 
             {/* ── HERO ── */}
             <section className="relative min-h-[560px] flex items-center pb-20 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628] via-[#020817] to-[#020817]" />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, #111a0f, #0d150b)' }} />
                 <div className="absolute inset-0 grid-pattern opacity-60" />
-                <div className="absolute -top-40 -right-40 w-[700px] h-[700px] bg-teal-500/8 rounded-full blur-[140px]" />
-                <div className="absolute -bottom-20 -left-20 w-[500px] h-[500px] bg-sky-500/6 rounded-full blur-[100px]" />
+                <div className="absolute -top-40 -right-40 w-[700px] h-[700px] bg-lime-500/6 rounded-full blur-[140px]" />
+                <div className="absolute -bottom-20 -left-20 w-[500px] h-[500px] bg-lime-500/6 rounded-full blur-[100px]" />
 
                 <div className="container-main relative z-10 text-center">
                     <motion.div
@@ -54,19 +54,19 @@ export default function ContactPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] text-teal-400 bg-teal-500/10 border border-teal-500/20 px-4 py-2 rounded-full mb-6">
-                            <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+                        <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] text-lime-400 bg-lime-500/10 border border-lime-500/20 px-4 py-2 rounded-full mb-6">
+                            <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse" />
                             Get in Touch
                         </div>
 
                         <h1 className="text-[56px] md:text-[72px] font-[var(--font-outfit)] font-extrabold text-white leading-[1.0] tracking-[-0.03em] mb-6">
                             We&apos;d Love to<br />
-                            <span className="bg-gradient-to-r from-teal-400 to-sky-400 bg-clip-text text-transparent">
+                            <span className="bg-gradient-to-r from-lime-400 to-amber-400 bg-clip-text text-transparent">
                                 Hear From You
                             </span>
                         </h1>
 
-                        <p className="text-[17px] text-slate-400 leading-[1.75] max-w-[480px] mx-auto">
+                        <p className="text-[17px] leading-[1.75] max-w-[480px] mx-auto" style={{ color: 'rgba(180,200,140,0.6)' }}>
                             Questions, partnerships, or just want to say hi — our team is always happy to connect.
                         </p>
                     </motion.div>
@@ -82,7 +82,7 @@ export default function ContactPage() {
                             label: 'Our Office',
                             line1: 'CSJMU, Kanpur',
                             line2: 'Uttar Pradesh, India',
-                            accent: 'sky',
+                            accent: 'lime',
                         },
                         {
                             icon: '📞',
@@ -110,13 +110,13 @@ export default function ContactPage() {
                         },
                     ].map((card, i) => {
                         const colors: Record<string, string> = {
-                            sky: 'border-sky-500/20 bg-sky-500/5 hover:border-sky-500/40',
+                            lime: 'border-lime-500/20 bg-lime-500/5 hover:border-lime-500/40',
                             emerald: 'border-emerald-500/20 bg-emerald-500/5 hover:border-emerald-500/40',
                             orange: 'border-orange-500/20 bg-orange-500/5 hover:border-orange-500/40',
                             purple: 'border-purple-500/20 bg-purple-500/5 hover:border-purple-500/40',
                         }
                         const textColors: Record<string, string> = {
-                            sky: 'text-sky-400',
+                            lime: 'text-lime-400',
                             emerald: 'text-emerald-400',
                             orange: 'text-orange-400',
                             purple: 'text-purple-400',
@@ -140,7 +140,7 @@ export default function ContactPage() {
                                 ) : (
                                     <p className="font-bold text-[15px] text-white mb-1">{card.line1}</p>
                                 )}
-                                <p className="text-slate-500 text-sm">{card.line2}</p>
+                                <p className="text-sm" style={{ color: 'rgba(180,200,140,0.4)' }}>{card.line2}</p>
                             </motion.div>
                         )
                     })}
@@ -159,11 +159,11 @@ export default function ContactPage() {
                         <h2 className="text-3xl font-[var(--font-outfit)] font-extrabold text-white mb-2">
                             Send us a message
                         </h2>
-                        <p className="text-slate-400 text-base mb-8">
+                        <p className="text-base mb-8" style={{ color: 'rgba(180,200,140,0.6)' }}>
                             Fill out the form below and we&apos;ll get back to you within 24 hours.
                         </p>
 
-                        <div className="rounded-2xl border border-white/[0.08] bg-[#0a1628]/60 p-8 md:p-10">
+                        <div className="rounded-2xl border border-lime-400/10 p-8 md:p-10" style={{ background: 'rgba(10,18,8,0.6)' }}>
                             {sent && (
                                 <motion.div
                                     className="mb-7 flex items-start gap-4 p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/25"
@@ -185,27 +185,27 @@ export default function ContactPage() {
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
-                                        <label className="block text-slate-400 text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5">
+                                        <label className="block text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5" style={{ color: 'rgba(180,200,140,0.6)' }}>
                                             Your Name
                                         </label>
                                         <input
                                             type="text"
                                             value={form.name}
                                             onChange={e => setForm({ ...form, name: e.target.value })}
-                                            className="w-full px-4 py-3.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-[15px] placeholder-slate-600 outline-none focus:border-sky-500/50 focus:bg-white/[0.06] transition-all"
+                                            className="w-full px-4 py-3.5 bg-lime-400/5 border border-lime-400/10 rounded-xl text-white text-[15px] placeholder-slate-600 outline-none focus:border-lime-500/50 focus:bg-lime-400/5 transition-all"
                                             placeholder="Your full name"
                                             required
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-slate-400 text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5">
+                                        <label className="block text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5" style={{ color: 'rgba(180,200,140,0.6)' }}>
                                             Email Address
                                         </label>
                                         <input
                                             type="email"
                                             value={form.email}
                                             onChange={e => setForm({ ...form, email: e.target.value })}
-                                            className="w-full px-4 py-3.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-[15px] placeholder-slate-600 outline-none focus:border-sky-500/50 focus:bg-white/[0.06] transition-all"
+                                            className="w-full px-4 py-3.5 bg-lime-400/5 border border-lime-400/10 rounded-xl text-white text-[15px] placeholder-slate-600 outline-none focus:border-lime-500/50 focus:bg-lime-400/5 transition-all"
                                             placeholder="you@email.com"
                                             required
                                         />
@@ -213,30 +213,31 @@ export default function ContactPage() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-slate-400 text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5">
+                                    <label className="block text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5" style={{ color: 'rgba(180,200,140,0.6)' }}>
                                         Subject
                                     </label>
                                     <select
                                         value={form.subject}
                                         onChange={e => setForm({ ...form, subject: e.target.value })}
-                                        className="w-full px-4 py-3.5 bg-[#0f172a] border border-white/[0.08] rounded-xl text-[15px] text-slate-300 outline-none focus:border-sky-500/50 transition-all cursor-pointer"
+                                        className="w-full px-4 py-3.5 border border-lime-400/10 rounded-xl text-[15px] text-slate-300 outline-none focus:border-lime-500/50 transition-all cursor-pointer"
+                                        style={{ background: '#0a1208' }}
                                         required
                                     >
-                                        <option value="" className="bg-[#0f172a]">Select a topic...</option>
+                                        <option value="" style={{ background: '#0a1208' }}>Select a topic...</option>
                                         {['General Inquiry', 'Trip Booking', 'Partnership', 'Custom Trip Request', 'Feedback', 'Other'].map(s => (
-                                            <option key={s} value={s} className="bg-[#0f172a]">{s}</option>
+                                            <option key={s} value={s} style={{ background: '#0a1208' }}>{s}</option>
                                         ))}
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label className="block text-slate-400 text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5">
+                                    <label className="block text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5" style={{ color: 'rgba(180,200,140,0.6)' }}>
                                         Message
                                     </label>
                                     <textarea
                                         value={form.message}
                                         onChange={e => setForm({ ...form, message: e.target.value })}
-                                        className="w-full px-4 py-3.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-[15px] placeholder-slate-600 outline-none focus:border-sky-500/50 focus:bg-white/[0.06] transition-all resize-none h-36"
+                                        className="w-full px-4 py-3.5 bg-lime-400/5 border border-lime-400/10 rounded-xl text-white text-[15px] placeholder-slate-600 outline-none focus:border-lime-500/50 focus:bg-lime-400/5 transition-all resize-none h-36"
                                         placeholder="Tell us how we can help..."
                                         required
                                     />
@@ -245,7 +246,7 @@ export default function ContactPage() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full flex items-center justify-center gap-2.5 py-4 px-6 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-400 hover:to-sky-500 text-white font-bold text-[15px] rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-sky-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                    className="w-full flex items-center justify-center gap-2.5 py-4 px-6 bg-gradient-to-r from-lime-500 to-lime-600 hover:from-lime-400 hover:to-lime-500 text-black font-bold text-[15px] rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-lime-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                 >
                                     {loading ? (
                                         <>
@@ -279,12 +280,12 @@ export default function ContactPage() {
                         <h2 className="text-3xl font-[var(--font-outfit)] font-extrabold text-white mb-2">
                             Find us here
                         </h2>
-                        <p className="text-slate-400 text-base -mt-4">
+                        <p className="text-base -mt-4" style={{ color: 'rgba(180,200,140,0.6)' }}>
                             Visit our office or connect on social media.
                         </p>
 
                         {/* Map */}
-                        <div className="rounded-2xl overflow-hidden border border-white/[0.08] h-[240px]">
+                        <div className="rounded-2xl overflow-hidden border border-lime-400/10 h-[240px]">
                             <iframe
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3571.0!2d80.3319!3d26.4499!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399c4770b127c46f%3A0x1778302a9fbe7b41!2sChhatrapati%20Shahu%20Ji%20Maharaj%20University!5e0!3m2!1sen!2sin!4v1706000000000"
                                 width="100%" height="100%"
@@ -294,12 +295,12 @@ export default function ContactPage() {
                         </div>
 
                         {/* Social */}
-                        <div className="rounded-2xl border border-white/[0.08] bg-[#0a1628]/60 p-6">
+                        <div className="rounded-2xl border border-lime-400/10 p-6" style={{ background: 'rgba(10,18,8,0.6)' }}>
                             <p className="text-white font-bold text-sm mb-5">Follow our journey</p>
                             <div className="space-y-3">
                                 {[
                                     { platform: 'Instagram', handle: '@safarnama_in', color: 'text-pink-400', dot: 'bg-pink-400' },
-                                    { platform: 'Twitter / X', handle: '@safarnama', color: 'text-sky-400', dot: 'bg-sky-400' },
+                                    { platform: 'Twitter / X', handle: '@safarnama', color: 'text-lime-400', dot: 'bg-lime-400' },
                                     { platform: 'YouTube', handle: 'Safarnama Vlogs', color: 'text-red-400', dot: 'bg-red-400' },
                                     { platform: 'LinkedIn', handle: 'Safarnama Travel', color: 'text-blue-400', dot: 'bg-blue-400' },
                                 ].map((s) => (
@@ -327,7 +328,7 @@ export default function ContactPage() {
                             </div>
                             <div>
                                 <p className="text-white font-semibold text-sm">Fast Response</p>
-                                <p className="text-slate-400 text-xs mt-0.5">Average reply time under 2 hours</p>
+                                <p className="text-xs mt-0.5" style={{ color: 'rgba(180,200,140,0.6)' }}>Average reply time under 2 hours</p>
                             </div>
                         </div>
                     </motion.div>
@@ -341,14 +342,14 @@ export default function ContactPage() {
                     transition={{ duration: 0.5 }}
                 >
                     <div className="text-center mb-14">
-                        <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] text-sky-400 bg-sky-500/10 border border-sky-500/20 px-4 py-2 rounded-full mb-5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+                        <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] text-lime-400 bg-lime-500/10 border border-lime-500/20 px-4 py-2 rounded-full mb-5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-lime-400" />
                             FAQ
                         </div>
                         <h2 className="text-4xl md:text-5xl font-[var(--font-outfit)] font-extrabold text-white tracking-tight mb-4">
                             Common Questions
                         </h2>
-                        <p className="text-slate-400 text-[17px] max-w-[420px] mx-auto leading-relaxed">
+                        <p className="text-[17px] max-w-[420px] mx-auto leading-relaxed" style={{ color: 'rgba(180,200,140,0.6)' }}>
                             Quick answers to what we hear most often.
                         </p>
                     </div>
@@ -357,7 +358,8 @@ export default function ContactPage() {
                         {FAQS.map((faq, i) => (
                             <motion.div
                                 key={i}
-                                className="rounded-2xl border border-white/[0.07] bg-[#0a1628]/40 overflow-hidden"
+                                className="rounded-2xl border border-lime-400/10 overflow-hidden"
+                                style={{ background: 'rgba(10,18,8,0.4)' }}
                                 initial={{ opacity: 0, y: 12 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -370,10 +372,10 @@ export default function ContactPage() {
                                     <span className="text-white font-semibold text-[15px] pr-6">{faq.q}</span>
                                     <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 border ${
                                         openFaq === i
-                                            ? 'bg-sky-500/20 border-sky-500/30 rotate-45'
+                                            ? 'bg-lime-500/20 border-lime-500/30 rotate-45'
                                             : 'bg-white/[0.04] border-white/[0.08]'
                                     }`}>
-                                        <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'rgba(180,200,140,0.6)' }}>
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
                                         </svg>
                                     </div>
@@ -385,7 +387,7 @@ export default function ContactPage() {
                                         className="px-7 pb-6"
                                     >
                                         <div className="h-px bg-white/[0.05] mb-5" />
-                                        <p className="text-slate-400 text-[15px] leading-[1.75]">{faq.a}</p>
+                                        <p className="text-[15px] leading-[1.75]" style={{ color: 'rgba(180,200,140,0.6)' }}>{faq.a}</p>
                                     </motion.div>
                                 )}
                             </motion.div>

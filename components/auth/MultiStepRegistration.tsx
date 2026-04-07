@@ -4,10 +4,13 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { signIn } from 'next-auth/react'
 
 interface FormData {
     name: string
     email: string
+    password: string
+    confirmPassword: string
     phone: string
     college: string
     instagram: string
@@ -18,7 +21,8 @@ interface FormData {
 }
 
 const INITIAL: FormData = {
-    name: '', email: '', phone: '', college: '',
+    name: '', email: '', password: '', confirmPassword: '',
+    phone: '', college: '',
     instagram: '', facebook: '',
     emergencyName: '', emergencyPhone: '', emergencyRelation: '',
 }
@@ -35,6 +39,8 @@ export default function MultiStepRegistration() {
     const [form, setForm] = useState<FormData>(INITIAL)
     const [errors, setErrors] = useState<Partial<FormData>>({})
     const [loading, setLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirm, setShowConfirm] = useState(false)
 
     const update = (field: keyof FormData, value: string) => {
         setForm(p => ({ ...p, [field]: value }))
@@ -47,6 +53,10 @@ export default function MultiStepRegistration() {
             if (!form.name.trim()) e.name = 'Name is required'
             if (!form.email.trim()) e.email = 'Email is required'
             else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Enter a valid email'
+            if (!form.password.trim()) e.password = 'Password is required'
+            else if (form.password.length < 6) e.password = 'Minimum 6 characters'
+            if (!form.confirmPassword.trim()) e.confirmPassword = 'Please confirm your password'
+            else if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match'
             if (!form.phone.trim()) e.phone = 'Phone is required'
             else if (!/^\d{10}$/.test(form.phone)) e.phone = 'Enter a valid 10-digit number'
             if (!form.college.trim()) e.college = 'College name is required'
@@ -67,8 +77,31 @@ export default function MultiStepRegistration() {
     const submit = async () => {
         if (!validate(step)) return
         setLoading(true)
-        await new Promise(r => setTimeout(r, 900))
-        router.push('/dashboard')
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(form),
+            })
+            const data = await res.json()
+            if (!res.ok) {
+                setErrors({ email: data.error || 'Registration failed' })
+                setStep(1)
+                setLoading(false)
+                return
+            }
+            // Auto sign in after registration
+            await signIn('credentials', {
+                email: form.email,
+                password: form.password,
+                callbackUrl: '/dashboard',
+                redirect: true,
+            })
+        } catch {
+            setErrors({ email: 'Something went wrong. Please try again.' })
+            setStep(1)
+            setLoading(false)
+        }
     }
 
     const inputClass = (field: keyof FormData) =>
@@ -169,6 +202,36 @@ export default function MultiStepRegistration() {
                                             <label className="block text-slate-400 text-xs font-medium mb-1.5 uppercase tracking-wider">College *</label>
                                             <input type="text" value={form.college} onChange={e => update('college', e.target.value)} className={inputClass('college')} placeholder="Your college" />
                                             {errors.college && <p className="text-red-400 text-xs mt-1">{errors.college}</p>}
+                                        </div>
+                                        <div className="sm:col-span-2">
+                                            <label className="block text-slate-400 text-xs font-medium mb-1.5 uppercase tracking-wider">Password *</label>
+                                            <div className="relative">
+                                                <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={e => update('password', e.target.value)} className={`${inputClass('password')} pr-10`} placeholder="Min. 6 characters" />
+                                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        {showPassword
+                                                            ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                                            : <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></>
+                                                        }
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password}</p>}
+                                        </div>
+                                        <div className="sm:col-span-2">
+                                            <label className="block text-slate-400 text-xs font-medium mb-1.5 uppercase tracking-wider">Confirm Password *</label>
+                                            <div className="relative">
+                                                <input type={showConfirm ? 'text' : 'password'} value={form.confirmPassword} onChange={e => update('confirmPassword', e.target.value)} className={`${inputClass('confirmPassword')} pr-10`} placeholder="Re-enter password" />
+                                                <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        {showConfirm
+                                                            ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                                            : <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></>
+                                                        }
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            {errors.confirmPassword && <p className="text-red-400 text-xs mt-1">{errors.confirmPassword}</p>}
                                         </div>
                                     </div>
                                 </div>

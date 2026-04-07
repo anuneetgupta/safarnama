@@ -39,139 +39,84 @@ export default function GalleryPage() {
     const filtered = activeTrip === 'All' ? ALL_PHOTOS : ALL_PHOTOS.filter(p => p.trip === activeTrip)
 
     return (
-        <main className="min-h-screen bg-[#020817]">
-
-            {/* Hero */}
+        <main className="min-h-screen" style={{ background: '#0d150b' }}>
             <section className="relative min-h-[420px] flex items-center pb-16 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628] via-[#020817] to-[#020817]" />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, #111a0f, #0d150b)' }} />
                 <div className="absolute inset-0 grid-pattern opacity-50" />
-                <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-sky-500/8 rounded-full blur-[120px]" />
-
+                <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-lime-500/6 rounded-full blur-[120px]" />
                 <div className="container-main relative z-10 text-center">
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                        <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] text-sky-400 bg-sky-500/10 border border-sky-500/20 px-4 py-2 rounded-full mb-6">
-                            <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
-                            Trip Memories
+                        <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] text-lime-400 bg-lime-500/10 border border-lime-500/20 px-4 py-2 rounded-full mb-6">
+                            <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse" />Trip Memories
                         </div>
                         <h1 className="text-[56px] md:text-[68px] font-[var(--font-outfit)] font-extrabold text-white leading-[1.0] tracking-[-0.03em] mb-5">
-                            Our <span className="bg-gradient-to-r from-sky-400 to-teal-400 bg-clip-text text-transparent">Gallery</span>
+                            Our <span className="bg-gradient-to-r from-lime-400 to-amber-400 bg-clip-text text-transparent">Gallery</span>
                         </h1>
-                        <p className="text-[17px] text-slate-400 leading-[1.75] max-w-[480px] mx-auto">
+                        <p className="text-[17px] leading-[1.75] max-w-[480px] mx-auto" style={{ color: 'rgba(180,200,140,0.6)' }}>
                             Real moments from real trips. Every photo tells a story of adventure, friendship, and discovery.
                         </p>
                     </motion.div>
                 </div>
             </section>
 
-            {/* Filter tabs */}
             <section className="container-main pb-8">
                 <div className="flex flex-wrap gap-2 justify-center mb-12">
                     {trips.map((trip) => (
-                        <button
-                            key={trip}
-                            onClick={() => setActiveTrip(trip)}
+                        <button key={trip} onClick={() => setActiveTrip(trip)}
                             className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 border ${
-                                activeTrip === trip
-                                    ? 'bg-sky-500 border-sky-500 text-white shadow-lg shadow-sky-500/25'
-                                    : 'bg-white/[0.04] border-white/[0.08] text-slate-400 hover:text-white hover:border-white/20'
+                                activeTrip === trip ? 'bg-lime-500 border-lime-500 text-black shadow-lg shadow-lime-500/25'
+                                : 'bg-lime-400/5 border-lime-400/10 hover:text-white hover:border-lime-400/30'
                             }`}
-                        >
-                            {trip}
-                        </button>
+                            style={activeTrip !== trip ? { color: 'rgba(180,200,140,0.6)' } : undefined}
+                        >{trip}</button>
                     ))}
                 </div>
 
-                {/* Masonry grid */}
                 <motion.div layout className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
                     <AnimatePresence>
                         {filtered.map((photo, i) => (
-                            <motion.div
-                                key={photo.url + i}
-                                layout
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ delay: i * 0.05, duration: 0.4 }}
-                                className="break-inside-avoid group relative rounded-2xl overflow-hidden border border-white/[0.07] cursor-pointer"
-                                onClick={() => setLightbox(photo)}
-                            >
-                                <img
-                                    src={photo.url}
-                                    alt={photo.caption}
-                                    className="w-full object-cover group-hover:scale-105 transition-transform duration-700"
-                                />
+                            <motion.div key={photo.url + i} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ delay: i * 0.05, duration: 0.4 }}
+                                className="break-inside-avoid group relative rounded-2xl overflow-hidden border border-lime-400/10 cursor-pointer" onClick={() => setLightbox(photo)}>
+                                <img src={photo.url} alt={photo.caption} className="w-full object-cover group-hover:scale-105 transition-transform duration-700" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                 <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                                    <span className="text-[10px] font-bold text-sky-400 uppercase tracking-wider">{photo.trip}</span>
+                                    <span className="text-[10px] font-bold text-lime-400 uppercase tracking-wider">{photo.trip}</span>
                                     <p className="text-white text-sm font-medium mt-0.5">{photo.caption}</p>
                                 </div>
-                                {/* Zoom icon */}
                                 <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                                    </svg>
+                                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
                                 </div>
                             </motion.div>
                         ))}
                     </AnimatePresence>
                 </motion.div>
 
-                {/* Upload CTA */}
-                <motion.div
-                    className="mt-16 text-center"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                >
-                    <div className="inline-flex flex-col items-center gap-4 p-8 rounded-2xl border border-dashed border-white/20 bg-white/[0.02] max-w-md mx-auto">
-                        <div className="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center">
-                            <svg className="w-7 h-7 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
+                <motion.div className="mt-16 text-center" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                    <div className="inline-flex flex-col items-center gap-4 p-8 rounded-2xl border border-dashed border-lime-400/20 bg-lime-400/5 max-w-md mx-auto">
+                        <div className="w-14 h-14 rounded-2xl bg-lime-500/10 border border-lime-500/20 flex items-center justify-center">
+                            <svg className="w-7 h-7 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                         </div>
                         <div>
                             <p className="text-white font-semibold mb-1">Went on a Safarnama trip?</p>
-                            <p className="text-slate-500 text-sm">Share your photos with us on WhatsApp and we&apos;ll feature them here.</p>
+                            <p className="text-sm" style={{ color: 'rgba(180,200,140,0.4)' }}>Share your photos with us on WhatsApp and we&apos;ll feature them here.</p>
                         </div>
-                        <a
-                            href="https://chat.whatsapp.com/LCYyIzi0cCcFmcrQ9vpTjU?mode=gi_t"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn-primary text-sm px-6 py-2.5"
-                        >
-                            Share Your Photos
-                        </a>
+                        <a href="https://chat.whatsapp.com/LCYyIzi0cCcFmcrQ9vpTjU?mode=gi_t" target="_blank" rel="noopener noreferrer" className="btn-primary text-sm px-6 py-2.5">Share Your Photos</a>
                     </div>
                 </motion.div>
             </section>
 
-            {/* Lightbox */}
             <AnimatePresence>
                 {lightbox && (
-                    <motion.div
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setLightbox(null)}
-                    >
-                        <motion.div
-                            className="relative max-w-4xl w-full"
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            onClick={e => e.stopPropagation()}
-                        >
+                    <motion.div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setLightbox(null)}>
+                        <motion.div className="relative max-w-4xl w-full" initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} onClick={e => e.stopPropagation()}>
                             <img src={lightbox.url} alt={lightbox.caption} className="w-full rounded-2xl" />
                             <div className="mt-3 flex items-center justify-between">
                                 <div>
-                                    <span className="text-sky-400 text-xs font-bold uppercase tracking-wider">{lightbox.trip}</span>
+                                    <span className="text-lime-400 text-xs font-bold uppercase tracking-wider">{lightbox.trip}</span>
                                     <p className="text-white font-medium mt-0.5">{lightbox.caption}</p>
                                 </div>
                                 <button onClick={() => setLightbox(null)} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors">
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                 </button>
                             </div>
                         </motion.div>

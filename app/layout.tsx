@@ -22,21 +22,20 @@ export const metadata: Metadata = {
 import Navbar from '@/components/ui/Navbar'
 import Providers from '@/components/ui/Providers'
 import CustomCursor from '@/components/ui/CustomCursor'
+import FloatingWhatsApp from '@/components/ui/FloatingWhatsApp'
+import SmoothScroll from '@/components/ui/SmoothScroll'
 
-export default function RootLayout({
-    children,
-}: {
-    children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
             <body className="antialiased" style={{ cursor: 'none' }}>
                 <Providers>
+                    <SmoothScroll />
                     <CustomCursor />
                     <Navbar />
-                    {/* Spacer to push content below fixed navbar */}
                     <div style={{ height: '80px' }} />
                     {children}
+                    <FloatingWhatsApp />
                 </Providers>
             </body>
         </html>
