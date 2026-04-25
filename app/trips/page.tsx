@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
@@ -98,7 +98,7 @@ function TripCard({ trip, index }: { trip: DBTrip; index: number }) {
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            {fmtD(start)} – {fmtD(end)}
+                            {fmtD(start)} ÔÇô {fmtD(end)}
                         </div>
                     )}
 
@@ -122,22 +122,22 @@ function TripCard({ trip, index }: { trip: DBTrip; index: number }) {
                             </>}
                         </div>
 
-                        {/* CTAs — Book Now is BLUE per reference */}
+                        {/* CTAs ÔÇö Book Now is BLUE per reference */}
                         {isBookingOpen && (
                             <button onClick={() => setModalOpen(true)}
                                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5"
                                 style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)', boxShadow: '0 4px 16px rgba(59,130,246,0.35)' }}>
-                                Book Now →
+                                Book Now ÔåÆ
                             </button>
                         )}
                         {isComingSoon && (
                             <button onClick={() => setModalOpen(true)}
                                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:-translate-y-0.5"
                                 style={{ background: 'linear-gradient(135deg,#a3e635,#65a30d)', color: '#000' }}>
-                                Notify Me 🔔
+                                Notify Me ­ƒöö
                             </button>
                         )}
-                        {isCompleted && <span className="text-xs font-semibold px-4 py-2 rounded-xl" style={{ color: '#6b7280', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>Trip Done ✓</span>}
+                        {isCompleted && <span className="text-xs font-semibold px-4 py-2 rounded-xl" style={{ color: '#6b7280', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>Trip Done Ô£ô</span>}
                         {isYetToAnnounce && <span className="text-xs font-semibold px-4 py-2 rounded-xl" style={{ color: '#6b7280', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>Stay Tuned</span>}
                     </div>
                 </div>
@@ -186,8 +186,7 @@ export default function TripsPage() {
     return (
         <main className="min-h-screen" style={{ background: '#0d150b' }}>
 
-<<<<<<< HEAD
-            {/* ── HERO ──────────────────────────────────────────────── */}
+            {/* ÔöÇÔöÇ HERO ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */}
             <section className="relative overflow-hidden pt-28 pb-16">
                 <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, #0e1a0c, #0d150b)' }} />
                 <div className="absolute inset-0 grid-pattern opacity-30" />
@@ -199,53 +198,28 @@ export default function TripsPage() {
                         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
                             <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] mb-6 px-4 py-2 rounded-full"
                                 style={{ color: '#a3e635', background: 'rgba(163,230,53,0.08)', border: '1px solid rgba(163,230,53,0.2)' }}>
-=======
-            {/* ── PAGE HERO ── */}
-            <section className="relative min-h-[600px] flex items-center pb-32 overflow-hidden">
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, #111a0f, #0d150b)' }} />
-                <div className="absolute inset-0 grid-pattern opacity-60" />
-                <div className="absolute -top-40 -right-40 w-[700px] h-[700px] bg-lime-500/6 rounded-full blur-[140px]" />
-                <div className="absolute -bottom-20 -left-20 w-[500px] h-[500px] bg-lime-500/6 rounded-full blur-[100px]" />
-
-                <div className="container-main relative z-10">
-                    <div className="max-w-[640px]">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] text-lime-400 bg-lime-500/10 border border-lime-500/20 px-4 py-2 rounded-full mb-8">
->>>>>>> 11800fe86b49fb8a43b65e6a6402cc6621bbebf2
                                 <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse" />
                                 Browse Destinations
                             </div>
 
-<<<<<<< HEAD
                             <h1 className="font-extrabold text-white leading-[1.05] tracking-[-0.03em] mb-5"
                                 style={{ fontFamily: 'var(--font-outfit)', fontSize: 'clamp(44px,5.5vw,68px)' }}>
-=======
-                            <h1 className="text-[56px] md:text-[72px] font-[var(--font-outfit)] font-extrabold text-white leading-[1.0] tracking-[-0.03em] mb-8">
->>>>>>> 11800fe86b49fb8a43b65e6a6402cc6621bbebf2
                                 Find Your<br />
                                 <span style={{ background: 'linear-gradient(135deg,#a3e635,#d4a843)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                                     Next Trip
                                 </span>
                             </h1>
 
-<<<<<<< HEAD
                             <p className="text-[16px] leading-[1.75] mb-8 max-w-[440px]" style={{ color: 'rgba(180,200,140,0.6)' }}>
-=======
-                            <p className="text-[17px] leading-[1.75] mb-12 max-w-[500px]" style={{ color: 'rgba(180,200,140,0.6)' }}>
->>>>>>> 11800fe86b49fb8a43b65e6a6402cc6621bbebf2
-                                Curated group adventures across India. Mountains, beaches, heritage cities — all at student-friendly prices.
+                                Curated group adventures across India. Mountains, beaches, heritage cities ÔÇö all at student-friendly prices.
                             </p>
 
-                            <div className="flex flex-wrap gap-4">
+                            <div className="flex flex-wrap gap-3">
                                 {[
-                                    { icon: '✈️', text: `${trips.length || '2'}+ Trips` },
-                                    { icon: '👥', text: 'Group Travel' },
-                                    { icon: '💰', text: 'Student Pricing' },
-                                    { icon: '🛡️', text: 'Verified Safe' },
+                                    { icon: 'Ô£ê´©Å', text: `${trips.length || '2'}+ Trips` },
+                                    { icon: '­ƒæÑ', text: 'Group Travel' },
+                                    { icon: '­ƒÆ░', text: 'Student Pricing' },
+                                    { icon: '­ƒøí´©Å', text: 'Verified Safe' },
                                 ].map(b => (
                                     <div key={b.text} className="flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-medium"
                                         style={{ background: 'rgba(132,204,22,0.06)', border: '1px solid rgba(132,204,22,0.12)', color: 'rgba(180,200,140,0.7)' }}>
@@ -255,7 +229,7 @@ export default function TripsPage() {
                             </div>
                         </motion.div>
 
-                        {/* Right — hero image card */}
+                        {/* Right ÔÇö hero image card */}
                         <motion.div className="hidden lg:block" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.15 }}>
                             <div className="relative rounded-2xl overflow-hidden" style={{ height: '300px', border: '1px solid rgba(132,204,22,0.15)' }}>
                                 <Image src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=1000" alt="Mountain" fill className="object-cover" />
@@ -294,7 +268,7 @@ export default function TripsPage() {
                 </div>
             </section>
 
-            {/* ── FILTER BAR ─────────────────────────────────────────── */}
+            {/* ÔöÇÔöÇ FILTER BAR ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */}
             <div className="sticky top-[72px] z-30 backdrop-blur-2xl border-y"
                 style={{ background: 'rgba(13,21,11,0.97)', borderColor: 'rgba(132,204,22,0.1)' }}>
                 <div className="container-main">
@@ -319,13 +293,13 @@ export default function TripsPage() {
                 </div>
             </div>
 
-            {/* ── TRIPS GRID ─────────────────────────────────────────── */}
+            {/* ÔöÇÔöÇ TRIPS GRID ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */}
             <section className="container-main py-10">
                 {/* Count row */}
                 <div className="flex items-center justify-between mb-7">
                     <div>
                         <p className="font-bold text-xl">
-                            <span style={{ color: '#a3e635' }}>{loading ? '—' : filtered.length} {filtered.length === 1 ? 'trip' : 'trips'}</span>
+                            <span style={{ color: '#a3e635' }}>{loading ? 'ÔÇö' : filtered.length} {filtered.length === 1 ? 'trip' : 'trips'}</span>
                             {' '}<span className="text-white">available</span>
                         </p>
                         <p className="text-sm mt-0.5" style={{ color: 'rgba(180,200,140,0.4)' }}>
@@ -354,14 +328,14 @@ export default function TripsPage() {
                     </div>
                 ) : (
                     <div className="text-center py-28">
-                        <div className="text-6xl mb-5">🗺️</div>
+                        <div className="text-6xl mb-5">­ƒù║´©Å</div>
                         <p className="text-white font-bold text-2xl mb-3">No trips found</p>
                         <p className="text-base mb-8" style={{ color: 'rgba(180,200,140,0.4)' }}>Try a different filter or check back soon.</p>
                         <button onClick={() => setActiveFilter('all')} className="btn-primary px-8 py-3.5">View all trips</button>
                     </div>
                 )}
 
-                {/* ── CTA BANNER ─────────────────────────────────────── */}
+                {/* ÔöÇÔöÇ CTA BANNER ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */}
                 {!loading && (
                     <motion.div
                         className="mt-14 relative rounded-2xl overflow-hidden"
@@ -395,7 +369,7 @@ export default function TripsPage() {
                             <a href="/contact"
                                 className="flex-shrink-0 flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5"
                                 style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)', boxShadow: '0 4px 20px rgba(59,130,246,0.35)' }}>
-                                Request a Trip →
+                                Request a Trip ÔåÆ
                             </a>
                         </div>
                     </motion.div>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
@@ -27,7 +27,7 @@ const STATUS_STYLES: Record<string, { label: string; cls: string }> = {
 }
 
 function fmtDate(d: string | null) {
-    if (!d) return '—'
+    if (!d) return 'ÔÇö'
     return new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
@@ -51,7 +51,7 @@ export default function DashboardPage() {
         }
     }, [status])
 
-    // ── Loading ────────────────────────────────────────────────────────────────
+    // ÔöÇÔöÇ Loading ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
     if (status === 'loading') {
         return (
             <div className="min-h-screen flex items-center justify-center" style={{ background: '#0d150b' }}>
@@ -66,7 +66,7 @@ export default function DashboardPage() {
         )
     }
 
-    // ── Unauthenticated ────────────────────────────────────────────────────────
+    // ÔöÇÔöÇ Unauthenticated ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
     if (!session) {
         return (
             <div className="min-h-screen flex items-center justify-center" style={{ background: '#0d150b' }}>
@@ -84,16 +84,15 @@ export default function DashboardPage() {
             <div className="absolute inset-0 grid-pattern opacity-30" />
             <div className="absolute -top-60 -right-60 w-[700px] h-[700px] rounded-full blur-[160px]" style={{ background: 'rgba(132,204,22,0.04)' }} />
 
-            <div className="container-main relative z-10 pt-16 pb-20">
+            <div className="container-main relative z-10 pt-10 pb-16">
 
-                {/* ── Top bar ────────────────────────────────────────────────── */}
+                {/* ÔöÇÔöÇ Top bar ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */}
                 <motion.div
-<<<<<<< HEAD
                     className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10"
                     initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                 >
                     <div>
-                        <p className="text-sm mb-1" style={{ color: 'rgba(180,200,140,0.4)' }}>Welcome back 👋</p>
+                        <p className="text-sm mb-1" style={{ color: 'rgba(180,200,140,0.4)' }}>Welcome back ­ƒæï</p>
                         <h1 className="text-2xl md:text-3xl font-extrabold text-white" style={{ fontFamily: 'var(--font-outfit)' }}>
                             Hello,{' '}
                             <span style={{ background: 'linear-gradient(135deg,#a3e635,#d4a843)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
@@ -106,20 +105,6 @@ export default function DashboardPage() {
                             className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-black transition-all hover:-translate-y-0.5"
                             style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)', boxShadow: '0 4px 16px rgba(163,230,53,0.25)' }}
                         >
-=======
-                    className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-16"
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                    <div>
-                        <p className="text-slate-500 text-sm mb-2">Welcome back 👋</p>
-                        <h1 className="text-2xl md:text-3xl font-[var(--font-outfit)] font-extrabold text-white">
-                            Hello, <span className="text-gradient-brand">{userName}</span>
-                        </h1>
-                    </div>
-                    <div className="flex gap-4">
-                        <Link href="/trips" className="btn-primary text-sm px-6 py-3">
->>>>>>> 11800fe86b49fb8a43b65e6a6402cc6621bbebf2
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
@@ -127,12 +112,8 @@ export default function DashboardPage() {
                         </Link>
                         <button
                             onClick={() => signOut({ callbackUrl: '/' })}
-<<<<<<< HEAD
                             className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:-translate-y-0.5"
                             style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171' }}
-=======
-                            className="btn-secondary text-sm px-6 py-3 text-red-400 border-red-500/20 hover:bg-red-500/10"
->>>>>>> 11800fe86b49fb8a43b65e6a6402cc6621bbebf2
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -142,9 +123,9 @@ export default function DashboardPage() {
                     </div>
                 </motion.div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                    {/* ── Profile Card ──────────────────────────────────────── */}
+                    {/* ÔöÇÔöÇ Profile Card ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */}
                     <motion.div
                         className="rounded-2xl p-7"
                         style={{ background: 'rgba(10,18,8,0.85)', border: '1px solid rgba(132,204,22,0.12)', backdropFilter: 'blur(16px)' }}
@@ -168,7 +149,7 @@ export default function DashboardPage() {
                             <p className="text-sm mb-3" style={{ color: 'rgba(180,200,140,0.5)' }}>{userEmail}</p>
                             <span className="text-[10px] font-bold px-2.5 py-1 rounded-full border"
                                 style={{ color: '#a3e635', background: 'rgba(163,230,53,0.08)', borderColor: 'rgba(163,230,53,0.2)' }}>
-                                ✓ Verified Member
+                                Ô£ô Verified Member
                             </span>
 
                             {/* Stats */}
@@ -187,7 +168,7 @@ export default function DashboardPage() {
                         </div>
                     </motion.div>
 
-                    {/* ── My Trips ───────────────────────────────────────────── */}
+                    {/* ÔöÇÔöÇ My Trips ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */}
                     <motion.div
                         className="lg:col-span-2 rounded-2xl p-7"
                         style={{ background: 'rgba(10,18,8,0.85)', border: '1px solid rgba(132,204,22,0.12)', backdropFilter: 'blur(16px)' }}
@@ -197,7 +178,7 @@ export default function DashboardPage() {
                             <h2 className="text-white font-bold text-base">My Trips</h2>
                             <Link href="/trips" className="text-xs font-semibold transition-colors hover:text-lime-300"
                                 style={{ color: 'rgba(163,230,53,0.6)' }}>
-                                Browse more →
+                                Browse more ÔåÆ
                             </Link>
                         </div>
 
@@ -223,7 +204,7 @@ export default function DashboardPage() {
                                     className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold text-black transition-all hover:-translate-y-0.5"
                                     style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)', boxShadow: '0 4px 16px rgba(163,230,53,0.25)' }}
                                 >
-                                    Browse Trips →
+                                    Browse Trips ÔåÆ
                                 </Link>
                             </div>
                         ) : (
@@ -243,7 +224,7 @@ export default function DashboardPage() {
                                             <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0" style={{ background: 'rgba(132,204,22,0.1)' }}>
                                                 {reg.trip?.imageUrl
                                                     ? <img src={reg.trip.imageUrl} alt={reg.tripName} className="w-full h-full object-cover" />
-                                                    : <div className="w-full h-full flex items-center justify-center text-xl">✈️</div>
+                                                    : <div className="w-full h-full flex items-center justify-center text-xl">Ô£ê´©Å</div>
                                                 }
                                             </div>
                                             {/* Info */}
@@ -251,7 +232,7 @@ export default function DashboardPage() {
                                                 <p className="text-white font-semibold text-sm truncate">{reg.tripName}</p>
                                                 {reg.trip?.startDate && (
                                                     <p className="text-[11px] mt-0.5" style={{ color: 'rgba(180,200,140,0.45)' }}>
-                                                        {fmtDate(reg.trip.startDate)} – {fmtDate(reg.trip.endDate)}
+                                                        {fmtDate(reg.trip.startDate)} ÔÇô {fmtDate(reg.trip.endDate)}
                                                     </p>
                                                 )}
                                                 <p className="text-[11px]" style={{ color: 'rgba(180,200,140,0.35)' }}>
@@ -269,16 +250,16 @@ export default function DashboardPage() {
                         )}
                     </motion.div>
 
-                    {/* ── Quick Links ────────────────────────────────────────── */}
+                    {/* ÔöÇÔöÇ Quick Links ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */}
                     <motion.div
                         className="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4"
                         initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
                     >
                         {[
-                            { label: 'Browse Trips', href: '/trips', icon: '✈️', color: 'rgba(163,230,53,0.06)', border: 'rgba(163,230,53,0.12)', hover: 'rgba(163,230,53,0.2)' },
-                            { label: 'Gallery',      href: '/gallery', icon: '📸', color: 'rgba(212,168,67,0.06)', border: 'rgba(212,168,67,0.12)', hover: 'rgba(212,168,67,0.2)' },
-                            { label: 'Reviews',      href: '/blog', icon: '⭐', color: 'rgba(163,230,53,0.06)', border: 'rgba(163,230,53,0.12)', hover: 'rgba(163,230,53,0.2)' },
-                            { label: 'Contact Us',   href: '/contact', icon: '💬', color: 'rgba(212,168,67,0.06)', border: 'rgba(212,168,67,0.12)', hover: 'rgba(212,168,67,0.2)' },
+                            { label: 'Browse Trips', href: '/trips', icon: 'Ô£ê´©Å', color: 'rgba(163,230,53,0.06)', border: 'rgba(163,230,53,0.12)', hover: 'rgba(163,230,53,0.2)' },
+                            { label: 'Gallery',      href: '/gallery', icon: '­ƒô©', color: 'rgba(212,168,67,0.06)', border: 'rgba(212,168,67,0.12)', hover: 'rgba(212,168,67,0.2)' },
+                            { label: 'Reviews',      href: '/blog', icon: 'Ô¡É', color: 'rgba(163,230,53,0.06)', border: 'rgba(163,230,53,0.12)', hover: 'rgba(163,230,53,0.2)' },
+                            { label: 'Contact Us',   href: '/contact', icon: '­ƒÆ¼', color: 'rgba(212,168,67,0.06)', border: 'rgba(212,168,67,0.12)', hover: 'rgba(212,168,67,0.2)' },
                         ].map(item => (
                             <Link
                                 key={item.label}
