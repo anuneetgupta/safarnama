@@ -186,6 +186,7 @@ export default function TripsPage() {
     return (
         <main className="min-h-screen" style={{ background: '#0d150b' }}>
 
+<<<<<<< HEAD
             {/* ── HERO ──────────────────────────────────────────────── */}
             <section className="relative overflow-hidden pt-28 pb-16">
                 <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, #0e1a0c, #0d150b)' }} />
@@ -198,23 +199,48 @@ export default function TripsPage() {
                         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
                             <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] mb-6 px-4 py-2 rounded-full"
                                 style={{ color: '#a3e635', background: 'rgba(163,230,53,0.08)', border: '1px solid rgba(163,230,53,0.2)' }}>
+=======
+            {/* ── PAGE HERO ── */}
+            <section className="relative min-h-[600px] flex items-center pb-32 overflow-hidden">
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, #111a0f, #0d150b)' }} />
+                <div className="absolute inset-0 grid-pattern opacity-60" />
+                <div className="absolute -top-40 -right-40 w-[700px] h-[700px] bg-lime-500/6 rounded-full blur-[140px]" />
+                <div className="absolute -bottom-20 -left-20 w-[500px] h-[500px] bg-lime-500/6 rounded-full blur-[100px]" />
+
+                <div className="container-main relative z-10">
+                    <div className="max-w-[640px]">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] text-lime-400 bg-lime-500/10 border border-lime-500/20 px-4 py-2 rounded-full mb-8">
+>>>>>>> 11800fe86b49fb8a43b65e6a6402cc6621bbebf2
                                 <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse" />
                                 Browse Destinations
                             </div>
 
+<<<<<<< HEAD
                             <h1 className="font-extrabold text-white leading-[1.05] tracking-[-0.03em] mb-5"
                                 style={{ fontFamily: 'var(--font-outfit)', fontSize: 'clamp(44px,5.5vw,68px)' }}>
+=======
+                            <h1 className="text-[56px] md:text-[72px] font-[var(--font-outfit)] font-extrabold text-white leading-[1.0] tracking-[-0.03em] mb-8">
+>>>>>>> 11800fe86b49fb8a43b65e6a6402cc6621bbebf2
                                 Find Your<br />
                                 <span style={{ background: 'linear-gradient(135deg,#a3e635,#d4a843)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                                     Next Trip
                                 </span>
                             </h1>
 
+<<<<<<< HEAD
                             <p className="text-[16px] leading-[1.75] mb-8 max-w-[440px]" style={{ color: 'rgba(180,200,140,0.6)' }}>
+=======
+                            <p className="text-[17px] leading-[1.75] mb-12 max-w-[500px]" style={{ color: 'rgba(180,200,140,0.6)' }}>
+>>>>>>> 11800fe86b49fb8a43b65e6a6402cc6621bbebf2
                                 Curated group adventures across India. Mountains, beaches, heritage cities — all at student-friendly prices.
                             </p>
 
-                            <div className="flex flex-wrap gap-3">
+                            <div className="flex flex-wrap gap-4">
                                 {[
                                     { icon: '✈️', text: `${trips.length || '2'}+ Trips` },
                                     { icon: '👥', text: 'Group Travel' },

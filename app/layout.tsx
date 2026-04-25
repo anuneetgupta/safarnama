@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     description: 'Join the tribe. Explore destinations. Create memories.',
 }
 
-import Navbar from '@/components/ui/Navbar'
+import Navbar from '@/components/ui/Navbar-v2'
 import Providers from '@/components/ui/Providers'
 import CustomCursor from '@/components/ui/CustomCursor'
 import FloatingWhatsApp from '@/components/ui/FloatingWhatsApp'
@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <SmoothScroll />
                     <CustomCursor />
                     <Navbar />
-                    <div style={{ height: '80px' }} />
+                    <div style={{ height: '72px' }} />
                     {children}
                     <FloatingWhatsApp />
                 </Providers>

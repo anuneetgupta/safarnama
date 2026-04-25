@@ -84,10 +84,11 @@ export default function DashboardPage() {
             <div className="absolute inset-0 grid-pattern opacity-30" />
             <div className="absolute -top-60 -right-60 w-[700px] h-[700px] rounded-full blur-[160px]" style={{ background: 'rgba(132,204,22,0.04)' }} />
 
-            <div className="container-main relative z-10 pt-10 pb-16">
+            <div className="container-main relative z-10 pt-16 pb-20">
 
                 {/* ── Top bar ────────────────────────────────────────────────── */}
                 <motion.div
+<<<<<<< HEAD
                     className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10"
                     initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                 >
@@ -105,6 +106,20 @@ export default function DashboardPage() {
                             className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-black transition-all hover:-translate-y-0.5"
                             style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)', boxShadow: '0 4px 16px rgba(163,230,53,0.25)' }}
                         >
+=======
+                    className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-16"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                >
+                    <div>
+                        <p className="text-slate-500 text-sm mb-2">Welcome back 👋</p>
+                        <h1 className="text-2xl md:text-3xl font-[var(--font-outfit)] font-extrabold text-white">
+                            Hello, <span className="text-gradient-brand">{userName}</span>
+                        </h1>
+                    </div>
+                    <div className="flex gap-4">
+                        <Link href="/trips" className="btn-primary text-sm px-6 py-3">
+>>>>>>> 11800fe86b49fb8a43b65e6a6402cc6621bbebf2
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
@@ -112,8 +127,12 @@ export default function DashboardPage() {
                         </Link>
                         <button
                             onClick={() => signOut({ callbackUrl: '/' })}
+<<<<<<< HEAD
                             className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:-translate-y-0.5"
                             style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171' }}
+=======
+                            className="btn-secondary text-sm px-6 py-3 text-red-400 border-red-500/20 hover:bg-red-500/10"
+>>>>>>> 11800fe86b49fb8a43b65e6a6402cc6621bbebf2
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -123,7 +142,7 @@ export default function DashboardPage() {
                     </div>
                 </motion.div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                     {/* ── Profile Card ──────────────────────────────────────── */}
                     <motion.div

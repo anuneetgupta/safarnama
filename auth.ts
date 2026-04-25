@@ -6,10 +6,12 @@ import { prisma } from '@/lib/prisma'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
-        Google({
-            clientId: process.env.GOOGLE_CLIENT_ID!,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        }),
+        ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
+            Google({
+                clientId: process.env.GOOGLE_CLIENT_ID,
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            }),
+        ] : []),
         Credentials({
             name: 'credentials',
             credentials: {
@@ -77,4 +79,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     session: { strategy: 'jwt' },
     trustHost: true,
+    secret: process.env.NEXTAUTH_SECRET,
 })
