@@ -15,15 +15,15 @@ const NAV_LINKS = [
 ]
 
 export default function Navbar() {
-    const [scrolled, setScrolled] = useState(false)
-    const [menuOpen, setMenuOpen] = useState(false)
-    const [dropOpen, setDropOpen] = useState(false)
-    const pathname = usePathname()
-    const { data: session } = useSession()
+    const [scrolled, setScrolled]   = useState(false)
+    const [menuOpen, setMenuOpen]   = useState(false)
+    const [dropOpen, setDropOpen]   = useState(false)
+    const pathname                  = usePathname()
+    const { data: session }         = useSession()
     const isAdmin = (session?.user as { role?: string })?.role === 'admin'
 
     useEffect(() => {
-        const fn = () => setScrolled(window.scrollY > 24)
+        const fn = () => setScrolled(window.scrollY > 20)
         window.addEventListener('scroll', fn, { passive: true })
         return () => window.removeEventListener('scroll', fn)
     }, [])
@@ -32,69 +32,146 @@ export default function Navbar() {
 
     return (
         <>
+            {/* ─── Full-Width Professional Navbar ─── */}
             <motion.header
-                className="fixed top-0 left-0 right-0 z-50"
                 style={{
-                    height: '72px',
-                    background: scrolled ? 'rgba(8,15,8,0.92)' : 'rgba(8,15,8,0.75)',
-                    backdropFilter: 'blur(20px)',
-                    WebkitBackdropFilter: 'blur(20px)',
-                    borderBottom: `1px solid ${scrolled ? 'rgba(132,204,22,0.10)' : 'rgba(132,204,22,0.06)'}`,
-                    boxShadow: scrolled ? '0 4px 24px rgba(0,0,0,0.3)' : 'none',
-                    transition: 'all 0.3s ease',
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 50,
+                    height: 76,
+                    background: scrolled
+                        ? 'rgba(6, 12, 5, 0.98)'
+                        : 'rgba(6, 12, 5, 0.85)',
+                    backdropFilter: 'blur(24px)',
+                    WebkitBackdropFilter: 'blur(24px)',
+                    borderBottom: scrolled ? '1px solid rgba(163,230,53,0.15)' : '1px solid rgba(163,230,53,0.06)',
+                    boxShadow: scrolled
+                        ? '0 8px 32px rgba(0,0,0,0.5)'
+                        : 'none',
+                    transition: 'background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
                 }}
-                initial={{ y: -72, opacity: 0 }}
+                initial={{ y: -90, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             >
-                <div className="container-main h-full flex items-center justify-between">
+                <div style={{ height: '100%', padding: '0 24px' }} className="max-w-[1536px] mx-auto w-full flex items-center justify-between">
+                    
+                    {/* ── Left Side (Logo) ── */}
+                    <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, width: 220 }}>
+                        <Link
+                            href="/"
+                            style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }}
+                        >
+                            {/* circular logo */}
+                            <div style={{
+                                width: 48, height: 48, borderRadius: '50%', overflow: 'hidden', flexShrink: 0,
+                                border: '2px solid rgba(163,230,53,0.22)',
+                                background: '#0d160b',
+                            }}>
+                                <img
+                                    src="/logo.png"
+                                    alt="Safarnama"
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                            </div>
+                            <span style={{
+                                fontFamily: "var(--font-outfit, 'Outfit', sans-serif)",
+                                fontSize: 17,
+                                fontWeight: 800,
+                                color: '#f0f4e8',
+                                letterSpacing: '0.08em',
+                                textTransform: 'uppercase',
+                            }}>
+                                Safarnama
+                            </span>
+                        </Link>
+                    </div>
 
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center flex-shrink-0">
-                        <img src="/logo.png" alt="Safarnama" style={{ height: '40px', width: 'auto', objectFit: 'contain' }} />
-                    </Link>
-
-                    {/* Desktop Nav — centered */}
-                    <nav className="hidden md:flex items-center gap-1">
-                        {NAV_LINKS.map(link => (
-                            <Link key={link.name} href={link.href}
-                                className="relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
-                                style={{
-                                    color: pathname === link.href ? '#f0f4e8' : 'rgba(200,220,160,0.65)',
-                                    background: pathname === link.href ? 'rgba(132,204,22,0.08)' : 'transparent',
-                                }}
-                                onMouseEnter={e => { if (pathname !== link.href) (e.currentTarget as HTMLElement).style.color = '#f0f4e8' }}
-                                onMouseLeave={e => { if (pathname !== link.href) (e.currentTarget as HTMLElement).style.color = 'rgba(200,220,160,0.65)' }}
-                            >
-                                {link.name}
-                                {pathname === link.href && (
-                                    <motion.div layoutId="nav-dot"
-                                        className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                                        style={{ background: '#a3e635' }} />
-                                )}
-                            </Link>
-                        ))}
+                    {/* ── Center Desktop Nav links ── */}
+                    <nav style={{ gap: 8 }} className="hidden md:flex items-center justify-center flex-1">
+                        {NAV_LINKS.map(link => {
+                            const active = pathname === link.href
+                            return (
+                                <Link
+                                    key={link.name}
+                                    href={link.href}
+                                    style={{
+                                        position: 'relative',
+                                        padding: '8px 18px',
+                                        fontSize: 15,
+                                        fontWeight: active ? 600 : 500,
+                                        color: active ? '#f0f4e8' : 'rgba(200,220,155,0.7)',
+                                        textDecoration: 'none',
+                                        transition: 'color 0.2s ease',
+                                        borderRadius: 6,
+                                    }}
+                                    onMouseEnter={e => {
+                                        if (!active) (e.currentTarget as HTMLElement).style.color = '#f0f4e8'
+                                    }}
+                                    onMouseLeave={e => {
+                                        if (!active) (e.currentTarget as HTMLElement).style.color = 'rgba(200,220,155,0.7)'
+                                    }}
+                                >
+                                    {link.name}
+                                    {/* lime underline for active */}
+                                    {active && (
+                                        <motion.span
+                                            layoutId="nav-underline"
+                                            style={{
+                                                position: 'absolute',
+                                                bottom: 0,
+                                                left: '50%',
+                                                transform: 'translateX(-50%)',
+                                                width: '60%',
+                                                height: 3,
+                                                borderRadius: '3px 3px 0 0',
+                                                background: '#a3e635',
+                                                display: 'block',
+                                            }}
+                                        />
+                                    )}
+                                </Link>
+                            )
+                        })}
                     </nav>
 
-                    {/* Right actions */}
-                    <div className="hidden md:flex items-center gap-3">
+                    {/* ── Right Actions ── */}
+                    <div style={{ gap: 14, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', minWidth: 220 }} className="hidden md:flex shrink-0">
                         {session?.user ? (
-                            <div className="relative">
-                                <button onClick={() => setDropOpen(!dropOpen)}
-                                    className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200"
-                                    style={{ background: 'rgba(132,204,22,0.06)', border: '1px solid rgba(132,204,22,0.12)' }}>
-                                    <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center"
-                                        style={{ background: 'linear-gradient(135deg, #84cc16, #d4a843)' }}>
+                            /* ── Logged-in user dropdown ── */
+                            <div style={{ position: 'relative' }}>
+                                <button
+                                    onClick={() => setDropOpen(!dropOpen)}
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: 10,
+                                        padding: '6px 16px 6px 8px',
+                                        borderRadius: 9999,
+                                        background: 'rgba(163,230,53,0.08)',
+                                        border: '1px solid rgba(163,230,53,0.2)',
+                                        cursor: 'pointer',
+                                        transition: 'background 0.2s',
+                                    }}
+                                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(163,230,53,0.14)')}
+                                    onMouseLeave={e => (e.currentTarget.style.background = 'rgba(163,230,53,0.08)')}
+                                >
+                                    <div style={{
+                                        width: 32, height: 32, borderRadius: '50%', overflow: 'hidden',
+                                        background: 'linear-gradient(135deg,#84cc16,#d4a843)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        flexShrink: 0,
+                                    }}>
                                         {session.user.image
-                                            ? <img src={session.user.image} alt="" className="w-full h-full object-cover" />
-                                            : <span className="text-xs font-bold text-black">{session.user.name?.charAt(0).toUpperCase()}</span>
+                                            ? <img src={session.user.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            : <span style={{ fontSize: 13, fontWeight: 700, color: '#000' }}>{session.user.name?.charAt(0).toUpperCase()}</span>
                                         }
                                     </div>
-                                    <span className="text-sm font-medium" style={{ color: '#f0f4e8' }}>
-                                        {session.user.name?.split(' ')[0]}
-                                    </span>
-                                    <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${dropOpen ? 'rotate-180' : ''}`}
-                                        style={{ color: 'rgba(200,220,160,0.5)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <span style={{ fontSize: 14, fontWeight: 600, color: '#f0f4e8' }}>{session.user.name?.split(' ')[0]}</span>
+                                    <svg
+                                        style={{ color: 'rgba(200,220,155,0.6)', transform: dropOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}
+                                        width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    >
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
@@ -102,41 +179,38 @@ export default function Navbar() {
                                 <AnimatePresence>
                                     {dropOpen && (
                                         <motion.div
-                                            className="absolute right-0 top-full mt-2 w-52 rounded-xl overflow-hidden"
-                                            style={{ background: '#0d150b', border: '1px solid rgba(132,204,22,0.12)', boxShadow: '0 16px 48px rgba(0,0,0,0.4)' }}
+                                            style={{
+                                                position: 'absolute', right: 0, top: 'calc(100% + 10px)',
+                                                width: 220, borderRadius: 14, overflow: 'hidden',
+                                                background: '#0a1308',
+                                                border: '1px solid rgba(163,230,53,0.15)',
+                                                boxShadow: '0 16px 48px rgba(0,0,0,0.6)',
+                                            }}
                                             initial={{ opacity: 0, y: -8, scale: 0.96 }}
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: -8, scale: 0.96 }}
                                             transition={{ duration: 0.15 }}
                                         >
-                                            <div className="px-4 py-3" style={{ borderBottom: '1px solid rgba(132,204,22,0.08)' }}>
-                                                <p className="text-sm font-semibold" style={{ color: '#f0f4e8' }}>{session.user.name}</p>
-                                                <p className="text-xs mt-0.5 truncate" style={{ color: 'rgba(180,200,140,0.5)' }}>{session.user.email}</p>
+                                            <div style={{ padding: '14px 18px', borderBottom: '1px solid rgba(163,230,53,0.1)' }}>
+                                                <p style={{ fontSize: 14, fontWeight: 600, color: '#f0f4e8', margin: 0 }}>{session.user.name}</p>
+                                                <p style={{ fontSize: 12, marginTop: 4, color: 'rgba(180,200,140,0.6)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{session.user.email}</p>
                                             </div>
-                                            <div className="p-1.5 flex flex-col gap-0.5">
-                                                <Link href="/dashboard" className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-all duration-200"
-                                                    style={{ color: 'rgba(200,220,160,0.8)' }}
-                                                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(132,204,22,0.06)'; (e.currentTarget as HTMLElement).style.color = '#f0f4e8' }}
-                                                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(200,220,160,0.8)' }}>
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                                                    Dashboard
-                                                </Link>
-                                                {isAdmin && (
-                                                    <Link href="/admin" className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-all duration-200"
-                                                        style={{ color: '#a3e635' }}
-                                                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(132,204,22,0.08)' }}
-                                                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}>
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                                                        Admin Panel
-                                                    </Link>
-                                                )}
-                                                <button onClick={() => signOut({ callbackUrl: '/' })}
-                                                    className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm w-full text-left transition-all duration-200"
-                                                    style={{ color: '#f87171' }}
-                                                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(239,68,68,0.08)' }}
-                                                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}>
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                                                    Sign Out
+                                            <div style={{ padding: '6px' }}>
+                                                <DropItem href="/dashboard" icon="🏠">Dashboard</DropItem>
+                                                {isAdmin && <DropItem href="/admin" icon="🛡" color="#a3e635">Admin Panel</DropItem>}
+                                                <button
+                                                    onClick={() => signOut({ callbackUrl: '/' })}
+                                                    style={{
+                                                        display: 'flex', alignItems: 'center', gap: 10,
+                                                        padding: '10px 14px', borderRadius: 8, width: '100%',
+                                                        fontSize: 14, fontWeight: 500, color: '#f87171',
+                                                        background: 'none', border: 'none', cursor: 'pointer',
+                                                        textAlign: 'left', transition: 'background 0.15s',
+                                                    }}
+                                                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.1)')}
+                                                    onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                                                >
+                                                    <span>🚪</span> Sign Out
                                                 </button>
                                             </div>
                                         </motion.div>
@@ -145,66 +219,147 @@ export default function Navbar() {
                             </div>
                         ) : (
                             <>
-                                <Link href="/auth/login" className="text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200"
-                                    style={{ color: 'rgba(200,220,160,0.7)' }}
+                                {/* Login — text+icon style, no border */}
+                                <Link
+                                    href="/auth/login"
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: 6,
+                                        padding: '8px 12px',
+                                        fontSize: 15, fontWeight: 500,
+                                        color: 'rgba(200,220,155,0.75)',
+                                        textDecoration: 'none',
+                                        borderRadius: 8,
+                                        transition: 'color 0.2s',
+                                    }}
                                     onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#f0f4e8'}
-                                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'rgba(200,220,160,0.7)'}>
-                                    Sign in
+                                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'rgba(200,220,155,0.75)'}
+                                >
+                                    {/* Search / person icon */}
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                                        <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+                                    </svg>
+                                    Login
                                 </Link>
-                                <Link href="/auth/register" className="btn btn-primary btn-sm">
-                                    Get Started
+
+                                {/* Sign Up — outline pill button */}
+                                <Link
+                                    href="/auth/register"
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: 8,
+                                        padding: '10px 22px',
+                                        fontSize: 15, fontWeight: 600,
+                                        color: '#c8e87a',
+                                        textDecoration: 'none',
+                                        borderRadius: 9999,
+                                        border: '1.5px solid rgba(163,230,53,0.5)',
+                                        background: 'transparent',
+                                        transition: 'all 0.2s ease',
+                                        letterSpacing: '0.01em',
+                                    }}
+                                    onMouseEnter={e => {
+                                        const el = e.currentTarget as HTMLElement
+                                        el.style.background = 'rgba(163,230,53,0.1)'
+                                        el.style.borderColor = 'rgba(163,230,53,0.8)'
+                                        el.style.color = '#d4f570'
+                                    }}
+                                    onMouseLeave={e => {
+                                        const el = e.currentTarget as HTMLElement
+                                        el.style.background = 'transparent'
+                                        el.style.borderColor = 'rgba(163,230,53,0.5)'
+                                        el.style.color = '#c8e87a'
+                                    }}
+                                >
+                                    <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
+                                    </svg>
+                                    Sign Up
                                 </Link>
                             </>
                         )}
                     </div>
 
-                    {/* Mobile toggle */}
-                    <button className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200"
-                        style={{ background: 'rgba(132,204,22,0.06)', border: '1px solid rgba(132,204,22,0.10)' }}
-                        onClick={() => setMenuOpen(!menuOpen)}>
-                        <div className="w-5 flex flex-col gap-1.5">
-                            <motion.span animate={menuOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }} className="block h-0.5 w-full rounded-full" style={{ background: '#f0f4e8' }} />
-                            <motion.span animate={menuOpen ? { opacity: 0 } : { opacity: 1 }} className="block h-0.5 w-full rounded-full" style={{ background: '#f0f4e8' }} />
-                            <motion.span animate={menuOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }} className="block h-0.5 w-full rounded-full" style={{ background: '#f0f4e8' }} />
+                    {/* ── Mobile hamburger ── */}
+                    <button
+                        className="md:hidden flex items-center justify-center shrink-0"
+                        onClick={() => setMenuOpen(!menuOpen)}
+                        style={{
+                            width: 44, height: 44, borderRadius: '50%',
+                            background: 'rgba(163,230,53,0.06)',
+                            border: '1px solid rgba(163,230,53,0.15)',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        <div style={{ width: 20, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                            <motion.span animate={menuOpen ? { rotate: 45, y: 9 } : { rotate: 0, y: 0 }}
+                                style={{ display: 'block', height: 2, width: '100%', borderRadius: 2, background: '#f0f4e8' }} />
+                            <motion.span animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
+                                style={{ display: 'block', height: 2, width: '100%', borderRadius: 2, background: '#f0f4e8' }} />
+                            <motion.span animate={menuOpen ? { rotate: -45, y: -9 } : { rotate: 0, y: 0 }}
+                                style={{ display: 'block', height: 2, width: '100%', borderRadius: 2, background: '#f0f4e8' }} />
                         </div>
                     </button>
                 </div>
             </motion.header>
 
-            {/* Mobile Menu */}
+            {/* ── Mobile full-screen menu ── */}
             <AnimatePresence>
                 {menuOpen && (
-                    <motion.div className="fixed inset-0 z-40 md:hidden"
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                        <div className="absolute inset-0" style={{ background: 'rgba(8,15,8,0.96)', backdropFilter: 'blur(20px)' }}
-                            onClick={() => setMenuOpen(false)} />
-                        <motion.nav className="absolute top-[72px] left-0 right-0 p-6 flex flex-col gap-2"
-                            initial={{ y: -16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -16, opacity: 0 }}
-                            transition={{ duration: 0.2 }}>
+                    <motion.div
+                        style={{ position: 'fixed', inset: 0, zIndex: 49 }}
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    >
+                        <div
+                            style={{ position: 'absolute', inset: 0, background: 'rgba(6,12,5,0.98)', backdropFilter: 'blur(20px)' }}
+                            onClick={() => setMenuOpen(false)}
+                        />
+                        <motion.nav
+                            style={{ position: 'absolute', top: 100, left: 0, right: 0, padding: '0 24px', display: 'flex', flexDirection: 'column', gap: 10 }}
+                            initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                        >
                             {NAV_LINKS.map((link, i) => (
-                                <motion.div key={link.name} initial={{ x: -16, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: i * 0.05 }}>
-                                    <Link href={link.href} className="flex items-center justify-between px-4 py-3.5 rounded-xl text-base font-medium transition-all duration-200"
+                                <motion.div key={link.name} initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: i * 0.05 }}>
+                                    <Link
+                                        href={link.href}
                                         style={{
-                                            background: pathname === link.href ? 'rgba(132,204,22,0.08)' : 'transparent',
-                                            border: `1px solid ${pathname === link.href ? 'rgba(132,204,22,0.20)' : 'transparent'}`,
-                                            color: pathname === link.href ? '#f0f4e8' : 'rgba(200,220,160,0.7)',
-                                        }}>
+                                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                            padding: '16px 20px', borderRadius: 16,
+                                            fontSize: 17, fontWeight: 500,
+                                            color: pathname === link.href ? '#f0f4e8' : 'rgba(200,220,155,0.7)',
+                                            background: pathname === link.href ? 'rgba(163,230,53,0.08)' : 'transparent',
+                                            border: `1px solid ${pathname === link.href ? 'rgba(163,230,53,0.2)' : 'transparent'}`,
+                                            textDecoration: 'none',
+                                        }}
+                                    >
                                         {link.name}
-                                        <svg className="w-4 h-4 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                                        <svg width="18" height="18" style={{ opacity: 0.4 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
                                     </Link>
                                 </motion.div>
                             ))}
-                            <div className="h-px my-2" style={{ background: 'rgba(132,204,22,0.08)' }} />
+
+                            <div style={{ height: 1, background: 'rgba(163,230,53,0.1)', margin: '12px 0' }} />
+
                             {session?.user ? (
-                                <div className="flex flex-col gap-2">
-                                    <Link href="/dashboard" className="btn btn-secondary w-full justify-center">Dashboard</Link>
-                                    {isAdmin && <Link href="/admin" className="btn btn-secondary w-full justify-center" style={{ color: '#a3e635', borderColor: 'rgba(132,204,22,0.3)' }}>Admin Panel</Link>}
-                                    <button onClick={() => signOut({ callbackUrl: '/' })} className="btn w-full justify-center" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171' }}>Sign Out</button>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                    <Link href="/dashboard" style={mobileBtn}>Dashboard</Link>
+                                    {isAdmin && <Link href="/admin" style={{ ...mobileBtn, color: '#a3e635', borderColor: 'rgba(163,230,53,0.3)' }}>Admin Panel</Link>}
+                                    <button onClick={() => signOut({ callbackUrl: '/' })} style={{ ...mobileBtn, color: '#f87171', borderColor: 'rgba(239,68,68,0.25)', background: 'none', cursor: 'pointer' }}>
+                                        Sign Out
+                                    </button>
                                 </div>
                             ) : (
-                                <div className="flex flex-col gap-3">
-                                    <Link href="/auth/login" className="btn btn-secondary w-full justify-center">Sign in</Link>
-                                    <Link href="/auth/register" className="btn btn-primary w-full justify-center">Get Started</Link>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 6 }}>
+                                    <Link href="/auth/login"
+                                        style={{ ...mobileBtn, color: 'rgba(200,220,155,0.8)', borderColor: 'rgba(163,230,53,0.25)', textDecoration: 'none', display: 'block', textAlign: 'center' }}>
+                                        Login
+                                    </Link>
+                                    <Link href="/auth/register"
+                                        style={{ ...mobileBtn, color: '#0a1308', background: '#a3e635', borderColor: '#a3e635', fontWeight: 700, textDecoration: 'none', display: 'block', textAlign: 'center' }}>
+                                        Sign Up
+                                    </Link>
                                 </div>
                             )}
                         </motion.nav>
@@ -213,4 +368,34 @@ export default function Navbar() {
             </AnimatePresence>
         </>
     )
+}
+
+function DropItem({ href, icon, color = 'rgba(200,220,155,0.8)', children }: { href: string; icon: string; color?: string; children: React.ReactNode }) {
+    return (
+        <Link
+            href={href}
+            style={{
+                display: 'flex', alignItems: 'center', gap: 12,
+                padding: '10px 14px', borderRadius: 8,
+                fontSize: 14, fontWeight: 500, color,
+                textDecoration: 'none', transition: 'background 0.15s',
+            }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'rgba(163,230,53,0.08)'}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'none'}
+        >
+            <span>{icon}</span>{children}
+        </Link>
+    )
+}
+
+const mobileBtn: React.CSSProperties = {
+    padding: '14px 20px',
+    borderRadius: 14,
+    fontSize: 16,
+    fontWeight: 600,
+    border: '1px solid rgba(255,255,255,0.1)',
+    color: '#f0f4e8',
+    background: 'rgba(255,255,255,0.05)',
+    width: '100%',
+    textAlign: 'center' as const,
 }

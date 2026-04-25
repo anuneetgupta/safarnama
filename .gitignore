@@ -14,15 +14,13 @@ out/
 
 # logs
 *.log
-dev*.log
-dev*.err
-server_start.log
+*.err
 
 # misc
 .DS_Store
 *.pem
-test.txt
-test_server.js
+*.bak
 
 # prisma
+prisma/dev.db
 prisma/migrations/

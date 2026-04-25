@@ -1,12 +1,14 @@
 generator client {
-  provider   = "prisma-client-js"
-  engineType = "binary"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
+
+// ─── Auth Models (NextAuth v5 / @auth/prisma-adapter) ────────────────────────
 
 model User {
   id            String    @id @default(cuid())
@@ -19,7 +21,7 @@ model User {
   college       String?
   instagram     String?
   facebook      String?
-  role          String    @default("user")   // "user" | "admin"
+  role          String    @default("user") // "user" | "admin"
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -27,6 +29,9 @@ model User {
   sessions      Session[]
   registrations TripRegistration[]
   contactMsgs   ContactMessage[]
+
+  @@index([email])
+  @@index([role])
 }
 
 model Account {
@@ -46,6 +51,7 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -55,6 +61,8 @@ model Session {
   expires      DateTime
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model VerificationToken {
@@ -71,24 +79,104 @@ model PasswordResetToken {
   token     String   @unique
   expires   DateTime
   createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([token])
+}
+
+// ─── Core Domain Models ───────────────────────────────────────────────────────
+
+model Trip {
+  id          String   @id @default(cuid())
+  name        String
+  destination String
+  description String
+  price       Int      @default(0)
+  // "completed" | "coming_soon" | "booking_open" | "yet_to_announce"
+  status      String   @default("yet_to_announce")
+  startDate   String?
+  endDate     String?
+  totalSlots  Int      @default(30)
+  bookedSlots Int      @default(0)
+  imageUrl    String?
+  featured    Boolean  @default(false)
+  category    String?  // "mountain" | "beach" | "culture" | "adventure" — for filtering
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  registrations TripRegistration[]
+
+  @@index([status])
+  @@index([featured])
+  @@index([category])
+  @@index([createdAt])
+}
+
+model BlogPost {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  author    String   @default("Safarnama Team")
+  tripName  String?
+  imageUrl  String?
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published])
+  @@index([createdAt])
+}
+
+model GalleryPhoto {
+  id        String   @id @default(cuid())
+  url       String
+  caption   String?
+  tripName  String
+  category  String?  // mirrors Trip.category for gallery filtering
+  createdAt DateTime @default(now())
+
+  @@index([tripName])
+  @@index([category])
+  @@index([createdAt])
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  // "info" | "success" | "warning" | "urgent"
+  type      String   @default("info")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([active])
 }
 
 model TripRegistration {
-  id           String   @id @default(cuid())
-  userId       String?
-  name         String
-  email        String
-  phone        String
-  college      String?
-  city         String?
-  gender       String?
-  age          String?
-  tripName     String
-  message      String?
-  status       String   @default("pending")  // pending | confirmed | cancelled
-  createdAt    DateTime @default(now())
+  id       String   @id @default(cuid())
+  userId   String?
+  name     String
+  email    String
+  phone    String
+  college  String?
+  city     String?
+  gender   String?
+  age      String?
+  tripId   String?  // FK to Trip for relational integrity (optional for backward compat)
+  tripName String
+  message  String?
+  // "pending" | "confirmed" | "cancelled"
+  status   String   @default("pending")
+  createdAt DateTime @default(now())
 
   user User? @relation(fields: [userId], references: [id])
+  trip Trip? @relation(fields: [tripId], references: [id])
+
+  @@index([userId])
+  @@index([tripId])
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model ContactMessage {
@@ -102,4 +190,8 @@ model ContactMessage {
   createdAt DateTime @default(now())
 
   user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
 }

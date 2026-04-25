@@ -5,19 +5,38 @@
 :root {
     --font-inter: 'Inter', sans-serif;
     --font-outfit: 'Outfit', sans-serif;
-    --accent: #0ea5e9;
-    --accent-light: #38bdf8;
-    --accent-dark: #0284c7;
+
+    /* ── Brand Colors (lime-green / gold theme) ── */
+    --accent: #a3e635;          /* lime-green — primary CTA */
+    --accent-light: #d4f570;    /* lighter lime for hover states */
+    --accent-dark: #84cc16;     /* darker lime for gradients */
+    --gold: #d4a843;            /* gold — section accents, founders */
+    --gold-light: #fbbf24;      /* amber — stars, badges */
+
+    /* ── Background Scale ── */
+    --bg-deepest: #0c0900;      /* home hero background */
+    --bg-deep: #0d150b;         /* trips, gallery, dashboard */
+    --bg-card: rgba(10, 18, 8, 0.85);
+    --bg-card-hover: rgba(12, 22, 10, 0.9);
+
+    /* ── Border Colors ── */
+    --border: rgba(132, 204, 22, 0.1);
+    --border-hover: rgba(132, 204, 22, 0.25);
+
+    /* ── Text ── */
+    --text-primary: #f0f4e8;
+    --text-muted: rgba(180, 200, 140, 0.6);
+    --text-faint: rgba(180, 200, 140, 0.35);
+
+    /* ── Legacy aliases kept for backward compatibility ── */
     --teal: #14b8a6;
     --teal-dark: #0f766e;
     --orange: #f97316;
     --orange-dark: #ea580c;
-    --navy: #020817;
-    --navy-light: #0f172a;
-    --navy-mid: #0a1628;
-    --card-bg: rgba(15, 23, 42, 0.7);
-    --border: rgba(148, 163, 184, 0.1);
-    --border-hover: rgba(148, 163, 184, 0.2);
+    --navy: #0d150b;
+    --navy-light: #0c1a09;
+    --navy-mid: #0a1208;
+    --card-bg: var(--bg-card);
 }
 
 * {
@@ -34,16 +53,16 @@ html {
 body {
     cursor: none;
     font-family: var(--font-inter);
-    background-color: var(--navy);
-    color: rgba(226, 232, 240, 0.92);
+    background-color: var(--bg-deep);
+    color: var(--text-primary);
     overflow-x: hidden;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--accent) 0%, var(--teal) 100%);
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
     border-radius: 10px;
 }
 

@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
+import { motion } from 'framer-motion'
 
 export default function LoginPage() {
     const [email, setEmail] = useState('')
@@ -33,7 +33,6 @@ export default function LoginPage() {
             if (result?.error) {
                 setErrors({ email: '', password: 'Invalid email or password' })
             } else {
-                // Check role and redirect accordingly
                 const res = await fetch('/api/auth/session')
                 const session = await res.json()
                 const role = session?.user?.role
@@ -47,238 +46,498 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#020817] flex">
-            
-            {/* Left Side — Animated Panel */}
-            <div className="hidden lg:flex lg:w-[55%] relative overflow-hidden flex-col bg-[#020817]">
-                <div className="absolute inset-0 grid-pattern opacity-20" />
-                <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-sky-500/10 rounded-full blur-[100px]" />
-                <div className="relative z-10 flex flex-col h-full p-12 justify-between">
-                    <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                        <Link href="/"><img src="/logo.png" alt="Safarnama" className="h-12 w-auto object-contain" /></Link>
-                    </motion.div>
-                    <div className="flex flex-col gap-8">
-                        <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-                            <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] text-sky-400 bg-sky-500/10 border border-sky-500/20 px-3 py-1.5 rounded-full mb-4">
-                                <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
-                                India&apos;s #1 Student Travel Platform
-                            </div>
-                            <h2 className="text-5xl font-[var(--font-outfit)] font-extrabold text-white leading-[1.1] tracking-tight mb-3">
-                                Your Journey<br />
-                                <span className="bg-gradient-to-r from-sky-400 to-teal-400 bg-clip-text text-transparent">Starts Here</span>
-                            </h2>
-                            <p className="text-slate-300 text-base leading-relaxed max-w-[380px]">
-                                Curated group trips for students across India. Budget-friendly, safe, and unforgettable.
-                            </p>
-                        </motion.div>
-                        <motion.div className="flex gap-6" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-                            {[{ value: '12K+', label: 'Travelers' }, { value: '80+', label: 'Destinations' }, { value: '4.9★', label: 'Rating' }].map(s => (
-                                <div key={s.label} className="text-center">
-                                    <p className="text-2xl font-extrabold text-white font-[var(--font-outfit)]">{s.value}</p>
-                                    <p className="text-slate-400 text-xs mt-0.5">{s.label}</p>
-                                </div>
-                            ))}
-                        </motion.div>
-                        <motion.div className="glass-card border border-white/[0.1] p-5" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }}>
-                            <div className="flex gap-0.5 mb-2">{[...Array(5)].map((_, i) => <span key={i} className="text-amber-400 text-sm">★</span>)}</div>
-                            <p className="text-slate-300 text-sm leading-relaxed mb-3">&ldquo;Best trip of my life! Safarnama made everything so easy. The Ganga Aarti was unforgettable.&rdquo;</p>
-                            <div className="flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-500 to-teal-500 flex items-center justify-center text-white font-bold text-xs">R</div>
-                                <div>
-                                    <p className="text-white text-xs font-semibold">Riya Sharma</p>
-                                    <p className="text-slate-500 text-[10px]">IIT Delhi · Banaras Trip</p>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </div>
-                    <motion.div className="flex flex-wrap gap-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
-                        {['IIT Students', 'DU Students', 'BITS Students', 'CSJMU Kanpur'].map(b => (
-                            <div key={b} className="flex items-center gap-1.5 text-xs text-slate-400 bg-white/[0.05] border border-white/[0.08] px-3 py-1.5 rounded-full">
-                                <svg className="w-3 h-3 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                                {b}
-                            </div>
-                        ))}
-                    </motion.div>
+        <>
+            <style>{`
+                .login-wrap {
+                    min-height: calc(100vh - 80px);
+                    background: #080f08;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 40px 16px;
+                    position: relative;
+                    overflow: hidden;
+                    font-family: var(--font-inter, 'Inter', sans-serif);
+                }
+
+                /* Same mountain background as home hero */
+                .login-bg {
+                    position: absolute;
+                    inset: 0;
+                    z-index: 0;
+                }
+                .login-bg img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: center top;
+                }
+                .login-bg-overlay1 {
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(135deg, rgba(8,15,8,0.92) 0%, rgba(8,15,8,0.55) 55%, rgba(8,15,8,0.85) 100%);
+                }
+                .login-bg-overlay2 {
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(to bottom, rgba(8,15,8,0.4) 0%, transparent 30%, rgba(8,15,8,0.9) 100%);
+                }
+
+                /* Grid pattern overlay */
+                .login-grid {
+                    position: absolute;
+                    inset: 0;
+                    background-image:
+                        linear-gradient(rgba(132,204,22,0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(132,204,22,0.03) 1px, transparent 1px);
+                    background-size: 40px 40px;
+                    z-index: 1;
+                    pointer-events: none;
+                }
+
+                /* Glow orb */
+                .login-glow {
+                    position: absolute;
+                    top: 40%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 600px;
+                    height: 400px;
+                    background: radial-gradient(ellipse, rgba(132,204,22,0.06) 0%, transparent 65%);
+                    z-index: 1;
+                    pointer-events: none;
+                }
+
+                /* SPLIT CARD */
+                .login-card {
+                    position: relative;
+                    z-index: 10;
+                    width: 100%;
+                    max-width: 960px;
+                    min-height: 540px;
+                    display: flex;
+                    border-radius: 20px;
+                    overflow: hidden;
+                    border: 1px solid rgba(132,204,22,0.12);
+                    box-shadow: 0 0 0 1px rgba(132,204,22,0.04), 0 24px 80px rgba(0,0,0,0.7);
+                }
+
+                /* LEFT: form */
+                .lc-form {
+                    width: 44%;
+                    min-width: 300px;
+                    flex-shrink: 0;
+                    background: rgba(8,15,8,0.88);
+                    backdrop-filter: blur(24px);
+                    -webkit-backdrop-filter: blur(24px);
+                    border-right: 1px solid rgba(132,204,22,0.1);
+                    padding: 52px 48px 44px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                }
+
+                /* RIGHT: visual */
+                .lc-visual {
+                    flex: 1;
+                    position: relative;
+                    overflow: hidden;
+                    background: rgba(5,10,5,0.3);
+                    backdrop-filter: blur(4px);
+                    display: flex;
+                    align-items: flex-end;
+                    justify-content: center;
+                }
+                .lc-visual::before {
+                    content: '';
+                    position: absolute;
+                    top: 10%;
+                    right: 5%;
+                    width: 260px;
+                    height: 260px;
+                    background: radial-gradient(circle, rgba(132,204,22,0.08) 0%, transparent 65%);
+                    pointer-events: none;
+                }
+
+                /* Right panel text content */
+                .lc-visual-body {
+                    position: absolute;
+                    inset: 0;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    padding: 48px 40px;
+                }
+
+                /* LOGO */
+                .lc-logo { margin-bottom: 8px; }
+                .lc-logo img { height: 36px; width: auto; object-fit: contain; }
+
+                /* HEADING */
+                .lc-heading {
+                    font-size: 36px;
+                    font-weight: 800;
+                    color: #ffffff;
+                    letter-spacing: -0.4px;
+                    line-height: 1.1;
+                    margin-bottom: 28px;
+                    font-family: var(--font-outfit, 'Outfit', sans-serif);
+                }
+
+                /* FIELD */
+                .lc-field { margin-bottom: 16px; }
+                .lc-label {
+                    display: block;
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: rgba(180,200,140,0.7);
+                    margin-bottom: 7px;
+                    letter-spacing: 0.3px;
+                    text-transform: uppercase;
+                }
+                .lc-input {
+                    width: 100%;
+                    padding: 13px 20px;
+                    border: 1.5px solid rgba(132,204,22,0.15);
+                    border-radius: 50px;
+                    font-size: 14px;
+                    color: #e2e8f0;
+                    background: rgba(132,204,22,0.04);
+                    outline: none;
+                    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+                    font-family: inherit;
+                }
+                .lc-input::placeholder { color: rgba(148,163,184,0.3); }
+                .lc-input:focus {
+                    border-color: rgba(132,204,22,0.5);
+                    background: rgba(132,204,22,0.06);
+                    box-shadow: 0 0 0 3px rgba(132,204,22,0.07);
+                }
+                .lc-input.err { border-color: rgba(239,68,68,0.5); }
+                .lc-err {
+                    color: #f87171;
+                    font-size: 11px;
+                    margin-top: 5px;
+                    margin-left: 16px;
+                }
+
+                /* PASSWORD */
+                .lc-pw { position: relative; }
+                .lc-pw .lc-input { padding-right: 48px; }
+                .lc-eye {
+                    position: absolute;
+                    right: 16px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    color: rgba(132,204,22,0.4);
+                    display: flex;
+                    align-items: center;
+                    padding: 0;
+                    transition: color 0.15s;
+                }
+                .lc-eye:hover { color: rgba(132,204,22,0.8); }
+
+                /* FORGOT */
+                .lc-forgot {
+                    display: inline-block;
+                    font-size: 12px;
+                    color: #84cc16;
+                    text-decoration: none;
+                    margin-top: 9px;
+                    margin-bottom: 22px;
+                    font-weight: 500;
+                    transition: color 0.15s;
+                }
+                .lc-forgot:hover { color: #a3e635; }
+
+                /* SIGN IN BTN */
+                .lc-btn {
+                    width: 100%;
+                    padding: 15px;
+                    background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+                    color: #050c05;
+                    border: none;
+                    border-radius: 50px;
+                    font-size: 15.5px;
+                    font-weight: 800;
+                    cursor: pointer;
+                    letter-spacing: 0.3px;
+                    transition: all 0.2s;
+                    font-family: inherit;
+                    margin-bottom: 24px;
+                    box-shadow: 0 4px 24px rgba(132,204,22,0.25);
+                }
+                .lc-btn:hover:not(:disabled) {
+                    background: linear-gradient(135deg, #a3e635 0%, #84cc16 100%);
+                    box-shadow: 0 6px 32px rgba(132,204,22,0.4);
+                    transform: translateY(-1px);
+                }
+                .lc-btn:active:not(:disabled) { transform: translateY(0); }
+                .lc-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+                /* DIVIDER */
+                .lc-divider {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin-bottom: 18px;
+                }
+                .lc-div-line { flex: 1; height: 1px; background: rgba(132,204,22,0.1); }
+                .lc-div-txt {
+                    font-size: 11px;
+                    color: rgba(132,204,22,0.35);
+                    white-space: nowrap;
+                    font-weight: 500;
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                }
+
+                /* SOCIAL */
+                .lc-social { display: flex; justify-content: center; gap: 12px; margin-bottom: 24px; }
+                .lc-soc-btn {
+                    width: 76px;
+                    height: 46px;
+                    border-radius: 50px;
+                    border: 1.5px solid rgba(132,204,22,0.15);
+                    background: rgba(132,204,22,0.04);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+                    padding: 0;
+                }
+                .lc-soc-btn:hover {
+                    border-color: rgba(132,204,22,0.4);
+                    background: rgba(132,204,22,0.08);
+                    box-shadow: 0 2px 12px rgba(132,204,22,0.1);
+                }
+
+                /* REGISTER */
+                .lc-register { text-align: center; font-size: 12.5px; color: rgba(180,200,140,0.45); }
+                .lc-register a { color: #a3e635; font-weight: 700; text-decoration: none; }
+                .lc-register a:hover { color: #d4a843; }
+
+                /* Right side content */
+                .lc-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 7px;
+                    font-size: 10px;
+                    font-weight: 700;
+                    letter-spacing: 0.2em;
+                    text-transform: uppercase;
+                    color: #a3e635;
+                    background: rgba(132,204,22,0.08);
+                    border: 1px solid rgba(132,204,22,0.2);
+                    padding: 5px 14px;
+                    border-radius: 100px;
+                    margin-bottom: 20px;
+                    width: fit-content;
+                }
+                .lc-badge-dot {
+                    width: 6px; height: 6px;
+                    border-radius: 50%;
+                    background: #a3e635;
+                    animation: pulse-dot 2s infinite;
+                }
+                @keyframes pulse-dot {
+                    0%, 100% { transform: scale(1); opacity: 1; }
+                    50% { transform: scale(1.5); opacity: 0.7; }
+                }
+                .lc-right-title {
+                    font-size: 42px;
+                    font-weight: 800;
+                    color: white;
+                    line-height: 1.05;
+                    letter-spacing: -0.5px;
+                    margin-bottom: 16px;
+                    font-family: var(--font-outfit, 'Outfit', sans-serif);
+                }
+                .lc-right-title span {
+                    background: linear-gradient(135deg, #a3e635, #d4a843);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                }
+                .lc-right-sub {
+                    font-size: 14px;
+                    color: rgba(200,220,160,0.6);
+                    line-height: 1.7;
+                    max-width: 280px;
+                    margin-bottom: 28px;
+                }
+                .lc-stats { display: flex; gap: 24px; margin-bottom: 28px; }
+                .lc-stat-val {
+                    font-size: 22px;
+                    font-weight: 800;
+                    color: white;
+                    font-family: var(--font-outfit, 'Outfit', sans-serif);
+                }
+                .lc-stat-lbl { font-size: 11px; color: rgba(180,200,140,0.45); margin-top: 2px; }
+
+                .lc-testimonial {
+                    background: rgba(10,18,8,0.7);
+                    border: 1px solid rgba(132,204,22,0.12);
+                    border-radius: 14px;
+                    padding: 18px 20px;
+                    backdrop-filter: blur(12px);
+                }
+                .lc-stars { color: #fbbf24; font-size: 13px; margin-bottom: 8px; }
+                .lc-quote { font-size: 12.5px; color: rgba(200,220,160,0.7); line-height: 1.6; margin-bottom: 12px; }
+                .lc-avatar {
+                    width: 30px; height: 30px; border-radius: 50%;
+                    background: linear-gradient(135deg, #84cc16, #d4a843);
+                    display: flex; align-items: center; justify-content: center;
+                    font-size: 12px; font-weight: 800; color: #050c05;
+                    flex-shrink: 0;
+                }
+                .lc-author-name { font-size: 12px; font-weight: 700; color: white; }
+                .lc-author-sub { font-size: 10px; color: rgba(180,200,140,0.4); }
+
+                /* RESPONSIVE */
+                @media (max-width: 700px) {
+                    .login-card { flex-direction: column; min-height: unset; }
+                    .lc-form { width: 100%; padding: 36px 24px; border-right: none; }
+                    .lc-visual { display: none; }
+                }
+            `}</style>
+
+            <div className="login-wrap">
+
+                {/* Background — same mountain photo as home */}
+                <div className="login-bg">
+                    <img
+                        src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=85"
+                        alt=""
+                    />
+                    <div className="login-bg-overlay1" />
+                    <div className="login-bg-overlay2" />
                 </div>
-                <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#020817] to-transparent pointer-events-none" />
-            </div>
+                <div className="login-grid" />
+                <div className="login-glow" />
 
-            {/* Right Side — Login Form */}
-            <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
-                <motion.div
-                    className="w-full max-w-[460px]"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    {/* Mobile Logo */}
-                    <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-8">
-                        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-sky-500 to-teal-500 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064" />
-                            </svg>
-                        </div>
-                        <span className="text-white font-bold text-lg">SAFARNAMA</span>
-                    </Link>
+                {/* CARD */}
+                <div className="login-card">
 
-                    <div className="mb-8">
-                        <h1 className="text-3xl font-[var(--font-outfit)] font-extrabold text-white mb-2">
-                            Welcome back
-                        </h1>
-                        <p className="text-slate-400 text-[15px]">
-                            New to Safarnama?{' '}
-                            <Link href="/auth/register" className="text-sky-400 hover:text-sky-300 font-semibold transition-colors">
-                                Create account
+                    {/* ── LEFT: Login Form ── */}
+                    <div className="lc-form">
+
+                        <div className="lc-logo">
+                            <Link href="/">
+                                <img src="/logo.png" alt="Safarnama" />
                             </Link>
-                        </p>
-                    </div>
+                        </div>
 
-                    {/* Social Login Buttons */}
-                    <div className="space-y-3 mb-8">
-                        {[
-                            {
-                                provider: 'google',
-                                label: 'Continue with Google',
-                                icon: (
-                                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <h1 className="lc-heading">Login</h1>
+
+                        <form onSubmit={handleSubmit} noValidate>
+
+                            <div className="lc-field">
+                                <label className="lc-label">Email</label>
+                                <input
+                                    type="email"
+                                    className={`lc-input${errors.email ? ' err' : ''}`}
+                                    placeholder="Email"
+                                    value={email}
+                                    onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors({ ...errors, email: '' }) }}
+                                />
+                                {errors.email && <p className="lc-err">{errors.email}</p>}
+                            </div>
+
+                            <div className="lc-field">
+                                <label className="lc-label">Password</label>
+                                <div className="lc-pw">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        className={`lc-input${errors.password ? ' err' : ''}`}
+                                        placeholder="Password"
+                                        value={password}
+                                        onChange={(e) => { setPassword(e.target.value); if (errors.password) setErrors({ ...errors, password: '' }) }}
+                                    />
+                                    <button type="button" className="lc-eye" onClick={() => setShowPassword(!showPassword)}>
+                                        {showPassword ? (
+                                            <svg width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                                <line x1="1" y1="1" x2="23" y2="23"/>
+                                            </svg>
+                                        ) : (
+                                            <svg width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                                <circle cx="12" cy="12" r="3"/>
+                                            </svg>
+                                        )}
+                                    </button>
+                                </div>
+                                {errors.password && <p className="lc-err">{errors.password}</p>}
+                            </div>
+
+                            <Link href="/auth/forgot-password" className="lc-forgot">Forgot Password?</Link>
+
+                            <button type="submit" className="lc-btn" disabled={loading}>
+                                {loading ? 'Signing in...' : 'Sign In'}
+                            </button>
+
+                            <div className="lc-divider">
+                                <div className="lc-div-line" />
+                                <span className="lc-div-txt">Or continue with</span>
+                                <div className="lc-div-line" />
+                            </div>
+
+                            <div className="lc-social">
+                                <button type="button" className="lc-soc-btn" onClick={() => handleSocialLogin('google')} aria-label="Google">
+                                    <svg width="20" height="20" viewBox="0 0 24 24">
                                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                                         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                                         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                                     </svg>
-                                ),
-                                bg: 'bg-white hover:bg-gray-50',
-                                text: 'text-gray-700',
-                            },
-                            {
-                                provider: 'facebook',
-                                label: 'Continue with Facebook',
-                                icon: (
-                                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#1877F2">
-                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                    </svg>
-                                ),
-                                bg: 'bg-[#1877F2] hover:bg-[#166fe5]',
-                                text: 'text-white',
-                            },
-                            {
-                                provider: 'twitter',
-                                label: 'Continue with X',
-                                icon: (
-                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                </button>
+                                <button type="button" className="lc-soc-btn" onClick={() => handleSocialLogin('x')} aria-label="X">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                                     </svg>
-                                ),
-                                bg: 'bg-black hover:bg-gray-900',
-                                text: 'text-white',
-                            },
-                        ].map(({ provider, label, icon, bg, text }) => (
-                            <button
-                                key={provider}
-                                type="button"
-                                onClick={() => handleSocialLogin(provider)}
-                                className={`w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-xl font-semibold text-[15px] transition-all duration-200 hover:-translate-y-0.5 shadow-lg hover:shadow-xl ${bg} ${text}`}
-                            >
-                                {icon}
-                                {label}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Divider */}
-                    <div className="relative mb-8">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-white/[0.08]" />
-                        </div>
-                        <div className="relative flex justify-center">
-                            <span className="bg-[#020817] px-4 text-xs text-slate-500 uppercase tracking-wider">Or with email</span>
-                        </div>
-                    </div>
-
-                    {/* Email/Password Form */}
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        <div>
-                            <label className="block text-slate-300 text-sm font-medium mb-2">Email address</label>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors({ ...errors, email: '' }) }}
-                                className={`w-full px-4 py-3.5 bg-white/[0.04] border rounded-xl text-white text-[15px] placeholder-slate-600 outline-none transition-all ${
-                                    errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-white/[0.08] focus:border-sky-500/50 focus:bg-white/[0.06]'
-                                }`}
-                                placeholder="you@example.com"
-                            />
-                            {errors.email && <p className="text-red-400 text-xs mt-2">{errors.email}</p>}
-                        </div>
-
-                        <div>
-                            <div className="flex justify-between mb-2">
-                                <label className="text-slate-300 text-sm font-medium">Password</label>
-                                <a href="/auth/forgot-password" className="text-xs text-sky-400 hover:text-sky-300 transition-colors">Forgot?</a>
-                            </div>
-                            <div className="relative">
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={password}
-                                    onChange={(e) => { setPassword(e.target.value); if (errors.password) setErrors({ ...errors, password: '' }) }}
-                                    className={`w-full px-4 py-3.5 pr-12 bg-white/[0.04] border rounded-xl text-white text-[15px] placeholder-slate-600 outline-none transition-all ${
-                                        errors.password ? 'border-red-500/50 focus:border-red-500' : 'border-white/[0.08] focus:border-sky-500/50 focus:bg-white/[0.06]'
-                                    }`}
-                                    placeholder="Enter your password"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
-                                >
-                                    {showPassword ? (
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                        </svg>
-                                    ) : (
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                    )}
+                                </button>
+                                <button type="button" className="lc-soc-btn" onClick={() => handleSocialLogin('facebook')} aria-label="Facebook">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                    </svg>
                                 </button>
                             </div>
-                            {errors.password && <p className="text-red-400 text-xs mt-2">{errors.password}</p>}
+                        </form>
+
+                        <p className="lc-register">
+                            Don&apos;t have an account yet?{' '}
+                            <Link href="/auth/register">Register for free</Link>
+                        </p>
+                    </div>
+
+                    {/* ── RIGHT: Visual Panel ── */}
+                    <div className="lc-visual">
+                        <div className="lc-visual-body">
+
+                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                                <motion.div
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ duration: 0.8, ease: "easeOut" }}
+                                    style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}
+                                >
+                                    {/* Additional ambient glow behind the character */}
+                                    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '250px', height: '250px', background: 'radial-gradient(circle, rgba(132,204,22,0.15) 0%, transparent 70%)', filter: 'blur(20px)' }} />
+                                    <img src="/3d-guy.png" alt="Student traveler" style={{ maxWidth: '100%', maxHeight: '480px', objectFit: 'contain', zIndex: 1, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.5))' }} />
+                                </motion.div>
+                            </div>
+
                         </div>
+                    </div>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-gradient-to-r from-sky-500 to-teal-500 hover:from-sky-400 hover:to-teal-400 text-white font-bold text-[15px] rounded-xl transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-sky-500/25 hover:shadow-xl hover:shadow-sky-500/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                        >
-                            {loading ? (
-                                <>
-                                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                    </svg>
-                                    Signing in...
-                                </>
-                            ) : (
-                                <>
-                                    Sign in
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                    </svg>
-                                </>
-                            )}
-                        </button>
-                    </form>
+                </div>
 
-                    {/* Footer */}
-                    <p className="text-center text-slate-500 text-xs mt-8 leading-relaxed">
-                        By continuing, you agree to Safarnama&apos;s{' '}
-                        <a href="#" className="text-slate-400 hover:text-white transition-colors">Terms of Service</a>
-                        {' '}and{' '}
-                        <a href="#" className="text-slate-400 hover:text-white transition-colors">Privacy Policy</a>
-                    </p>
-                </motion.div>
             </div>
-        </div>
+        </>
     )
 }

@@ -1,14 +1,18 @@
 import { PrismaClient } from '@prisma/client'
-import path from 'path'
 
-// Force DATABASE_URL before Prisma initializes — works with Turbopack
-const dbUrl = `file:${path.join(process.cwd(), 'prisma', 'dev.db')}`
-process.env.DATABASE_URL = process.env.DATABASE_URL || dbUrl
+declare global {
+    // eslint-disable-next-line no-var
+    var __prisma: PrismaClient | undefined
+}
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
-
+// Reuse the same Prisma instance across hot reloads in development.
+// In production each serverless function gets its own instance.
 export const prisma =
-    globalForPrisma.prisma ??
-    new PrismaClient({ log: ['error'] })
+    global.__prisma ??
+    new PrismaClient({
+        log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+    })
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+if (process.env.NODE_ENV !== 'production') {
+    global.__prisma = prisma
+}

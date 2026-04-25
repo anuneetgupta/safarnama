@@ -1,0 +1,28 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '@/auth'
+import { prisma } from '@/lib/prisma'
+
+async function checkAdmin() {
+    const session = await auth()
+    return (session?.user as { role?: string })?.role === 'admin' ? session : null
+}
+
+export async function GET() {
+    if (!await checkAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const photos = await prisma.galleryPhoto.findMany({ orderBy: { createdAt: 'desc' } })
+    return NextResponse.json({ photos })
+}
+
+export async function POST(req: NextRequest) {
+    if (!await checkAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const data = await req.json()
+    const photo = await prisma.galleryPhoto.create({ data })
+    return NextResponse.json({ photo })
+}
+
+export async function DELETE(req: NextRequest) {
+    if (!await checkAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const { id } = await req.json()
+    await prisma.galleryPhoto.delete({ where: { id } })
+    return NextResponse.json({ success: true })
+}
