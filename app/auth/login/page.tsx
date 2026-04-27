@@ -399,10 +399,23 @@ export default function LoginPage() {
                 .lc-author-sub { font-size: 10px; color: rgba(180,200,140,0.4); }
 
                 /* RESPONSIVE */
+                @media (max-width: 1024px) {
+                    .login-card { max-width: 800px; }
+                    .lc-form { padding: 44px 36px; }
+                    .lc-right-title { font-size: 34px; }
+                }
                 @media (max-width: 700px) {
-                    .login-card { flex-direction: column; min-height: unset; }
+                    .login-card { flex-direction: column; min-height: unset; max-width: 480px; }
                     .lc-form { width: 100%; padding: 36px 24px; border-right: none; }
                     .lc-visual { display: none; }
+                    .lc-heading { font-size: 28px; }
+                }
+                @media (max-width: 480px) {
+                    .login-wrap { padding: 24px 12px; }
+                    .lc-form { padding: 28px 18px; }
+                    .lc-heading { font-size: 24px; margin-bottom: 20px; }
+                    .lc-social { gap: 8px; }
+                    .lc-soc-btn { width: 60px; height: 40px; }
                 }
             `}</style>
 

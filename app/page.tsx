@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
@@ -10,16 +10,16 @@ const FOREST_BG = 'https://images.unsplash.com/photo-1448375240586-882707db888b?
 const HERO_BG   = 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=85'
 
 const FEATURES = [
-    { icon: '­ƒÅò´©Å', title: 'Group Travel Made Easy',    desc: 'Book as a group, split costs, coordinate everything in one place.' },
-    { icon: '­ƒøí´©Å', title: 'Safe & Verified Trips',     desc: 'Every trip vetted by our team. Experienced leaders, verified stays, 24/7 support.' },
-    { icon: '­ƒÆ░', title: 'Student-Friendly Pricing',  desc: 'Exclusive deals, EMI starting Ôé╣3,000, and flexible payment options.' },
-    { icon: '­ƒù║´©Å', title: 'Curated Itineraries',       desc: 'Handpicked routes covering the best of each destination ÔÇö no planning needed.' },
-    { icon: '­ƒæÑ', title: 'Meet Your Tribe',            desc: 'Travel with like-minded students. Come as strangers, leave as friends.' },
-    { icon: '­ƒô▒', title: 'Real-Time Updates',          desc: 'Live trip tracking, instant notifications, WhatsApp group for every trip.' },
+    { icon: '🏕️', title: 'Group Travel Made Easy',    desc: 'Book as a group, split costs, coordinate everything in one place.' },
+    { icon: '🛡️', title: 'Safe & Verified Trips',     desc: 'Every trip vetted by our team. Experienced leaders, verified stays, 24/7 support.' },
+    { icon: '💰', title: 'Student-Friendly Pricing',  desc: 'Exclusive deals, EMI starting ₹3,000, and flexible payment options.' },
+    { icon: '🗺️', title: 'Curated Itineraries',       desc: 'Handpicked routes covering the best of each destination — no planning needed.' },
+    { icon: '👥', title: 'Meet Your Tribe',            desc: 'Travel with like-minded students. Come as strangers, leave as friends.' },
+    { icon: '📱', title: 'Real-Time Updates',          desc: 'Live trip tracking, instant notifications, WhatsApp group for every trip.' },
 ]
 
 const DESTINATIONS = [
-    { name: 'Banaras Vibes',    price: 'Ôé╣3,000',      priceCls: 'lime',  status: 'COMPLETED', badgeCls: 'completed', date: '15 Jan ÔÇô 18 Jan 2024', img: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=600&q=80' },
+    { name: 'Banaras Vibes',    price: '₹3,000',      priceCls: 'lime',  status: 'COMPLETED', badgeCls: 'completed', date: '15 Jan – 18 Jan 2024', img: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=600&q=80' },
     { name: 'Manali Adventure', price: 'Coming Soon',  priceCls: 'muted', status: 'NEXT',      badgeCls: 'next',      date: '',                     img: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=600&q=80' },
     { name: 'Goa Getaway',      price: 'Booking Open', priceCls: 'lime',  status: 'OPEN',      badgeCls: 'open',      date: '',                     img: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80' },
     { name: 'Rishikesh Rush',   price: 'TBA',          priceCls: 'muted', status: 'SOON',      badgeCls: 'soon',      date: '',                     img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80' },
@@ -27,7 +27,7 @@ const DESTINATIONS = [
 
 const TESTIMONIALS = [
     { name: 'Riya Sharma',  college: 'IIT Delhi',      trip: 'Banaras Vibes', text: 'Best trip of my life. The Ganga Aarti was magical. Safarnama handled everything perfectly!', avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80' },
-    { name: 'Arjun Mehta',  college: 'DU North Campus', trip: 'Banaras Vibes', text: 'At Ôé╣3,000 for 3 nights, I expected nothing. Got everything. Will book Manali for sure!',     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80' },
+    { name: 'Arjun Mehta',  college: 'DU North Campus', trip: 'Banaras Vibes', text: 'At ₹3,000 for 3 nights, I expected nothing. Got everything. Will book Manali for sure!',     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80' },
     { name: 'Priya Verma',  college: 'BITS Pilani',    trip: 'Banaras Vibes', text: 'As a solo female traveler, I felt completely safe. The group was amazing. 10/10!',             avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80' },
     { name: 'Karan Singh',  college: 'CSJMU Kanpur',   trip: 'Banaras Vibes', text: 'Went alone, came back with 20 new friends. That is the Safarnama magic.',                      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80' },
 ]
@@ -103,7 +103,7 @@ export default function Home() {
                 <motion.div style={{ opacity: heroOpacity, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
 
                     {/* ÔöÇÔöÇ Main hero ÔöÇÔöÇ */}
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '120px 24px 60px', maxWidth: '900px', margin: '0 auto', width: '100%' }}>
+                    <div className="hero-content" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '120px 24px 60px', maxWidth: '900px', margin: '0 auto', width: '100%' }}>
 
                         {/* Badge */}
                         <motion.div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}
@@ -117,6 +117,7 @@ export default function Home() {
 
                         {/* SAFARNAMA */}
                         <motion.h1
+                            className="hero-title"
                             style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(80px,12vw,148px)', lineHeight: 0.9, letterSpacing: '0.04em', color: '#fff', textShadow: '0 0 80px rgba(132,204,22,0.2),0 4px 40px rgba(0,0,0,0.9)', marginBottom: '20px', whiteSpace: 'nowrap' }}
                             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
                             SAFAR<span style={{ color: '#a3e635' }}>NA</span>MA
@@ -129,7 +130,7 @@ export default function Home() {
                         </motion.p>
 
                         {/* Buttons */}
-                        <motion.div style={{ display: 'flex', gap: '16px', marginBottom: '36px', flexWrap: 'wrap', justifyContent: 'center' }}
+                        <motion.div className="hero-cta-row" style={{ display: 'flex', gap: '16px', marginBottom: '36px', flexWrap: 'wrap', justifyContent: 'center' }}
                             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}>
                             <a href="#trips" style={{ padding: '16px 40px', background: 'linear-gradient(135deg,#84cc16 0%,#5a9c1a 100%)', color: '#fff', fontWeight: 700, fontSize: '16px', borderRadius: '10px', textDecoration: 'none', boxShadow: '0 4px 24px rgba(132,204,22,0.38)', display: 'inline-flex', alignItems: 'center', gap: '6px', transition: 'transform 0.2s' }}
                                 onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
@@ -145,9 +146,9 @@ export default function Home() {
                         </motion.div>
 
                         {/* Tags */}
-                        <motion.div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center' }}
+                        <motion.div className="hero-tags" style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center' }}
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
-                            {[['­ƒÅò´©Å', 'Group Adventures'], ['­ƒù║´©Å', 'Curated Routes'], ['­ƒøí´©Å', 'Safe & Verified']].map(([icon, text]) => (
+                            {[['🏕️', 'Group Adventures'], ['🗺️', 'Curated Routes'], ['🛡️', 'Safe & Verified']].map(([icon, text]) => (
                                 <div key={text} style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '8px 16px', background: 'rgba(132,204,22,0.08)', border: '1px solid rgba(132,204,22,0.18)', borderRadius: '12px', fontSize: '13px', fontWeight: 500, color: 'rgba(190,215,145,0.88)' }}>
                                     <span>{icon}</span>{text}
                                 </div>
@@ -157,6 +158,7 @@ export default function Home() {
 
                     {/* ÔöÇÔöÇ "READY TO START YOUR JOURNEY?" block at bottom of hero ÔöÇÔöÇ */}
                     <motion.div
+                        className="hero-bottom"
                         style={{ textAlign: 'center', padding: '70px 24px 90px', position: 'relative', zIndex: 2, background: 'linear-gradient(to bottom,transparent 0%,rgba(5,4,1,0.6) 100%)' }}
                         initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.3 }}>
                         <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(36px,6vw,68px)', lineHeight: 1.05, letterSpacing: '0.04em', color: '#fff', marginBottom: '8px' }}>
@@ -166,7 +168,7 @@ export default function Home() {
                             JOURNEY?
                         </h2>
                         <p style={{ fontSize: '15px', color: 'rgba(200,215,160,0.6)', marginBottom: '32px', lineHeight: 1.6 }}>
-                            Create Your Outdoor Adventure. Explore India With <span style={{ color: '#a3e635' }}>Ô£ª</span> Your Tribe.
+                            Create Your Outdoor Adventure. Explore India With <span style={{ color: '#a3e635' }}>♥</span> Your Tribe.
                         </p>
                         <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' }}>
                             <a href="#trips" style={{ padding: '15px 36px', background: 'linear-gradient(135deg,#84cc16 0%,#5a9c1a 100%)', color: '#fff', fontWeight: 700, fontSize: '15px', borderRadius: '9px', textDecoration: 'none', boxShadow: '0 4px 20px rgba(132,204,22,0.35)', transition: 'transform 0.2s' }}
@@ -309,13 +311,13 @@ export default function Home() {
 
                     <div style={{ maxWidth: '680px', margin: '0 auto' }}>
                         {/* Card */}
-                        <div style={{ padding: '32px 36px', borderRadius: '18px', background: 'rgba(5,4,1,0.68)', border: '1px solid rgba(212,168,67,0.28)', backdropFilter: 'blur(20px)', boxShadow: '0 0 60px rgba(212,168,67,0.07)' }}>
+                        <div className="testimonial-card" style={{ padding: '32px 36px', borderRadius: '18px', background: 'rgba(5,4,1,0.68)', border: '1px solid rgba(212,168,67,0.28)', backdropFilter: 'blur(20px)', boxShadow: '0 0 60px rgba(212,168,67,0.07)' }}>
                             <AnimatePresence mode="wait">
                                 <motion.div key={activeT}
                                     initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }}
                                     transition={{ duration: 0.35 }}>
                                     {/* Stars */}
-                                    <div style={{ fontSize: '18px', color: '#f59e0b', letterSpacing: '2px', marginBottom: '18px' }}>ÔÿàÔÿàÔÿàÔÿàÔÿà</div>
+                                    <div style={{ fontSize: '18px', color: '#f59e0b', letterSpacing: '2px', marginBottom: '18px' }}>⭐⭐⭐⭐⭐</div>
                                     {/* Quote */}
                                     <p style={{ fontSize: '17px', color: '#fff', fontWeight: 500, lineHeight: 1.65, marginBottom: '26px' }}>
                                         &ldquo;{TESTIMONIALS[activeT].text}&rdquo;
@@ -380,7 +382,7 @@ export default function Home() {
                     </Reveal>
 
                     {/* Founder cards */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '24px', maxWidth: '640px', margin: '0 auto' }}>
+                    <div className="founders-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '24px', maxWidth: '640px', margin: '0 auto' }}>
                         {[
                             { name: 'Shivansh Tripathi', role: 'CEO & Founder', image: '/shivansh.jpeg', fallback: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80' },
                             { name: 'Atish',             role: 'Co-founder & CMO', image: '/atish.jpeg',    fallback: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80' },
@@ -449,7 +451,7 @@ export default function Home() {
             ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */}
             <footer style={{ background: '#040301', borderTop: '1px solid rgba(163,230,53,0.08)', padding: '40px 0 24px' }}>
                 <div className="container-main">
-                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '40px', marginBottom: '32px' }}>
+                    <div className="footer-cols" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '40px', marginBottom: '32px' }}>
                         {/* Brand */}
                         <div>
                             <img src="/logo.png" alt="Safarnama" style={{ height: '36px', width: 'auto', objectFit: 'contain', marginBottom: '12px' }}
@@ -486,9 +488,9 @@ export default function Home() {
                         </div>
                     </div>
                     {/* Bottom bar */}
-                    <div style={{ paddingTop: '20px', borderTop: '1px solid rgba(163,230,53,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                        <p style={{ fontSize: '11.5px', color: 'rgba(180,200,140,0.22)' }}>┬® 2024 Safarnama. All rights reserved.</p>
-                        <p style={{ fontSize: '11.5px', color: 'rgba(180,200,140,0.22)' }}>Made with ÔØñ´©Å for student travellers across India</p>
+                    <div className="footer-bottom-bar" style={{ paddingTop: '20px', borderTop: '1px solid rgba(163,230,53,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                        <p style={{ fontSize: '11.5px', color: 'rgba(180,200,140,0.22)' }}>© 2024 Safarnama. All rights reserved.</p>
+                        <p style={{ fontSize: '11.5px', color: 'rgba(180,200,140,0.22)' }}>Made with ❤️ for student travellers across India</p>
                     </div>
                 </div>
             </footer>
@@ -512,13 +514,33 @@ export default function Home() {
                 RESPONSIVE CSS (mobile override)
             ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */}
             <style>{`
+                /* ── TABLET (≤900px) ── */
                 @media (max-width: 900px) {
                     .features-grid { grid-template-columns: repeat(2,1fr) !important; }
                     .trips-grid    { grid-template-columns: repeat(2,1fr) !important; }
+                    .footer-cols   { grid-template-columns: 1fr 1fr !important; gap: 28px !important; }
                 }
-                @media (max-width: 580px) {
-                    .features-grid { grid-template-columns: 1fr !important; }
-                    .trips-grid    { grid-template-columns: 1fr !important; }
+
+                /* ── MOBILE (≤640px) ── */
+                @media (max-width: 640px) {
+                    .features-grid  { grid-template-columns: 1fr !important; }
+                    .trips-grid     { grid-template-columns: 1fr !important; }
+                    .footer-cols    { grid-template-columns: 1fr !important; gap: 22px !important; }
+                    .founders-grid  { grid-template-columns: 1fr !important; max-width: 320px !important; }
+                    .hero-content   { padding: 88px 16px 40px !important; }
+                    .hero-title     { font-size: clamp(58px,15vw,90px) !important; white-space: normal !important; }
+                    .hero-cta-row   { gap: 10px !important; }
+                    .hero-cta-row a { padding: 13px 24px !important; font-size: 14px !important; width: 100%; text-align: center; justify-content: center; }
+                    .hero-tags      { gap: 8px !important; }
+                    .hero-bottom    { padding: 40px 16px 56px !important; }
+                    .cta-heading    { font-size: clamp(38px,11vw,72px) !important; }
+                    .footer-bottom-bar { flex-direction: column; align-items: flex-start !important; gap: 4px !important; }
+                    .testimonial-card  { padding: 24px 20px !important; }
+                }
+
+                /* ── SMALL PHONE (≤400px) ── */
+                @media (max-width: 400px) {
+                    .hero-title { font-size: 52px !important; }
                 }
             `}</style>
         </main>

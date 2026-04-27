@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
@@ -98,7 +98,7 @@ function TripCard({ trip, index }: { trip: DBTrip; index: number }) {
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            {fmtD(start)} ÔÇô {fmtD(end)}
+                            {fmtD(start)} – {fmtD(end)}
                         </div>
                     )}
 
@@ -122,22 +122,22 @@ function TripCard({ trip, index }: { trip: DBTrip; index: number }) {
                             </>}
                         </div>
 
-                        {/* CTAs ÔÇö Book Now is BLUE per reference */}
+                        {/* CTAs — Book Now is BLUE per reference */}
                         {isBookingOpen && (
                             <button onClick={() => setModalOpen(true)}
                                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5"
                                 style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)', boxShadow: '0 4px 16px rgba(59,130,246,0.35)' }}>
-                                Book Now ÔåÆ
+                                Book Now →
                             </button>
                         )}
                         {isComingSoon && (
                             <button onClick={() => setModalOpen(true)}
                                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:-translate-y-0.5"
                                 style={{ background: 'linear-gradient(135deg,#a3e635,#65a30d)', color: '#000' }}>
-                                Notify Me ­ƒöö
+                                Notify Me 🔔
                             </button>
                         )}
-                        {isCompleted && <span className="text-xs font-semibold px-4 py-2 rounded-xl" style={{ color: '#6b7280', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>Trip Done Ô£ô</span>}
+                        {isCompleted && <span className="text-xs font-semibold px-4 py-2 rounded-xl" style={{ color: '#6b7280', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>Trip Done ✓</span>}
                         {isYetToAnnounce && <span className="text-xs font-semibold px-4 py-2 rounded-xl" style={{ color: '#6b7280', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>Stay Tuned</span>}
                     </div>
                 </div>
@@ -211,15 +211,15 @@ export default function TripsPage() {
                             </h1>
 
                             <p className="text-[16px] leading-[1.75] mb-8 max-w-[440px]" style={{ color: 'rgba(180,200,140,0.6)' }}>
-                                Curated group adventures across India. Mountains, beaches, heritage cities ÔÇö all at student-friendly prices.
+                                Curated group adventures across India. Mountains, beaches, heritage cities — all at student-friendly prices.
                             </p>
 
                             <div className="flex flex-wrap gap-3">
                                 {[
-                                    { icon: 'Ô£ê´©Å', text: `${trips.length || '2'}+ Trips` },
-                                    { icon: '­ƒæÑ', text: 'Group Travel' },
-                                    { icon: '­ƒÆ░', text: 'Student Pricing' },
-                                    { icon: '­ƒøí´©Å', text: 'Verified Safe' },
+                                    { icon: '✈️', text: `${trips.length || '2'}+ Trips` },
+                                    { icon: '👥', text: 'Group Travel' },
+                                    { icon: '💰', text: 'Student Pricing' },
+                                    { icon: '🛡️', text: 'Verified Safe' },
                                 ].map(b => (
                                     <div key={b.text} className="flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-medium"
                                         style={{ background: 'rgba(132,204,22,0.06)', border: '1px solid rgba(132,204,22,0.12)', color: 'rgba(180,200,140,0.7)' }}>
@@ -299,7 +299,7 @@ export default function TripsPage() {
                 <div className="flex items-center justify-between mb-7">
                     <div>
                         <p className="font-bold text-xl">
-                            <span style={{ color: '#a3e635' }}>{loading ? 'ÔÇö' : filtered.length} {filtered.length === 1 ? 'trip' : 'trips'}</span>
+                            <span style={{ color: '#a3e635' }}>{loading ? '—' : filtered.length} {filtered.length === 1 ? 'trip' : 'trips'}</span>
                             {' '}<span className="text-white">available</span>
                         </p>
                         <p className="text-sm mt-0.5" style={{ color: 'rgba(180,200,140,0.4)' }}>
@@ -328,7 +328,7 @@ export default function TripsPage() {
                     </div>
                 ) : (
                     <div className="text-center py-28">
-                        <div className="text-6xl mb-5">­ƒù║´©Å</div>
+                        <div className="text-6xl mb-5">🗺️</div>
                         <p className="text-white font-bold text-2xl mb-3">No trips found</p>
                         <p className="text-base mb-8" style={{ color: 'rgba(180,200,140,0.4)' }}>Try a different filter or check back soon.</p>
                         <button onClick={() => setActiveFilter('all')} className="btn-primary px-8 py-3.5">View all trips</button>
@@ -369,7 +369,7 @@ export default function TripsPage() {
                             <a href="/contact"
                                 className="flex-shrink-0 flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5"
                                 style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)', boxShadow: '0 4px 20px rgba(59,130,246,0.35)' }}>
-                                Request a Trip ÔåÆ
+                                Request a Trip →
                             </a>
                         </div>
                     </motion.div>

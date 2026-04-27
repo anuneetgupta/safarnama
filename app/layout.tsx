@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter, Outfit } from 'next/font/google'
 import './globals.css'
 
@@ -14,6 +14,12 @@ const outfit = Outfit({
     display: 'swap',
 })
 
+export const viewport: Viewport = {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+}
+
 export const metadata: Metadata = {
     title: 'Safarnama - Your Digital Gateway to High-Energy Travel',
     description: 'Join the tribe. Explore destinations. Create memories.',
@@ -28,7 +34,7 @@ import SmoothScroll from '@/components/ui/SmoothScroll'
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
-            <body className="antialiased" style={{ cursor: 'none' }}>
+            <body className="antialiased">
                 <Providers>
                     <SmoothScroll />
                     <CustomCursor />

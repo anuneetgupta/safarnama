@@ -1,12 +1,25 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function CustomCursor() {
     const planeRef = useRef<HTMLDivElement>(null)
     const ringRef = useRef<HTMLDivElement>(null)
+    // Only show cursor on fine-pointer devices (mouse), not touch
+    const [isPointerFine, setIsPointerFine] = useState(false)
 
     useEffect(() => {
+        // Check if the primary pointer is fine (mouse vs touch)
+        const mq = window.matchMedia('(pointer: fine)')
+        setIsPointerFine(mq.matches)
+        const handler = (e: MediaQueryListEvent) => setIsPointerFine(e.matches)
+        mq.addEventListener('change', handler)
+        return () => mq.removeEventListener('change', handler)
+    }, [])
+
+    useEffect(() => {
+        if (!isPointerFine) return
+
         let mouseX = window.innerWidth / 2
         let mouseY = window.innerHeight / 2
         let ringX = mouseX
@@ -39,7 +52,6 @@ export default function CustomCursor() {
         }
 
         const tick = () => {
-            // Smooth ring follows mouse with lag
             ringX += (mouseX - ringX) * 0.12
             ringY += (mouseY - ringY) * 0.12
 
@@ -77,11 +89,14 @@ export default function CustomCursor() {
             document.removeEventListener('mouseup', onUp)
             document.removeEventListener('mouseover', onOver)
         }
-    }, [])
+    }, [isPointerFine])
+
+    // Don't render cursor elements on touch devices
+    if (!isPointerFine) return null
 
     return (
         <>
-            {/* Airplane */}
+            {/* Airplane cursor */}
             <div ref={planeRef} className="fixed top-0 left-0 z-[9999] pointer-events-none" style={{ willChange: 'transform', transition: 'width 0.15s, height 0.15s' }}>
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full"
                     style={{ color: '#a3e635', filter: 'drop-shadow(0 0 6px rgba(132,204,22,0.7))' }}>
