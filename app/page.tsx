@@ -69,6 +69,45 @@ export default function Home() {
     const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
     const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
     const [activeT, setActiveT] = useState(0)
+    const [liveTrips, setLiveTrips] = useState<any[]>([])
+
+    // Fetch trips dynamically
+    useEffect(() => {
+        fetch('/api/admin/trips')
+            .then(res => res.json())
+            .then(data => {
+                if (data.trips) {
+                    const mapped = data.trips.map((t: any) => {
+                        const price = t.price > 0 ? `₹${t.price.toLocaleString()}` : (t.status === 'coming_soon' ? 'Coming Soon' : 'TBA');
+                        const priceCls = t.price > 0 ? 'lime' : 'muted';
+                        const status = t.status.replace('_', ' ').toUpperCase();
+                        let badgeCls = 'soon';
+                        if (t.status === 'completed') badgeCls = 'completed';
+                        else if (t.status === 'coming_soon') badgeCls = 'next';
+                        else if (t.status === 'booking_open') badgeCls = 'open';
+                        
+                        let dateStr = '';
+                        if (t.startDate && t.endDate) {
+                            const sd = new Date(t.startDate);
+                            const ed = new Date(t.endDate);
+                            dateStr = `${sd.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })} – ${ed.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+                        }
+
+                        return {
+                            name: t.name,
+                            price,
+                            priceCls,
+                            status,
+                            badgeCls,
+                            date: dateStr,
+                            img: t.imageUrl || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80'
+                        };
+                    });
+                    setLiveTrips(mapped);
+                }
+            })
+            .catch(err => console.error('Failed to fetch trips:', err));
+    }, []);
 
     // Auto-advance testimonials
     useEffect(() => {
@@ -250,8 +289,8 @@ export default function Home() {
 
                     {/* Destination cards ÔÇö 4 columns */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '14px' }} className="trips-grid">
-                        {DESTINATIONS.map((d, i) => {
-                            const bs = BADGE_STYLES[d.badgeCls]
+                        {(liveTrips.length > 0 ? liveTrips : DESTINATIONS).map((d, i) => {
+                            const bs = BADGE_STYLES[d.badgeCls] || BADGE_STYLES.soon;
                             return (
                                 <Reveal key={d.name} delay={i * 0.1}>
                                     <motion.div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', aspectRatio: '3/4', border: '1px solid rgba(163,230,53,0.12)', cursor: 'pointer' }}
