@@ -20,6 +20,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ photo })
 }
 
+export async function PATCH(req: NextRequest) {
+    if (!await checkAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const { id, ...data } = await req.json()
+    const photo = await prisma.galleryPhoto.update({ where: { id }, data })
+    return NextResponse.json({ photo })
+}
+
 export async function DELETE(req: NextRequest) {
     if (!await checkAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const { id } = await req.json()

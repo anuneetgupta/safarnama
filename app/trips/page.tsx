@@ -47,101 +47,112 @@ function TripCard({ trip, index }: { trip: DBTrip; index: number }) {
     const nights = Math.max(0, days - 1)
     const fmtD  = (d: Date) => d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
     const img   = trip.imageUrl || 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800'
+    const slotsLeft = trip.totalSlots - trip.bookedSlots
+    const pct = trip.totalSlots > 0 ? Math.min(100, Math.round((trip.bookedSlots / trip.totalSlots) * 100)) : 0
 
     return (
         <>
-            <motion.div
+            <motion.article
                 className="group relative flex flex-col rounded-2xl overflow-hidden"
-                style={{ background: '#0a1509', border: '1px solid rgba(132,204,22,0.12)' }}
+                style={{ background: 'linear-gradient(145deg,#0d1a0c,#0a1208)', border: '1px solid rgba(132,204,22,0.1)', boxShadow: '0 4px 24px rgba(0,0,0,0.3)' }}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ delay: index * 0.07, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ y: -4, transition: { duration: 0.22 } }}
+                whileHover={{ y: -5, boxShadow: '0 20px 48px rgba(0,0,0,0.5)', borderColor: 'rgba(163,230,53,0.22)', transition: { duration: 0.22 } }}
             >
                 {/* Image */}
-                <div className="relative h-52 overflow-hidden">
+                <div className="relative overflow-hidden" style={{ height: '220px' }}>
                     <Image src={img} alt={trip.name} fill
-                        className={`object-cover transition-transform duration-700 group-hover:scale-105 ${isCompleted ? 'grayscale-[40%]' : ''}`}
+                        className={`object-cover transition-transform duration-700 group-hover:scale-105 ${isCompleted ? 'grayscale-[50%] brightness-75' : ''}`}
+                        sizes="(max-width:768px)100vw,50vw"
                     />
-                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 35%, rgba(10,21,9,0.95) 100%)' }} />
-
-                    {/* Status badge */}
-                    <div className={`absolute top-3 left-3 text-[10px] font-bold px-3 py-1 rounded-md backdrop-blur-md ${cfg.badge}`}>
-                        {cfg.label}
-                    </div>
-
-                    {/* Duration */}
-                    {!isYetToAnnounce && (
-                        <div className="absolute top-3 right-3 text-[11px] font-semibold px-2.5 py-1 rounded-md text-white"
-                            style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.12)' }}>
-                            {days}D / {nights}N
+                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, transparent 38%, rgba(10,18,8,0.97) 100%)' }} />
+                    {/* Badges row */}
+                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md uppercase backdrop-blur-md ${cfg.badge}`} style={{ letterSpacing:'0.1em', boxShadow:'0 2px 8px rgba(0,0,0,0.3)' }}>
+                            {cfg.label}
+                        </span>
+                        <div className="flex items-center gap-2">
+                            {trip.featured && <span className="text-[10px] font-bold px-2 py-1 rounded-md backdrop-blur-md" style={{ background:'rgba(212,168,67,0.9)', color:'#000' }}>★ FEATURED</span>}
+                            {!isYetToAnnounce && <span className="text-[10px] font-semibold px-2.5 py-1 rounded-md text-white backdrop-blur-md" style={{ background:'rgba(0,0,0,0.6)', border:'1px solid rgba(255,255,255,0.1)' }}>{days}D · {nights}N</span>}
                         </div>
-                    )}
-
-                    {/* Name on image */}
-                    <div className="absolute bottom-0 left-0 right-0 px-5 pb-3 pt-6">
-                        <h3 className="text-white font-extrabold text-xl capitalize tracking-tight" style={{ fontFamily: 'var(--font-outfit)' }}>
+                    </div>
+                    {/* Name + location */}
+                    <div className="absolute bottom-0 left-0 right-0 px-5 pb-4">
+                        <h3 className="text-white font-extrabold capitalize tracking-tight leading-tight" style={{ fontFamily:'var(--font-outfit)', fontSize:'clamp(16px,2vw,20px)', textShadow:'0 2px 12px rgba(0,0,0,0.8)' }}>
                             {trip.name}
                         </h3>
+                        {trip.destination && (
+                            <p className="text-xs mt-0.5 flex items-center gap-1" style={{ color:'rgba(163,230,53,0.65)' }}>
+                                <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                {trip.destination}
+                            </p>
+                        )}
                     </div>
                 </div>
 
                 {/* Body */}
-                <div className="flex flex-col flex-1 px-5 py-4">
-                    <p className="text-sm leading-relaxed mb-3 line-clamp-1" style={{ color: 'rgba(180,200,140,0.5)' }}>
+                <div className="flex flex-col flex-1 px-5 py-4 gap-3">
+                    <p className="text-sm leading-relaxed line-clamp-2" style={{ color:'rgba(180,200,140,0.5)' }}>
                         {trip.description}
                     </p>
-
                     {!isYetToAnnounce && (
-                        <div className="flex items-center gap-1.5 text-xs mb-4" style={{ color: 'rgba(180,200,140,0.45)' }}>
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
+                        <div className="flex items-center gap-1.5 text-xs" style={{ color:'rgba(180,200,140,0.4)' }}>
+                            <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             {fmtD(start)} – {fmtD(end)}
                         </div>
                     )}
-
-                    <div className="flex items-center justify-between pt-4 mt-auto" style={{ borderTop: '1px solid rgba(132,204,22,0.08)' }}>
+                    {isBookingOpen && trip.totalSlots > 0 && (
+                        <div>
+                            <div className="flex justify-between text-xs mb-1.5" style={{ color:'rgba(180,200,140,0.4)' }}>
+                                <span>{slotsLeft > 0 ? `${slotsLeft} spots left` : 'Fully booked'}</span>
+                                <span style={{ color: pct > 80 ? '#f87171' : '#a3e635' }}>{pct}% filled</span>
+                            </div>
+                            <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ background:'rgba(255,255,255,0.06)' }}>
+                                <div className="h-full rounded-full" style={{ width:`${pct}%`, background: pct > 80 ? 'linear-gradient(90deg,#f87171,#ef4444)' : 'linear-gradient(90deg,#a3e635,#65a30d)' }} />
+                            </div>
+                        </div>
+                    )}
+                    <div className="flex items-center justify-between pt-3 mt-auto" style={{ borderTop:'1px solid rgba(132,204,22,0.07)' }}>
                         <div>
                             {isBookingOpen && <>
-                                <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#a3e635' }}>Booking Open</p>
-                                <p className="text-2xl font-extrabold text-white">{trip.price > 0 ? formatCurrency(trip.price) : 'Register Free'}</p>
+                                <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color:'rgba(163,230,53,0.6)' }}>Per Person</p>
+                                <p className="text-xl font-extrabold text-white">{trip.price > 0 ? formatCurrency(trip.price) : 'Free'}</p>
                             </>}
                             {isComingSoon && <>
-                                <p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: 'rgba(180,200,140,0.4)' }}>Price</p>
-                                <p className="text-base font-bold" style={{ color: '#a3e635' }}>Announcing Soon</p>
+                                <p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color:'rgba(180,200,140,0.35)' }}>Price</p>
+                                <p className="text-sm font-bold" style={{ color:'#a3e635' }}>Announcing Soon</p>
                             </>}
                             {isCompleted && <>
-                                <p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: 'rgba(180,200,140,0.35)' }}>Was</p>
-                                <p className="text-xl font-extrabold text-slate-400">{formatCurrency(trip.price)}</p>
+                                <p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color:'rgba(180,200,140,0.3)' }}>Was</p>
+                                <p className="text-lg font-extrabold" style={{ color:'#6b7280' }}>{formatCurrency(trip.price)}</p>
                             </>}
                             {isYetToAnnounce && <>
-                                <p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: 'rgba(180,200,140,0.35)' }}>Details</p>
-                                <p className="text-base font-bold text-slate-500">To Be Announced</p>
+                                <p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color:'rgba(180,200,140,0.3)' }}>Details</p>
+                                <p className="text-sm font-bold text-slate-500">TBA</p>
                             </>}
                         </div>
-
-                        {/* CTAs — Book Now is BLUE per reference */}
                         {isBookingOpen && (
                             <button onClick={() => setModalOpen(true)}
-                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5"
-                                style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)', boxShadow: '0 4px 16px rgba(59,130,246,0.35)' }}>
-                                Book Now →
+                                className="flex items-center gap-2 text-sm font-bold text-white transition-all hover:-translate-y-0.5 active:scale-95"
+                                style={{ padding:'10px 20px', borderRadius:'10px', background:'linear-gradient(135deg,#3b82f6,#1d4ed8)', boxShadow:'0 4px 18px rgba(59,130,246,0.4)' }}>
+                                Book Now
+                                <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                             </button>
                         )}
                         {isComingSoon && (
                             <button onClick={() => setModalOpen(true)}
-                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:-translate-y-0.5"
-                                style={{ background: 'linear-gradient(135deg,#a3e635,#65a30d)', color: '#000' }}>
-                                Notify Me 🔔
+                                className="flex items-center gap-2 text-sm font-bold transition-all hover:-translate-y-0.5 active:scale-95"
+                                style={{ padding:'10px 20px', borderRadius:'10px', background:'linear-gradient(135deg,#a3e635,#65a30d)', color:'#000', boxShadow:'0 4px 18px rgba(163,230,53,0.3)' }}>
+                                🔔 Notify Me
                             </button>
                         )}
-                        {isCompleted && <span className="text-xs font-semibold px-4 py-2 rounded-xl" style={{ color: '#6b7280', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>Trip Done ✓</span>}
-                        {isYetToAnnounce && <span className="text-xs font-semibold px-4 py-2 rounded-xl" style={{ color: '#6b7280', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>Stay Tuned</span>}
+                        {isCompleted && <span className="text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5" style={{ color:'#6b7280', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.06)' }}><svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>Trip Done</span>}
+                        {isYetToAnnounce && <span className="text-xs font-semibold px-4 py-2 rounded-xl" style={{ color:'#6b7280', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.06)' }}>Stay Tuned</span>}
                     </div>
                 </div>
-            </motion.div>
+            </motion.article>
 
             {modalOpen && (
                 <TripRegistrationModal
@@ -270,23 +281,23 @@ export default function TripsPage() {
 
             {/* ÔöÇÔöÇ FILTER BAR ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */}
             <div className="sticky top-[72px] z-30 backdrop-blur-2xl border-y"
-                style={{ background: 'rgba(13,21,11,0.97)', borderColor: 'rgba(132,204,22,0.1)' }}>
+                style={{ background: 'rgba(13,21,11,0.97)', borderColor: 'rgba(132,204,22,0.08)' }}>
                 <div className="container-main">
-                    <div className="flex items-center justify-between gap-4 py-3 flex-wrap">
+                    <div className="flex items-center justify-between gap-4 py-3.5 flex-wrap">
                         <div className="flex items-center gap-2 flex-wrap">
                             {FILTERS.map(f => (
                                 <button key={f.value} onClick={() => setActiveFilter(f.value)}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold transition-all duration-200"
+                                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[12px] font-semibold transition-all duration-200"
                                     style={activeFilter === f.value
-                                        ? { background: '#a3e635', color: '#000', boxShadow: '0 4px 16px rgba(163,230,53,0.25)' }
-                                        : { background: 'transparent', color: 'rgba(180,200,140,0.6)', border: '1px solid rgba(132,204,22,0.12)' }}>
+                                        ? { background: '#a3e635', color: '#000', boxShadow: '0 4px 14px rgba(163,230,53,0.28)', transform: 'translateY(-1px)' }
+                                        : { background: 'rgba(255,255,255,0.04)', color: 'rgba(180,200,140,0.55)', border: '1px solid rgba(132,204,22,0.1)' }}>
                                     {f.icon}{f.label}
                                 </button>
                             ))}
                         </div>
                         <select value={sortBy} onChange={e => setSortBy(e.target.value)}
-                            className="text-[13px] border rounded-lg px-4 py-2 outline-none cursor-pointer min-w-[160px]"
-                            style={{ background: '#0a1208', color: 'rgba(180,200,140,0.7)', borderColor: 'rgba(132,204,22,0.15)' }}>
+                            className="text-[12px] font-semibold border rounded-lg px-4 py-2 outline-none cursor-pointer"
+                            style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(180,200,140,0.7)', borderColor: 'rgba(132,204,22,0.12)', minWidth: '170px' }}>
                             {SORT_OPTIONS.map(o => <option key={o} value={o} style={{ background: '#0a1208' }}>{o}</option>)}
                         </select>
                     </div>
@@ -317,13 +328,13 @@ export default function TripsPage() {
                 </div>
 
                 {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {[...Array(4)].map((_, i) => (
-                            <div key={i} className="rounded-2xl animate-pulse" style={{ height: '360px', background: 'rgba(132,204,22,0.05)', border: '1px solid rgba(132,204,22,0.08)' }} />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {[...Array(6)].map((_, i) => (
+                            <div key={i} className="rounded-2xl animate-pulse" style={{ height: '380px', background: 'rgba(132,204,22,0.04)', border: '1px solid rgba(132,204,22,0.07)' }} />
                         ))}
                     </div>
                 ) : filtered.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                         {filtered.map((trip, i) => <TripCard key={trip.id} trip={trip} index={i} />)}
                     </div>
                 ) : (
