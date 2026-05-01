@@ -50,6 +50,42 @@ export default function Navbar() {
           .nav-actions-desktop { display: none; }
           .nav-hamburger { display: flex; }
         }
+        .nav-link {
+          position: relative;
+          color: rgba(226,232,240,0.7);
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: 500;
+          transition: color 0.3s ease;
+          padding: 8px 0;
+        }
+        .nav-link:hover {
+          color: #f0f4e8;
+        }
+        .nav-link.active {
+          color: #a3e635;
+        }
+        .nav-link::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background: #a3e635;
+          transform: scaleX(0);
+          transform-origin: right;
+          transition: transform 0.3s ease;
+          border-radius: 2px;
+        }
+        .nav-link:hover::after {
+          transform: scaleX(1);
+          transform-origin: left;
+        }
+        .nav-link.active::after {
+          transform: scaleX(1);
+          background: #a3e635;
+        }
       `}</style>
 
       <header
@@ -60,11 +96,11 @@ export default function Navbar() {
           right: 0,
           zIndex: 50,
           height: 72,
-          background: isScrolled ? 'rgba(2,8,23,0.95)' : 'rgba(2,8,23,0.7)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          borderBottom: `1px solid ${isScrolled ? 'rgba(163,230,53,0.12)' : 'rgba(163,230,53,0.05)'}`,
-          transition: 'background 0.3s ease, border-color 0.3s ease',
+          background: isScrolled ? 'rgba(2,8,23,0.85)' : 'transparent',
+          backdropFilter: isScrolled ? 'blur(16px)' : 'blur(0px)',
+          WebkitBackdropFilter: isScrolled ? 'blur(16px)' : 'blur(0px)',
+          borderBottom: isScrolled ? '1px solid rgba(163,230,53,0.15)' : '1px solid transparent',
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
         <div
@@ -82,15 +118,7 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                style={{
-                  fontSize: 14,
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  color: pathname === link.href ? '#a3e635' : 'rgba(226,232,240,0.7)',
-                  transition: 'color 0.2s',
-                }}
-                onMouseEnter={e => { if (pathname !== link.href) (e.currentTarget as HTMLElement).style.color = '#a3e635' }}
-                onMouseLeave={e => { if (pathname !== link.href) (e.currentTarget as HTMLElement).style.color = 'rgba(226,232,240,0.7)' }}
+                className={`nav-link ${pathname === link.href ? 'active' : ''}`}
               >
                 {link.name}
               </Link>
