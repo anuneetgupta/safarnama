@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
+import TestimonialsSection from '@/components/sections/Testimonials'
 
 /* ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
    TYPES & DATA
@@ -19,10 +20,10 @@ const FEATURES = [
 ]
 
 const DESTINATIONS = [
-    { name: 'Banaras Vibes',    price: '₹3,000',      priceCls: 'lime',  status: 'COMPLETED', badgeCls: 'completed', date: '15 Jan – 18 Jan 2024', img: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=600&q=80' },
-    { name: 'Manali Adventure', price: 'Coming Soon',  priceCls: 'muted', status: 'NEXT',      badgeCls: 'next',      date: '',                     img: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=600&q=80' },
-    { name: 'Goa Getaway',      price: 'Booking Open', priceCls: 'lime',  status: 'OPEN',      badgeCls: 'open',      date: '',                     img: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80' },
-    { name: 'Rishikesh Rush',   price: 'TBA',          priceCls: 'muted', status: 'SOON',      badgeCls: 'soon',      date: '',                     img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80' },
+    { name: 'Banaras Vibes',    price: '₹3,000',      priceCls: 'lime',  status: 'COMPLETED', badgeCls: 'completed', tag: '🏛️ Culture',   tagColor: '#f59e0b', tagBg: 'rgba(245,158,11,0.13)', date: '15 Jan – 18 Jan 2024', img: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=600&q=80' },
+    { name: 'Manali Adventure', price: 'Coming Soon',  priceCls: 'muted', status: 'NEXT',      badgeCls: 'next',      tag: '⛰️ Mountain',  tagColor: '#a3e635', tagBg: 'rgba(163,230,53,0.12)', date: '',                     img: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=600&q=80' },
+    { name: 'Goa Getaway',      price: 'Booking Open', priceCls: 'lime',  status: 'OPEN',      badgeCls: 'open',      tag: '🏖️ Beach',    tagColor: '#38bdf8', tagBg: 'rgba(56,189,248,0.12)',  date: '',                     img: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80' },
+    { name: 'Rishikesh Rush',   price: 'TBA',          priceCls: 'muted', status: 'SOON',      badgeCls: 'soon',      tag: '⚡ Adventure', tagColor: '#f87171', tagBg: 'rgba(248,113,113,0.12)', date: '',                     img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80' },
 ]
 
 const TESTIMONIALS = [
@@ -93,6 +94,15 @@ export default function Home() {
                             dateStr = `${sd.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })} – ${ed.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}`;
                         }
 
+                        // Derive tag from category
+                        const CAT_TAG: Record<string, { tag: string; tagColor: string; tagBg: string }> = {
+                            mountain:  { tag: '⛰️ Mountain',  tagColor: '#a3e635', tagBg: 'rgba(163,230,53,0.12)' },
+                            beach:     { tag: '🏖️ Beach',    tagColor: '#38bdf8', tagBg: 'rgba(56,189,248,0.12)' },
+                            culture:   { tag: '🏛️ Culture',  tagColor: '#f59e0b', tagBg: 'rgba(245,158,11,0.13)' },
+                            adventure: { tag: '⚡ Adventure', tagColor: '#f87171', tagBg: 'rgba(248,113,113,0.12)' },
+                        }
+                        const catTag = CAT_TAG[(t.category || '').toLowerCase()] || (t.featured ? { tag: '🔥 Popular', tagColor: '#fb923c', tagBg: 'rgba(251,146,60,0.12)' } : { tag: '', tagColor: '', tagBg: '' })
+
                         return {
                             name: t.name,
                             price,
@@ -100,7 +110,8 @@ export default function Home() {
                             status,
                             badgeCls,
                             date: dateStr,
-                            img: t.imageUrl || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80'
+                            img: t.imageUrl || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
+                            ...catTag,
                         };
                     });
                     setLiveTrips(mapped);
@@ -287,39 +298,59 @@ export default function Home() {
                         </div>
                     </Reveal>
 
-                    {/* Destination cards ÔÇö 4 columns */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '14px' }} className="trips-grid">
+                    {/* Destination cards — 4 columns */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '20px' }} className="trips-grid">
                         {(liveTrips.length > 0 ? liveTrips : DESTINATIONS).map((d, i) => {
                             const bs = BADGE_STYLES[d.badgeCls] || BADGE_STYLES.soon;
                             return (
                                 <Reveal key={d.name} delay={i * 0.1}>
-                                    <motion.div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', aspectRatio: '3/4', border: '1px solid rgba(163,230,53,0.12)', cursor: 'pointer' }}
-                                        whileHover={{ y: -8, scale: 1.02, boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }}
-                                        transition={{ type: 'spring', stiffness: 280 }}>
+                                    <motion.div style={{
+                                        position: 'relative', borderRadius: '18px', overflow: 'hidden', aspectRatio: '3/4',
+                                        border: '1px solid rgba(163,230,53,0.14)',
+                                        boxShadow: '0 6px 32px rgba(0,0,0,0.38), 0 1px 0 rgba(163,230,53,0.06) inset',
+                                        cursor: 'pointer',
+                                    }}
+                                        whileHover={{
+                                            scale: 1.03,
+                                            y: -6,
+                                            boxShadow: '0 24px 56px rgba(0,0,0,0.55), 0 0 0 1px rgba(163,230,53,0.22)',
+                                            borderColor: 'rgba(163,230,53,0.28)',
+                                        }}
+                                        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}>
 
-                                        {/* Status badge ÔÇö top-left */}
-                                        <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10, padding: '4px 9px', borderRadius: '6px', fontSize: '9px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', background: bs.bg, color: bs.color, border: `1px solid ${bs.border}` }}>
+                                        {/* Status badge */}
+                                        <div style={{ position: 'absolute', top: '11px', left: '11px', zIndex: 10, padding: '4px 10px', borderRadius: '7px', fontSize: '9px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', background: bs.bg, color: bs.color, border: `1px solid ${bs.border}`, backdropFilter: 'blur(8px)' }}>
                                             {d.status}
                                         </div>
 
-                                        {/* Image */}
-                                        <motion.img src={d.img} alt={d.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                            whileHover={{ scale: 1.1 }} transition={{ duration: 0.7 }} />
+                                        {/* Image with subtle zoom on hover */}
+                                        <motion.img src={d.img} alt={d.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                                            whileHover={{ scale: 1.08 }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }} />
 
                                         {/* Gradient overlay */}
-                                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(3,2,0,0.97) 0%,rgba(3,2,0,0.35) 45%,transparent 100%)' }} />
+                                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(3,2,0,0.97) 0%,rgba(3,2,0,0.25) 48%,transparent 100%)' }} />
 
                                         {/* Bottom info */}
                                         <div style={{ position: 'absolute', bottom: '14px', left: '14px', right: '14px', zIndex: 5 }}>
-                                            {/* Second badge */}
-                                            <div style={{ marginBottom: '6px' }}>
-                                                <span style={{ display: 'inline-block', padding: '3px 8px', borderRadius: '5px', fontSize: '9px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', background: bs.bg.replace('0.88', '0.75'), color: bs.color, border: `1px solid ${bs.border.replace('0.45', '0.35')}` }}>
-                                                    {d.status}
+                                            {d.tag && (
+                                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '2px 8px', borderRadius: '20px', fontSize: '9px', fontWeight: 700, letterSpacing: '0.04em', background: d.tagBg, color: d.tagColor, border: `1px solid ${d.tagColor}30`, backdropFilter: 'blur(6px)', marginBottom: '7px' }}>
+                                                    {d.tag}
                                                 </span>
-                                            </div>
-                                            <p style={{ fontSize: '15px', fontWeight: 700, color: '#fff', marginBottom: '4px', lineHeight: 1.25 }}>{d.name}</p>
-                                            <p style={{ fontSize: d.priceCls === 'lime' ? '15px' : '13px', fontWeight: d.priceCls === 'lime' ? 800 : 600, color: PRICE_COLORS[d.priceCls], marginBottom: d.date ? '3px' : 0 }}>{d.price}</p>
-                                            {d.date && <p style={{ fontSize: '11px', color: 'rgba(180,200,140,0.5)' }}>{d.date}</p>}
+                                            )}
+                                            <p style={{ fontSize: '16px', fontWeight: 800, color: '#fff', marginBottom: '3px', lineHeight: 1.2, letterSpacing: '-0.01em', textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>{d.name}</p>
+                                            <p style={{ fontSize: d.priceCls === 'lime' ? '14px' : '12px', fontWeight: d.priceCls === 'lime' ? 800 : 600, color: PRICE_COLORS[d.priceCls], marginBottom: d.date ? '3px' : '8px' }}>{d.price}</p>
+                                            {d.date && <p style={{ fontSize: '10px', color: 'rgba(180,200,140,0.5)', marginBottom: '8px' }}>{d.date}</p>}
+                                            <a href="/trips" style={{
+                                                display: 'inline-flex', alignItems: 'center', gap: '5px',
+                                                padding: '7px 14px', borderRadius: '9px', fontSize: '11px', fontWeight: 700, textDecoration: 'none',
+                                                background: d.badgeCls === 'open' ? 'linear-gradient(135deg,#3b82f6,#1d4ed8)' : d.badgeCls === 'completed' ? 'rgba(255,255,255,0.07)' : 'linear-gradient(135deg,#a3e635,#65a30d)',
+                                                color: d.badgeCls === 'open' ? '#fff' : d.badgeCls === 'completed' ? '#9ca3af' : '#000',
+                                                boxShadow: d.badgeCls === 'open' ? '0 3px 12px rgba(59,130,246,0.35)' : d.badgeCls === 'completed' ? 'none' : '0 3px 12px rgba(163,230,53,0.28)',
+                                                border: d.badgeCls === 'completed' ? '1px solid rgba(255,255,255,0.08)' : 'none',
+                                            }}>
+                                                {d.badgeCls === 'open' ? 'Book Now' : d.badgeCls === 'completed' ? 'View Details' : 'Notify Me'}
+                                                <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                                            </a>
                                         </div>
                                     </motion.div>
                                 </Reveal>
@@ -332,69 +363,9 @@ export default function Home() {
             {/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
                 TESTIMONIALS ÔÇö "What Travelers Say"
             ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */}
-            <section style={{ position: 'relative', padding: '80px 0', overflow: 'hidden' }}>
-                <div style={forestBgStyle}>
-                    <img src={FOREST_BG} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 45%' }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,4,1,0.80)' }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 50%,rgba(163,230,53,0.04) 0%,transparent 65%)' }} />
-                </div>
+            {/* ═══ TESTIMONIALS ═══ */}
+            <TestimonialsSection />
 
-                <div className="container-main" style={{ position: 'relative', zIndex: 2 }}>
-                    <Reveal>
-                        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-                            <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 'clamp(28px,4vw,44px)', fontWeight: 700, color: '#fff' }}>
-                                What Travelers <span style={{ color: '#a3e635' }}>Say</span>
-                            </h2>
-                        </div>
-                    </Reveal>
-
-                    <div style={{ maxWidth: '680px', margin: '0 auto' }}>
-                        {/* Card */}
-                        <div className="testimonial-card" style={{ padding: '32px 36px', borderRadius: '18px', background: 'rgba(5,4,1,0.68)', border: '1px solid rgba(212,168,67,0.28)', backdropFilter: 'blur(20px)', boxShadow: '0 0 60px rgba(212,168,67,0.07)' }}>
-                            <AnimatePresence mode="wait">
-                                <motion.div key={activeT}
-                                    initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }}
-                                    transition={{ duration: 0.35 }}>
-                                    {/* Stars */}
-                                    <div style={{ fontSize: '18px', color: '#f59e0b', letterSpacing: '2px', marginBottom: '18px' }}>⭐⭐⭐⭐⭐</div>
-                                    {/* Quote */}
-                                    <p style={{ fontSize: '17px', color: '#fff', fontWeight: 500, lineHeight: 1.65, marginBottom: '26px' }}>
-                                        &ldquo;{TESTIMONIALS[activeT].text}&rdquo;
-                                    </p>
-                                    {/* Author row */}
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                            <img src={TESTIMONIALS[activeT].avatar} alt={TESTIMONIALS[activeT].name}
-                                                style={{ width: '44px', height: '44px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(163,230,53,0.3)', flexShrink: 0 }} />
-                                            <div>
-                                                <p style={{ fontSize: '14px', fontWeight: 700, color: '#fff', marginBottom: '2px' }}>{TESTIMONIALS[activeT].name}</p>
-                                                <p style={{ fontSize: '12px', color: 'rgba(180,200,140,0.5)' }}>{TESTIMONIALS[activeT].college} - {TESTIMONIALS[activeT].trip}</p>
-                                            </div>
-                                        </div>
-                                        {/* Play button */}
-                                        <motion.button style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(163,230,53,0.12)', border: '1px solid rgba(163,230,53,0.28)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
-                                            whileHover={{ scale: 1.12, background: 'rgba(163,230,53,0.22)' }}>
-                                            <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
-                                                <path d="M1 1l10 6L1 13V1z" fill="#a3e635" />
-                                            </svg>
-                                        </motion.button>
-                                    </div>
-                                </motion.div>
-                            </AnimatePresence>
-                        </div>
-
-                        {/* Dots */}
-                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
-                            {TESTIMONIALS.map((_, i) => (
-                                <motion.button key={i} onClick={() => setActiveT(i)}
-                                    style={{ height: '8px', borderRadius: '4px', background: i === activeT ? '#a3e635' : 'rgba(163,230,53,0.22)', border: 'none', cursor: 'pointer', outline: 'none' }}
-                                    animate={{ width: i === activeT ? 28 : 8 }}
-                                    transition={{ duration: 0.3 }} />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
                 FOUNDERS

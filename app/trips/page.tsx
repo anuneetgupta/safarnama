@@ -50,24 +50,48 @@ function TripCard({ trip, index }: { trip: DBTrip; index: number }) {
     const slotsLeft = trip.totalSlots - trip.bookedSlots
     const pct = trip.totalSlots > 0 ? Math.min(100, Math.round((trip.bookedSlots / trip.totalSlots) * 100)) : 0
 
+    // Derive a display tag from category or status
+    const CATEGORY_TAGS: Record<string, { label: string; color: string; bg: string }> = {
+        mountain:  { label: '⛰️ Mountain',  color: '#a3e635', bg: 'rgba(163,230,53,0.12)' },
+        beach:     { label: '🏖️ Beach',     color: '#38bdf8', bg: 'rgba(56,189,248,0.12)' },
+        culture:   { label: '🏛️ Culture',   color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' },
+        adventure: { label: '⚡ Adventure', color: '#f87171', bg: 'rgba(248,113,113,0.12)' },
+        popular:   { label: '🔥 Popular',   color: '#fb923c', bg: 'rgba(251,146,60,0.12)' },
+    }
+    const catKey = (trip.category || '').toLowerCase()
+    const displayTag = CATEGORY_TAGS[catKey] || (trip.featured ? CATEGORY_TAGS.popular : null)
+
     return (
         <>
             <motion.article
                 className="group relative flex flex-col rounded-2xl overflow-hidden"
-                style={{ background: 'linear-gradient(145deg,#0d1a0c,#0a1208)', border: '1px solid rgba(132,204,22,0.1)', boxShadow: '0 4px 24px rgba(0,0,0,0.3)' }}
-                initial={{ opacity: 0, y: 24 }}
+                style={{
+                    background: 'linear-gradient(160deg,#0e1c0c 0%,#09100a 100%)',
+                    border: '1px solid rgba(132,204,22,0.12)',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.3), 0 12px 40px rgba(0,0,0,0.25), 0 1px 0 rgba(163,230,53,0.06) inset',
+                    backdropFilter: 'blur(2px)',
+                }}
+                initial={{ opacity: 0, y: 28 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
-                transition={{ delay: index * 0.07, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ y: -5, boxShadow: '0 20px 48px rgba(0,0,0,0.5)', borderColor: 'rgba(163,230,53,0.22)', transition: { duration: 0.22 } }}
+                transition={{ delay: index * 0.07, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{
+                    scale: 1.03,
+                    y: -6,
+                    boxShadow: '0 0 0 1px rgba(163,230,53,0.22), 0 20px 60px rgba(0,0,0,0.6), 0 6px 20px rgba(0,0,0,0.4)',
+                    borderColor: 'rgba(163,230,53,0.28)',
+                    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
+                }}
             >
                 {/* Image */}
-                <div className="relative overflow-hidden" style={{ height: '220px' }}>
-                    <Image src={img} alt={trip.name} fill
-                        className={`object-cover transition-transform duration-700 group-hover:scale-105 ${isCompleted ? 'grayscale-[50%] brightness-75' : ''}`}
-                        sizes="(max-width:768px)100vw,50vw"
-                    />
-                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, transparent 38%, rgba(10,18,8,0.97) 100%)' }} />
+                <div className="relative overflow-hidden" style={{ height: '260px' }}>
+                    <motion.div className="absolute inset-0" whileHover={{ scale: 1.07 }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}>
+                        <Image src={img} alt={trip.name} fill
+                            className={`object-cover ${isCompleted ? 'grayscale-[50%] brightness-75' : ''}`}
+                            sizes="(max-width:768px)100vw,50vw"
+                        />
+                    </motion.div>
+                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.04) 0%, transparent 35%, rgba(10,18,8,0.97) 100%)' }} />
                     {/* Badges row */}
                     <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
                         <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md uppercase backdrop-blur-md ${cfg.badge}`} style={{ letterSpacing:'0.1em', boxShadow:'0 2px 8px rgba(0,0,0,0.3)' }}>
@@ -79,12 +103,20 @@ function TripCard({ trip, index }: { trip: DBTrip; index: number }) {
                         </div>
                     </div>
                     {/* Name + location */}
-                    <div className="absolute bottom-0 left-0 right-0 px-5 pb-4">
-                        <h3 className="text-white font-extrabold capitalize tracking-tight leading-tight" style={{ fontFamily:'var(--font-outfit)', fontSize:'clamp(16px,2vw,20px)', textShadow:'0 2px 12px rgba(0,0,0,0.8)' }}>
+                    <div className="absolute bottom-0 left-0 right-0 px-5 pb-5">
+                        {/* Category tag chip */}
+                        {displayTag && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full mb-2"
+                                style={{ background: displayTag.bg, color: displayTag.color, border: `1px solid ${displayTag.color}30`, backdropFilter: 'blur(8px)' }}>
+                                {displayTag.label}
+                            </span>
+                        )}
+                        <h3 className="text-white font-extrabold capitalize tracking-tight leading-tight"
+                            style={{ fontFamily:'var(--font-outfit)', fontSize:'clamp(17px,2vw,21px)', textShadow:'0 2px 16px rgba(0,0,0,0.9)', letterSpacing:'-0.01em' }}>
                             {trip.name}
                         </h3>
                         {trip.destination && (
-                            <p className="text-xs mt-0.5 flex items-center gap-1" style={{ color:'rgba(163,230,53,0.65)' }}>
+                            <p className="text-xs mt-1 flex items-center gap-1" style={{ color:'rgba(163,230,53,0.7)' }}>
                                 <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
                                 {trip.destination}
                             </p>
@@ -93,12 +125,12 @@ function TripCard({ trip, index }: { trip: DBTrip; index: number }) {
                 </div>
 
                 {/* Body */}
-                <div className="flex flex-col flex-1 px-5 py-4 gap-3">
-                    <p className="text-sm leading-relaxed line-clamp-2" style={{ color:'rgba(180,200,140,0.5)' }}>
+                <div className="flex flex-col flex-1 px-6 py-5 gap-4">
+                    <p className="text-[13.5px] leading-[1.7] line-clamp-2" style={{ color:'rgba(190,215,150,0.55)', letterSpacing:'0.005em' }}>
                         {trip.description}
                     </p>
                     {!isYetToAnnounce && (
-                        <div className="flex items-center gap-1.5 text-xs" style={{ color:'rgba(180,200,140,0.4)' }}>
+                        <div className="flex items-center gap-1.5 text-xs" style={{ color:'rgba(180,200,140,0.42)' }}>
                             <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             {fmtD(start)} – {fmtD(end)}
                         </div>
@@ -114,37 +146,56 @@ function TripCard({ trip, index }: { trip: DBTrip; index: number }) {
                             </div>
                         </div>
                     )}
-                    <div className="flex items-center justify-between pt-3 mt-auto" style={{ borderTop:'1px solid rgba(132,204,22,0.07)' }}>
+                    <div className="flex items-center justify-between pt-4 mt-auto" style={{ borderTop:'1px solid rgba(132,204,22,0.09)' }}>
                         <div>
                             {isBookingOpen && <>
-                                <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color:'rgba(163,230,53,0.6)' }}>Per Person</p>
-                                <p className="text-xl font-extrabold text-white">{trip.price > 0 ? formatCurrency(trip.price) : 'Free'}</p>
+                                <p style={{ fontSize:'9px', fontWeight:700, letterSpacing:'0.18em', textTransform:'uppercase', color:'rgba(163,230,53,0.55)', marginBottom:3 }}>Per Person</p>
+                                <p style={{ fontSize:'clamp(20px,2.5vw,26px)', fontWeight:800, color:'#ffffff', letterSpacing:'-0.03em', lineHeight:1.1, fontFamily:'var(--font-outfit)' }}>
+                                    {trip.price > 0 ? formatCurrency(trip.price) : 'Free'}
+                                </p>
                             </>}
                             {isComingSoon && <>
-                                <p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color:'rgba(180,200,140,0.35)' }}>Price</p>
-                                <p className="text-sm font-bold" style={{ color:'#a3e635' }}>Announcing Soon</p>
+                                <p style={{ fontSize:'9px', letterSpacing:'0.15em', textTransform:'uppercase', color:'rgba(180,200,140,0.35)', marginBottom:3 }}>Price</p>
+                                <p style={{ fontSize:'13px', fontWeight:700, color:'#a3e635' }}>Announcing Soon</p>
                             </>}
                             {isCompleted && <>
-                                <p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color:'rgba(180,200,140,0.3)' }}>Was</p>
-                                <p className="text-lg font-extrabold" style={{ color:'#6b7280' }}>{formatCurrency(trip.price)}</p>
+                                <p style={{ fontSize:'9px', letterSpacing:'0.15em', textTransform:'uppercase', color:'rgba(180,200,140,0.3)', marginBottom:3 }}>Was</p>
+                                <p style={{ fontSize:'18px', fontWeight:800, color:'#4b5563', textDecoration:'line-through' }}>{formatCurrency(trip.price)}</p>
                             </>}
                             {isYetToAnnounce && <>
-                                <p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color:'rgba(180,200,140,0.3)' }}>Details</p>
-                                <p className="text-sm font-bold text-slate-500">TBA</p>
+                                <p style={{ fontSize:'9px', letterSpacing:'0.15em', textTransform:'uppercase', color:'rgba(180,200,140,0.3)', marginBottom:3 }}>Details</p>
+                                <p style={{ fontSize:'13px', fontWeight:700, color:'#6b7280' }}>TBA</p>
                             </>}
                         </div>
                         {isBookingOpen && (
                             <button onClick={() => setModalOpen(true)}
-                                className="flex items-center gap-2 text-sm font-bold text-white transition-all hover:-translate-y-0.5 active:scale-95"
-                                style={{ padding:'10px 20px', borderRadius:'10px', background:'linear-gradient(135deg,#3b82f6,#1d4ed8)', boxShadow:'0 4px 18px rgba(59,130,246,0.4)' }}>
+                                className="group/btn flex items-center gap-2 text-sm font-bold text-white transition-all duration-200 active:scale-95"
+                                style={{
+                                    padding:'11px 22px',
+                                    borderRadius:'12px',
+                                    background:'linear-gradient(135deg,#3b82f6,#1d4ed8)',
+                                    boxShadow:'0 4px 20px rgba(59,130,246,0.38)',
+                                    letterSpacing:'0.01em',
+                                }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 28px rgba(59,130,246,0.55)'; (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)'; }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 20px rgba(59,130,246,0.38)'; (e.currentTarget as HTMLButtonElement).style.transform = ''; }}>
                                 Book Now
                                 <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                             </button>
                         )}
                         {isComingSoon && (
                             <button onClick={() => setModalOpen(true)}
-                                className="flex items-center gap-2 text-sm font-bold transition-all hover:-translate-y-0.5 active:scale-95"
-                                style={{ padding:'10px 20px', borderRadius:'10px', background:'linear-gradient(135deg,#a3e635,#65a30d)', color:'#000', boxShadow:'0 4px 18px rgba(163,230,53,0.3)' }}>
+                                className="flex items-center gap-2 text-sm font-bold transition-all duration-200 active:scale-95"
+                                style={{
+                                    padding:'11px 22px',
+                                    borderRadius:'12px',
+                                    background:'linear-gradient(135deg,#a3e635,#65a30d)',
+                                    color:'#000',
+                                    boxShadow:'0 4px 18px rgba(163,230,53,0.32)',
+                                    letterSpacing:'0.01em',
+                                }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 26px rgba(163,230,53,0.5)'; (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)'; }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 18px rgba(163,230,53,0.32)'; (e.currentTarget as HTMLButtonElement).style.transform = ''; }}>
                                 🔔 Notify Me
                             </button>
                         )}
@@ -328,13 +379,13 @@ export default function TripsPage() {
                 </div>
 
                 {loading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {[...Array(6)].map((_, i) => (
-                            <div key={i} className="rounded-2xl animate-pulse" style={{ height: '380px', background: 'rgba(132,204,22,0.04)', border: '1px solid rgba(132,204,22,0.07)' }} />
+                            <div key={i} className="rounded-2xl animate-pulse" style={{ height: '440px', background: 'rgba(132,204,22,0.04)', border: '1px solid rgba(132,204,22,0.07)' }} />
                         ))}
                     </div>
                 ) : filtered.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filtered.map((trip, i) => <TripCard key={trip.id} trip={trip} index={i} />)}
                     </div>
                 ) : (
