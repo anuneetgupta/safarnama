@@ -5,33 +5,36 @@ import bcrypt from 'bcryptjs'
 export async function POST(req: NextRequest) {
     try {
         const { token, password } = await req.json()
-        if (!token || !password) return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
-        if (password.length < 6) return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 })
+
+        if (!token || !password) {
+            return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+        }
+        if (password.length < 8) {
+            return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 })
+        }
 
         const resetToken = await prisma.passwordResetToken.findUnique({ where: { token } })
         if (!resetToken || resetToken.expires < new Date()) {
-            return NextResponse.json({ error: 'Reset link has expired. Please request a new one.' }, { status: 400 })
+            return NextResponse.json(
+                { error: 'Reset link has expired. Please request a new one.' },
+                { status: 400 }
+            )
+        }
+
+        const user = await prisma.user.findUnique({ where: { email: resetToken.email } })
+        if (!user) {
+            return NextResponse.json({ error: 'User not found' }, { status: 404 })
         }
 
         const hashed = await bcrypt.hash(password, 12)
 
-        // Update the credentials account password
-        const user = await prisma.user.findUnique({
+        // Correctly update the user's password field (not Account.access_token)
+        await prisma.user.update({
             where: { email: resetToken.email },
-            include: { accounts: true },
+            data: { password: hashed },
         })
 
-        if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
-
-        const credAccount = user.accounts.find(a => a.provider === 'credentials')
-        if (credAccount) {
-            await prisma.account.update({
-                where: { id: credAccount.id },
-                data: { access_token: hashed },
-            })
-        }
-
-        // Delete the used token
+        // Delete the used token to prevent reuse
         await prisma.passwordResetToken.delete({ where: { token } })
 
         return NextResponse.json({ success: true })

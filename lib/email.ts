@@ -1,16 +1,32 @@
 import nodemailer from 'nodemailer'
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
-})
+// Create transporter lazily to avoid errors at module load time when env vars are missing.
+function createTransporter() {
+    return nodemailer.createTransport({
+        host: process.env.SMTP_HOST ?? 'smtp.gmail.com',
+        port: parseInt(process.env.SMTP_PORT ?? '587', 10),
+        secure: process.env.SMTP_PORT === '465',
+        auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+        },
+    })
+}
 
 export async function sendPasswordResetEmail(email: string, resetUrl: string) {
+    const smtpUser = process.env.SMTP_USER
+    const smtpPass = process.env.SMTP_PASS
+    const smtpFrom = process.env.SMTP_FROM ?? `"Safarnama" <${smtpUser}>`
+
+    if (!smtpUser || !smtpPass) {
+        console.error('[Email] SMTP_USER and SMTP_PASS environment variables are not set. Cannot send email.')
+        throw new Error('Email service is not configured.')
+    }
+
+    const transporter = createTransporter()
+
     await transporter.sendMail({
-        from: `"Safarnama" <${process.env.EMAIL_FROM}>`,
+        from: smtpFrom,
         to: email,
         subject: 'Reset your Safarnama password',
         html: `

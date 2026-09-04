@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
+        // Google OAuth is opt-in — only enabled when credentials are provided
         ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
             Google({
                 clientId: process.env.GOOGLE_CLIENT_ID,
@@ -22,14 +23,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 if (!credentials?.email || !credentials?.password) return null
                 try {
                     const user = await prisma.user.findUnique({
-                        where: { email: credentials.email as string },
+                        where: { email: (credentials.email as string).toLowerCase() },
                     })
                     if (!user || !user.password) return null
                     const valid = await bcrypt.compare(credentials.password as string, user.password)
                     if (!valid) return null
-                    return { id: user.id, name: user.name, email: user.email, image: user.image, role: user.role }
+                    return {
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        image: user.image,
+                        role: user.role,
+                    }
                 } catch (e) {
-                    console.error('AUTH ERROR:', e)
+                    console.error('[auth] Credentials error:', e)
                     return null
                 }
             },
@@ -43,25 +50,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         async jwt({ token, user }) {
             if (user) {
                 token.id = user.id
-                token.role = (user as { role?: string }).role ?? 'user'
+                token.role = user.role ?? 'user'
             }
             return token
         },
         async session({ session, token }) {
             if (session.user) {
                 session.user.id = token.id as string
-                ;(session.user as { role?: string }).role = token.role as string
+                session.user.role = (token.role as string) ?? 'user'
             }
             return session
         },
         async signIn({ user, account }) {
-            // For Google OAuth — upsert user in SQLite
+            // For Google OAuth — upsert user record
             if (account?.provider === 'google' && user.email) {
                 await prisma.user.upsert({
-                    where: { email: user.email },
+                    where: { email: user.email.toLowerCase() },
                     update: { name: user.name, image: user.image, emailVerified: new Date() },
                     create: {
-                        email: user.email,
+                        email: user.email.toLowerCase(),
                         name: user.name,
                         image: user.image,
                         emailVerified: new Date(),
