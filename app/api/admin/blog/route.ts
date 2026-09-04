@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 
 
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     if (!await requireAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     try {
         const posts = await prisma.blogPost.findMany({ orderBy: { createdAt: 'desc' } })
