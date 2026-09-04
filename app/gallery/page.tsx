@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
-import Image from 'next/image'
+// Using native <img> instead of next/image to avoid domain whitelist restrictions
 
 type Photo = {
   id: string
@@ -72,12 +72,13 @@ function GalleryCard({ photo, index, onClick }: { photo:Photo; index:number; onC
     >
       {/* Image */}
       <div className="absolute inset-0 overflow-hidden" style={{ borderRadius:20 }}>
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={photo.url}
           alt={photo.caption ?? photo.tripName}
-          fill
-          className="object-cover group-hover:scale-[1.1]"
-          style={{ transition:'transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94)' }}
+          className="object-cover group-hover:scale-[1.1] w-full h-full"
+          style={{ transition:'transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94)', objectFit:'cover' }}
+          onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = '0.3' }}
         />
       </div>
 
@@ -202,7 +203,8 @@ function Lightbox({ photos, index, onClose, onPrev, onNext }:{
           onClick={e=>e.stopPropagation()}
         >
           <div className="relative w-full overflow-hidden" style={{ height:'70vh', borderRadius:20, border:'1px solid rgba(132,204,22,0.15)' }}>
-            <Image src={photo.url} alt={photo.caption??''} fill className="object-contain" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={photo.url} alt={photo.caption??''} className="w-full h-full" style={{ objectFit:'contain' }} />
           </div>
           {/* Info bar */}
           <div className="flex items-center justify-between mt-4 px-1">
