@@ -30,6 +30,7 @@ import Providers from '@/components/ui/Providers'
 import CustomCursor from '@/components/ui/CustomCursor'
 import FloatingWhatsApp from '@/components/ui/FloatingWhatsApp'
 import SmoothScroll from '@/components/ui/SmoothScroll'
+import AnnouncementBanner from '@/components/ui/AnnouncementBanner'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Providers>
                     <SmoothScroll />
                     <CustomCursor />
+                    <AnnouncementBanner />
                     <Navbar />
                     <div style={{ height: '72px' }} />
                     {children}
