@@ -56,3 +56,7 @@ coverage/
 # OS
 ehthumbs.db
 Desktop.ini
+
+# ─── Mobile Admin App — keep off GitHub ───────────────────────────────────────
+../safarnama-admin-app/
+../safarnama-admin-app-src-bak/
