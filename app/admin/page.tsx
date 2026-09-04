@@ -14,7 +14,7 @@ import {
 type User = { id: string; name: string | null; email: string; role: string; college: string | null; phone: string | null; createdAt: string }
 type Reg  = { id: string; name: string; email: string; phone: string; tripName: string; college: string | null; status: string; createdAt: string }
 type Msg  = { id: string; name: string; email: string; subject: string | null; message: string; read: boolean; createdAt: string }
-type Trip = { id: string; name: string; destination: string; description: string; price: number; status: string; startDate: string | null; endDate: string | null; totalSlots: number; bookedSlots: number; imageUrl: string | null; featured: boolean }
+type Trip = { id: string; name: string; destination: string; description: string; price: number; status: string; startDate: string | null; endDate: string | null; totalSlots: number; bookedSlots: number; imageUrl: string | null; featured: boolean; category: string | null; difficulty: string | null; duration: number | null; itinerary: string | null; inclusions: string | null; exclusions: string | null; highlights: string | null; meetingPoint: string | null; whatToBring: string | null }
 type Post = { id: string; title: string; content: string; author: string; tripName: string | null; imageUrl: string | null; published: boolean; createdAt: string }
 type Photo = { id: string; url: string; caption: string | null; tripName: string; createdAt: string }
 type Ann  = { id: string; title: string; message: string; type: string; active: boolean; createdAt: string }
@@ -594,52 +594,192 @@ export default function AdminPage() {
 
 // ── TRIP MODAL ─────────────────────────────────────────────────
 function TripModal({ editing, onClose, onSave }: { editing: Record<string, unknown> | null; onClose: () => void; onSave: () => void }) {
+    const parseJsonField = (val: unknown): string => {
+        if (!val) return ''
+        if (typeof val === 'string') {
+            try { const arr = JSON.parse(val); return Array.isArray(arr) ? arr.join('\n') : val } catch { return val }
+        }
+        return ''
+    }
+    const parseItinerary = (val: unknown): string => {
+        if (!val) return ''
+        if (typeof val === 'string') {
+            try {
+                const arr = JSON.parse(val)
+                if (Array.isArray(arr)) return arr.map((d: {day:number;title:string;desc:string}) => `Day ${d.day}: ${d.title} — ${d.desc}`).join('\n')
+            } catch {}
+        }
+        return typeof val === 'string' ? val : ''
+    }
+
     const [form, setForm] = useState({
-        name: (editing?.name as string) || '', destination: (editing?.destination as string) || '',
-        description: (editing?.description as string) || '', price: String(editing?.price || 0),
-        status: (editing?.status as string) || 'yet_to_announce', startDate: (editing?.startDate as string) || '',
-        endDate: (editing?.endDate as string) || '', totalSlots: String(editing?.totalSlots || 30),
-        bookedSlots: String(editing?.bookedSlots || 0), imageUrl: (editing?.imageUrl as string) || '',
+        name: (editing?.name as string) || '',
+        destination: (editing?.destination as string) || '',
+        description: (editing?.description as string) || '',
+        price: String(editing?.price || 0),
+        status: (editing?.status as string) || 'yet_to_announce',
+        category: (editing?.category as string) || '',
+        difficulty: (editing?.difficulty as string) || '',
+        duration: String(editing?.duration || ''),
+        startDate: (editing?.startDate as string) || '',
+        endDate: (editing?.endDate as string) || '',
+        totalSlots: String(editing?.totalSlots || 30),
+        bookedSlots: String(editing?.bookedSlots || 0),
+        imageUrl: (editing?.imageUrl as string) || '',
         featured: Boolean(editing?.featured),
+        highlights: parseJsonField(editing?.highlights),
+        inclusions: parseJsonField(editing?.inclusions),
+        exclusions: parseJsonField(editing?.exclusions),
+        itinerary: parseItinerary(editing?.itinerary),
+        meetingPoint: (editing?.meetingPoint as string) || '',
+        whatToBring: parseJsonField(editing?.whatToBring),
     })
     const [saving, setSaving] = useState(false)
+    const [section, setSection] = useState<'basic'|'details'|'logistics'>('basic')
+
+    const toJsonArr = (text: string) => JSON.stringify(text.split('\n').map(l => l.trim()).filter(Boolean))
+    const toItineraryJson = (text: string) => {
+        const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
+        const arr = lines.map((line, i) => {
+            const match = line.match(/^Day\s*(\d+)[:\-–]\s*(.+?)\s*[—\-–]\s*(.+)$/i)
+            if (match) return { day: parseInt(match[1]), title: match[2].trim(), desc: match[3].trim() }
+            return { day: i + 1, title: `Day ${i + 1}`, desc: line }
+        })
+        return JSON.stringify(arr)
+    }
 
     const save = async () => {
         setSaving(true)
-        const data = { ...form, price: parseInt(form.price) || 0, totalSlots: parseInt(form.totalSlots) || 30, bookedSlots: parseInt(form.bookedSlots) || 0 }
+        const data = {
+            name: form.name, destination: form.destination, description: form.description,
+            price: parseInt(form.price) || 0,
+            status: form.status, category: form.category || null,
+            difficulty: form.difficulty || null,
+            duration: form.duration ? parseInt(form.duration) : null,
+            startDate: form.startDate || null, endDate: form.endDate || null,
+            totalSlots: parseInt(form.totalSlots) || 30,
+            bookedSlots: parseInt(form.bookedSlots) || 0,
+            imageUrl: form.imageUrl || null, featured: form.featured,
+            highlights: form.highlights ? toJsonArr(form.highlights) : null,
+            inclusions: form.inclusions ? toJsonArr(form.inclusions) : null,
+            exclusions: form.exclusions ? toJsonArr(form.exclusions) : null,
+            itinerary: form.itinerary ? toItineraryJson(form.itinerary) : null,
+            meetingPoint: form.meetingPoint || null,
+            whatToBring: form.whatToBring ? toJsonArr(form.whatToBring) : null,
+        }
         if (editing?.id) await fetch('/api/admin/trips', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: editing.id, ...data }) })
         else await fetch('/api/admin/trips', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
         setSaving(false); onSave(); onClose()
     }
 
+    const tabs = [
+        { id: 'basic', label: '📋 Basic Info' },
+        { id: 'details', label: '🗺️ Trip Details' },
+        { id: 'logistics', label: '🎒 Logistics' },
+    ] as const
+
     return (
         <Modal title={editing ? '✏️ Edit Trip' : '✈️ Create New Trip'} onClose={onClose}>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 16px'}}>
-                <Field label="Trip Name *"><input className={inp} value={form.name} onChange={e => setForm({...form,name:e.target.value})} placeholder="e.g. Banaras Vibes" /></Field>
-                <Field label="Destination *"><input className={inp} value={form.destination} onChange={e => setForm({...form,destination:e.target.value})} placeholder="e.g. Varanasi, UP" /></Field>
-                <Field label="Description" span2><textarea className="adm-textarea" value={form.description} onChange={e => setForm({...form,description:e.target.value})} placeholder="Write a compelling trip description..." /></Field>
-                <Field label="Price (₹)"><input className={inp} type="text" inputMode="numeric" value={form.price} onChange={e => setForm({...form,price:e.target.value.replace(/[^0-9]/g,'')})} placeholder="3000" /></Field>
-                <Field label="Status">
-                    <select className="adm-select" value={form.status} onChange={e => setForm({...form,status:e.target.value})}>
-                        <option value="yet_to_announce">Yet to Announce</option>
-                        <option value="coming_soon">Coming Soon</option>
-                        <option value="booking_open">Booking Open</option>
-                        <option value="completed">Completed</option>
-                    </select>
-                </Field>
-                <Field label="Start Date"><input className={inp} style={{colorScheme:'dark'}} type="date" value={form.startDate} onChange={e => setForm({...form,startDate:e.target.value})} /></Field>
-                <Field label="End Date"><input className={inp} style={{colorScheme:'dark'}} type="date" value={form.endDate} onChange={e => setForm({...form,endDate:e.target.value})} /></Field>
-                <Field label="Total Slots"><input className={inp} type="text" inputMode="numeric" value={form.totalSlots} onChange={e => setForm({...form,totalSlots:e.target.value.replace(/[^0-9]/g,'')})} /></Field>
-                <Field label="Booked Slots"><input className={inp} type="text" inputMode="numeric" value={form.bookedSlots} onChange={e => setForm({...form,bookedSlots:e.target.value.replace(/[^0-9]/g,'')})} /></Field>
-                <Field label="Image URL" span2><input className={inp} value={form.imageUrl} onChange={e => setForm({...form,imageUrl:e.target.value})} placeholder="https://..." /></Field>
-                <div style={{gridColumn:'1/-1'}} className="adm-checkbox-row">
-                    <input type="checkbox" id="featured" checked={form.featured} onChange={e => setForm({...form,featured:e.target.checked})} />
-                    <label htmlFor="featured">⭐ Feature this trip on the homepage</label>
-                </div>
+            {/* Section Tabs */}
+            <div style={{display:'flex',gap:'6px',marginBottom:'20px',padding:'4px',background:'rgba(255,255,255,0.03)',borderRadius:'10px',border:'1px solid var(--border)'}}>
+                {tabs.map(t => (
+                    <button key={t.id} onClick={() => setSection(t.id)}
+                        style={{flex:1,padding:'8px',borderRadius:'8px',border:'none',cursor:'pointer',fontFamily:'inherit',fontSize:'12px',fontWeight:700,transition:'all 0.15s',
+                            background: section === t.id ? '#a3e635' : 'transparent',
+                            color: section === t.id ? '#050c05' : 'var(--text3)'}}>
+                        {t.label}
+                    </button>
+                ))}
             </div>
+
+            {/* ── BASIC INFO ── */}
+            {section === 'basic' && (
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 16px'}}>
+                    <Field label="Trip Name *"><input className={inp} value={form.name} onChange={e => setForm({...form,name:e.target.value})} placeholder="e.g. Banaras Vibes" /></Field>
+                    <Field label="Destination *"><input className={inp} value={form.destination} onChange={e => setForm({...form,destination:e.target.value})} placeholder="e.g. Varanasi, UP" /></Field>
+                    <Field label="Description" span2><textarea className="adm-textarea" style={{minHeight:'100px'}} value={form.description} onChange={e => setForm({...form,description:e.target.value})} placeholder="Write a compelling trip description..." /></Field>
+                    <Field label="Price (₹)"><input className={inp} type="text" inputMode="numeric" value={form.price} onChange={e => setForm({...form,price:e.target.value.replace(/[^0-9]/g,'')})} placeholder="3000" /></Field>
+                    <Field label="Status">
+                        <select className="adm-select" value={form.status} onChange={e => setForm({...form,status:e.target.value})}>
+                            <option value="yet_to_announce">Yet to Announce</option>
+                            <option value="coming_soon">Coming Soon</option>
+                            <option value="booking_open">Booking Open</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </Field>
+                    <Field label="Category">
+                        <select className="adm-select" value={form.category} onChange={e => setForm({...form,category:e.target.value})}>
+                            <option value="">None</option>
+                            <option value="mountain">⛰️ Mountain</option>
+                            <option value="beach">🏖️ Beach</option>
+                            <option value="culture">🏛️ Culture</option>
+                            <option value="adventure">⚡ Adventure</option>
+                        </select>
+                    </Field>
+                    <Field label="Difficulty">
+                        <select className="adm-select" value={form.difficulty} onChange={e => setForm({...form,difficulty:e.target.value})}>
+                            <option value="">Not Set</option>
+                            <option value="easy">🟢 Easy</option>
+                            <option value="moderate">🟡 Moderate</option>
+                            <option value="hard">🔴 Hard</option>
+                            <option value="expert">💀 Expert</option>
+                        </select>
+                    </Field>
+                    <Field label="Duration (days)"><input className={inp} type="text" inputMode="numeric" value={form.duration} onChange={e => setForm({...form,duration:e.target.value.replace(/[^0-9]/g,'')})} placeholder="e.g. 3" /></Field>
+                    <Field label="Start Date"><input className={inp} style={{colorScheme:'dark'}} type="date" value={form.startDate} onChange={e => setForm({...form,startDate:e.target.value})} /></Field>
+                    <Field label="End Date"><input className={inp} style={{colorScheme:'dark'}} type="date" value={form.endDate} onChange={e => setForm({...form,endDate:e.target.value})} /></Field>
+                    <Field label="Total Slots"><input className={inp} type="text" inputMode="numeric" value={form.totalSlots} onChange={e => setForm({...form,totalSlots:e.target.value.replace(/[^0-9]/g,'')})} /></Field>
+                    <Field label="Booked Slots"><input className={inp} type="text" inputMode="numeric" value={form.bookedSlots} onChange={e => setForm({...form,bookedSlots:e.target.value.replace(/[^0-9]/g,'')})} /></Field>
+                    <Field label="Image URL" span2>
+                        <input className={inp} value={form.imageUrl} onChange={e => setForm({...form,imageUrl:e.target.value})} placeholder="https://images.unsplash.com/..." />
+                        {form.imageUrl && (
+                            <div style={{marginTop:'10px',borderRadius:'10px',overflow:'hidden',height:'140px',border:'1px solid var(--border)'}}>
+                                <img src={form.imageUrl} alt="Preview" style={{width:'100%',height:'100%',objectFit:'cover'}} onError={e=>(e.currentTarget.style.display='none')} />
+                            </div>
+                        )}
+                    </Field>
+                    <div style={{gridColumn:'1/-1'}} className="adm-checkbox-row">
+                        <input type="checkbox" id="featured" checked={form.featured} onChange={e => setForm({...form,featured:e.target.checked})} />
+                        <label htmlFor="featured">⭐ Feature this trip (shown prominently)</label>
+                    </div>
+                </div>
+            )}
+
+            {/* ── TRIP DETAILS ── */}
+            {section === 'details' && (
+                <div style={{display:'flex',flexDirection:'column',gap:'0'}}>
+                    <Field label="✨ Highlights (one per line)">
+                        <textarea className="adm-textarea" style={{minHeight:'90px'}} value={form.highlights} onChange={e => setForm({...form,highlights:e.target.value})} placeholder={"Sunrise at Kashi Ghat\nMorning aarti experience\nStreet food tour"} />
+                        <p style={{fontSize:'11px',color:'var(--text3)',marginTop:'4px'}}>Each line becomes one highlight bullet on the trip page.</p>
+                    </Field>
+                    <Field label="✅ Inclusions (one per line)">
+                        <textarea className="adm-textarea" style={{minHeight:'90px'}} value={form.inclusions} onChange={e => setForm({...form,inclusions:e.target.value})} placeholder={"Hotel accommodation\nBreakfast & dinner\nTransport from Delhi"} />
+                    </Field>
+                    <Field label="❌ Exclusions (one per line)">
+                        <textarea className="adm-textarea" style={{minHeight:'80px'}} value={form.exclusions} onChange={e => setForm({...form,exclusions:e.target.value})} placeholder={"Flights\nLunch\nPersonal expenses"} />
+                    </Field>
+                    <Field label="📅 Itinerary (one day per line)" span2>
+                        <textarea className="adm-textarea" style={{minHeight:'130px'}} value={form.itinerary} onChange={e => setForm({...form,itinerary:e.target.value})} placeholder={"Day 1: Arrival — Check in, evening walk along the ghats\nDay 2: Exploration — Morning aarti, Vishwanath temple, boat ride\nDay 3: Departure — Breakfast and checkout"} />
+                        <p style={{fontSize:'11px',color:'var(--text3)',marginTop:'4px'}}>Format: <code>Day N: Title — Description</code></p>
+                    </Field>
+                </div>
+            )}
+
+            {/* ── LOGISTICS ── */}
+            {section === 'logistics' && (
+                <div style={{display:'flex',flexDirection:'column',gap:'0'}}>
+                    <Field label="📍 Meeting Point">
+                        <input className={inp} value={form.meetingPoint} onChange={e => setForm({...form,meetingPoint:e.target.value})} placeholder="e.g. New Delhi Railway Station, Gate 2, Platform 1" />
+                    </Field>
+                    <Field label="🎒 What to Bring (one per line)">
+                        <textarea className="adm-textarea" style={{minHeight:'120px'}} value={form.whatToBring} onChange={e => setForm({...form,whatToBring:e.target.value})} placeholder={"Warm jacket\nTrekking shoes\nSunscreen SPF 50+\nFirst aid kit\nWater bottle (2L)"} />
+                    </Field>
+                </div>
+            )}
+
             <div className="adm-modal-footer">
                 <button onClick={onClose} className="adm-btn adm-btn-ghost">Cancel</button>
-                <button onClick={save} disabled={saving} className="adm-btn adm-btn-primary" style={{minWidth:'130px'}}>
+                <button onClick={save} disabled={saving || !form.name || !form.destination} className="adm-btn adm-btn-primary" style={{minWidth:'140px'}}>
                     {saving ? '⏳ Saving...' : editing ? '✓ Save Changes' : '✈️ Create Trip'}
                 </button>
             </div>

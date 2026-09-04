@@ -3,6 +3,7 @@
 import { motion, useInView } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import TripRegistrationModal from '@/components/ui/TripRegistrationModal'
 import { formatCurrency } from '@/lib/utils'
 
@@ -155,10 +156,12 @@ function TripCard({ trip, index }: { trip: DBTrip; index: number }) {
                                 {displayTag.label}
                             </span>
                         )}
-                        <h3 className="text-white font-extrabold capitalize tracking-tight leading-tight"
-                            style={{ fontFamily: 'var(--font-outfit)', fontSize: 'clamp(17px,2vw,21px)', textShadow: '0 2px 16px rgba(0,0,0,0.9)', letterSpacing: '-0.01em' }}>
-                            {trip.name}
-                        </h3>
+                        <Link href={`/trips/${trip.id}`}>
+                            <h3 className="text-white font-extrabold capitalize tracking-tight leading-tight hover:text-lime-300 transition-colors"
+                                style={{ fontFamily: 'var(--font-outfit)', fontSize: 'clamp(17px,2vw,21px)', textShadow: '0 2px 16px rgba(0,0,0,0.9)', letterSpacing: '-0.01em' }}>
+                                {trip.name}
+                            </h3>
+                        </Link>
                         {trip.destination && (
                             <p className="text-xs mt-1 flex items-center gap-1" style={{ color: 'rgba(163,230,53,0.7)' }}>
                                 <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
@@ -271,6 +274,13 @@ function TripCard({ trip, index }: { trip: DBTrip; index: number }) {
                         {isCompleted && <span className="text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5" style={{ color: '#6b7280', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}><svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>Trip Done</span>}
                         {isYetToAnnounce && <span className="text-xs font-semibold px-4 py-2 rounded-xl" style={{ color: '#6b7280', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>Stay Tuned</span>}
                     </div>
+                    {/* View Details link */}
+                    <Link href={`/trips/${trip.id}`}
+                        style={{ display: 'block', textAlign: 'center', padding: '10px', borderRadius: 10, fontSize: 12, fontWeight: 700, color: 'rgba(163,230,53,0.5)', border: '1px solid rgba(132,204,22,0.1)', marginTop: 6, textDecoration: 'none', transition: 'all 0.2s' }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#a3e635'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(163,230,53,0.3)'; (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(163,230,53,0.05)' }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(163,230,53,0.5)'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(132,204,22,0.1)'; (e.currentTarget as HTMLAnchorElement).style.background = '' }}>
+                        View Full Details →
+                    </Link>
                 </div>
             </motion.article>
 

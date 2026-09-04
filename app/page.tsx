@@ -500,7 +500,36 @@ export default function Home() {
                     {/* Bottom bar */}
                     <div className="footer-bottom-bar" style={{ paddingTop: '20px', borderTop: '1px solid rgba(163,230,53,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                         <p style={{ fontSize: '11.5px', color: 'rgba(180,200,140,0.22)' }}>© 2024 Safarnama. All rights reserved.</p>
-                        <p style={{ fontSize: '11.5px', color: 'rgba(180,200,140,0.22)' }}>Made with ❤️ for student travellers across India</p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <p style={{ fontSize: '11.5px', color: 'rgba(180,200,140,0.22)' }}>Made with ❤️ for student travellers across India</p>
+                            <a
+                                href="/auth/admin-login"
+                                style={{
+                                    fontSize: '11px',
+                                    fontWeight: 600,
+                                    color: 'rgba(163,230,53,0.45)',
+                                    textDecoration: 'none',
+                                    border: '1px solid rgba(163,230,53,0.18)',
+                                    borderRadius: '6px',
+                                    padding: '4px 10px',
+                                    letterSpacing: '0.04em',
+                                    transition: 'color 0.2s, border-color 0.2s, background 0.2s',
+                                    whiteSpace: 'nowrap',
+                                }}
+                                onMouseEnter={e => {
+                                    e.currentTarget.style.color = '#a3e635'
+                                    e.currentTarget.style.borderColor = 'rgba(163,230,53,0.45)'
+                                    e.currentTarget.style.background = 'rgba(163,230,53,0.07)'
+                                }}
+                                onMouseLeave={e => {
+                                    e.currentTarget.style.color = 'rgba(163,230,53,0.45)'
+                                    e.currentTarget.style.borderColor = 'rgba(163,230,53,0.18)'
+                                    e.currentTarget.style.background = 'transparent'
+                                }}
+                            >
+                                Admin Login
+                            </a>
+                        </div>
                     </div>
                 </div>
             </footer>

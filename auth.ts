@@ -47,10 +47,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         error: '/auth/login',
     },
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, account }) {
             if (user) {
                 token.id = user.id
-                token.role = user.role ?? 'user'
+                token.role = (user as any).role ?? 'user'
+            }
+            // For OAuth logins, user.role is not set — fetch it from DB
+            if (account?.provider === 'google' && token.email && !token.role) {
+                try {
+                    const dbUser = await prisma.user.findUnique({
+                        where: { email: token.email as string },
+                        select: { id: true, role: true },
+                    })
+                    if (dbUser) {
+                        token.id = dbUser.id
+                        token.role = dbUser.role
+                    }
+                } catch (e) {
+                    console.error('[auth] JWT DB lookup error:', e)
+                }
             }
             return token
         },
@@ -62,19 +77,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return session
         },
         async signIn({ user, account }) {
-            // For Google OAuth — upsert user record
+            // For Google OAuth — upsert user record in DB
             if (account?.provider === 'google' && user.email) {
-                await prisma.user.upsert({
-                    where: { email: user.email.toLowerCase() },
-                    update: { name: user.name, image: user.image, emailVerified: new Date() },
-                    create: {
-                        email: user.email.toLowerCase(),
-                        name: user.name,
-                        image: user.image,
-                        emailVerified: new Date(),
-                        role: 'user',
-                    },
-                })
+                try {
+                    await prisma.user.upsert({
+                        where: { email: user.email.toLowerCase() },
+                        update: { name: user.name, image: user.image, emailVerified: new Date() },
+                        create: {
+                            email: user.email.toLowerCase(),
+                            name: user.name,
+                            image: user.image,
+                            emailVerified: new Date(),
+                            role: 'user',
+                        },
+                    })
+                } catch (e) {
+                    // Log but don't block login — AccessDenied is worse than a missing upsert
+                    console.error('[auth] Google signIn upsert error:', e)
+                }
             }
             return true
         },
