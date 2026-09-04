@@ -228,8 +228,8 @@ export default function GalleryPage() {
   useEffect(()=>{
     fetch('/api/gallery')
       .then(r=>r.json())
-      .then(d=>setPhotos(d.photos?.length>0?d.photos:FALLBACK))
-      .catch(()=>setPhotos(FALLBACK))
+      .then(d=>setPhotos(d.photos || []))
+      .catch(()=>setPhotos([]))
       .finally(()=>setLoading(false))
   },[])
 
