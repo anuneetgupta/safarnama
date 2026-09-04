@@ -111,9 +111,9 @@ export default function Footer() {
               Made with ❤️ for student travelers across India
             </p>
             <Link
-              href="/admin"
-              className="text-10px text-[rgba(163,230,53,0.3)] hover:text-[rgba(163,230,53,0.6)] transition-colors duration-300"
-              title="Admin Access"
+              href="/auth/admin-login"
+              className="text-10px text-[rgba(163,230,53,0.2)] hover:text-[rgba(163,230,53,0.5)] transition-colors duration-300"
+              title="Admin Login"
             >
               •
             </Link>
