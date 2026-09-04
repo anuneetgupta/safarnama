@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
     LayoutDashboard, Map, Users, Image as ImageIcon, 
-    MessageSquare, FileText, Bell, Calendar, LogOut, ExternalLink, Menu, X 
+    MessageSquare, FileText, Bell, Calendar, LogOut, ExternalLink, Menu, X, Star
 } from 'lucide-react'
 
 // ── TYPES ──────────────────────────────────────────────────────
@@ -18,12 +18,14 @@ type Trip = { id: string; name: string; destination: string; description: string
 type Post = { id: string; title: string; content: string; author: string; tripName: string | null; imageUrl: string | null; published: boolean; createdAt: string }
 type Photo = { id: string; url: string; caption: string | null; tripName: string; createdAt: string }
 type Ann  = { id: string; title: string; message: string; type: string; active: boolean; createdAt: string }
+type ReviewItem = { id: string; name: string; email: string | null; college: string | null; location: string | null; tripName: string; rating: number; title: string; review: string; published: boolean; verified: boolean; fake: boolean; createdAt: string }
 
 const TABS = [
     { id: 'Overview', icon: LayoutDashboard },
     { id: 'Trips', icon: Map },
     { id: 'Registrations', icon: Calendar },
     { id: 'Users', icon: Users },
+    { id: 'Reviews', icon: Star },
     { id: 'Blog', icon: FileText },
     { id: 'Gallery', icon: ImageIcon },
     { id: 'Announcements', icon: Bell },
@@ -77,6 +79,8 @@ export default function AdminPage() {
     const [posts, setPosts] = useState<Post[]>([])
     const [photos, setPhotos] = useState<Photo[]>([])
     const [anns, setAnns] = useState<Ann[]>([])
+    const [reviews, setReviews] = useState<ReviewItem[]>([])
+    const [reviewFilter, setReviewFilter] = useState<'all' | 'pending' | 'published'>('all')
     const [loading, setLoading] = useState(true)
     const [modal, setModal] = useState<string | null>(null)
     const [editing, setEditing] = useState<Record<string, unknown> | null>(null)
@@ -92,12 +96,14 @@ export default function AdminPage() {
     const fetchAll = useCallback(async () => {
         setLoading(true)
         try {
-            const [u, r, m, t, p, g, a] = await Promise.all([
+            const [u, r, m, t, p, g, a, rev] = await Promise.all([
                 api('/api/admin/users'), api('/api/admin/registrations'), api('/api/admin/messages'),
                 api('/api/admin/trips'), api('/api/admin/blog'), api('/api/admin/gallery'), api('/api/admin/announcements'),
+                api('/api/admin/reviews'),
             ])
             setUsers(u.users || []); setRegs(r.registrations || []); setMsgs(m.messages || [])
             setTrips(t.trips || []); setPosts(p.posts || []); setPhotos(g.photos || []); setAnns(a.announcements || [])
+            setReviews(rev.reviews || [])
         } catch (error) {
             console.error("Failed to fetch admin data", error)
         }
@@ -113,6 +119,7 @@ export default function AdminPage() {
 
     const unread = msgs.filter(m => !m.read).length
     const pending = regs.filter(r => r.status === 'pending').length
+    const pendingReviews = reviews.filter(r => !r.published).length
 
     return (
         <div className="adm-root">
@@ -151,6 +158,7 @@ export default function AdminPage() {
                                         </div>
                                         {t.id === 'Messages' && unread > 0 && <span className="adm-badge adm-badge-red">{unread}</span>}
                                         {t.id === 'Registrations' && pending > 0 && <span className="adm-badge adm-badge-amber">{pending}</span>}
+                                        {t.id === 'Reviews' && pendingReviews > 0 && <span className="adm-badge adm-badge-amber">{pendingReviews}</span>}
                                     </button>
                                 )
                             })}
@@ -184,6 +192,7 @@ export default function AdminPage() {
                     </div>
                     <div>
                         {tab === 'Trips' && <button onClick={() => { setEditing(null); setModal('trip') }} className="adm-btn adm-btn-primary">+ New Trip</button>}
+                        {tab === 'Reviews' && <button onClick={() => { setEditing(null); setModal('review') }} className="adm-btn adm-btn-primary">+ Add Fake Review</button>}
                         {tab === 'Blog' && <button onClick={() => { setEditing(null); setModal('blog') }} className="adm-btn adm-btn-primary">+ New Post</button>}
                         {tab === 'Gallery' && <button onClick={() => { setEditing(null); setModal('photo') }} className="adm-btn adm-btn-primary">+ Add Photo</button>}
                         {tab === 'Announcements' && <button onClick={() => { setEditing(null); setModal('ann') }} className="adm-btn adm-btn-primary">+ Announcement</button>}
@@ -403,6 +412,117 @@ export default function AdminPage() {
                             </div>
                         )}
 
+                        {/* ── REVIEWS ── */}
+                        {tab === 'Reviews' && (
+                            <div style={{display:'flex',flexDirection:'column',gap:'16px'}}>
+                                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:'12px'}}>
+                                    <div style={{display:'flex',gap:'8px'}}>
+                                        {(['all','pending','published'] as const).map(f => (
+                                            <button
+                                                key={f}
+                                                onClick={() => setReviewFilter(f)}
+                                                className={`adm-btn adm-btn-sm ${reviewFilter === f ? 'adm-btn-primary' : 'adm-btn-ghost'}`}
+                                            >
+                                                {f === 'all' ? `All (${reviews.length})` : f === 'pending' ? `Pending (${pendingReviews})` : `Live (${reviews.filter(r => r.published).length})`}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <button onClick={() => { setEditing(null); setModal('review') }} className="adm-btn adm-btn-primary adm-btn-sm">
+                                        ✨ + Add Fake Review
+                                    </button>
+                                </div>
+
+                                <div className="adm-grid-2">
+                                    {reviews
+                                        .filter(r => {
+                                            if (reviewFilter === 'pending') return !r.published
+                                            if (reviewFilter === 'published') return r.published
+                                            return true
+                                        })
+                                        .map(r => (
+                                            <div key={r.id} className="adm-card" style={{display:'flex',flexDirection:'column'}}>
+                                                <div className="adm-card-header" style={{alignItems:'flex-start'}}>
+                                                    <div style={{display:'flex',gap:'12px',flex:1}}>
+                                                        <div className="adm-avatar" style={{background:'rgba(163,230,53,0.12)',color:'#a3e635'}}>
+                                                            {r.name.charAt(0).toUpperCase()}
+                                                        </div>
+                                                        <div>
+                                                            <div style={{display:'flex',alignItems:'center',gap:'8px',flexWrap:'wrap'}}>
+                                                                <strong style={{fontSize:'14px',color:'var(--text)'}}>{r.name}</strong>
+                                                                {r.fake && <span style={{fontSize:'10px',fontWeight:800,padding:'2px 6px',borderRadius:'4px',background:'rgba(245,158,11,0.15)',color:'#f59e0b',border:'1px solid rgba(245,158,11,0.3)'}}>FAKE</span>}
+                                                                {r.verified && <span style={{fontSize:'10px',fontWeight:700,color:'#a3e635'}}>✅ Verified</span>}
+                                                            </div>
+                                                            <div style={{fontSize:'12px',color:'var(--text3)',marginTop:'2px'}}>
+                                                                {[r.college, r.location].filter(Boolean).join(' · ')}
+                                                            </div>
+                                                            <div style={{fontSize:'12px',color:'#38bdf8',fontWeight:600,marginTop:'2px'}}>
+                                                                ✈️ {r.tripName}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:'4px'}}>
+                                                        <div style={{color:'#f59e0b',fontSize:'13px',letterSpacing:'1px'}}>
+                                                            {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
+                                                        </div>
+                                                        <span className={`adm-status ${r.published ? 'adm-status-green' : 'adm-status-amber'}`}>
+                                                            {r.published ? '● Live' : '○ Pending'}
+                                                        </span>
+                                                        <span style={{fontSize:'11px',color:'var(--text3)'}}>
+                                                            {new Date(r.createdAt).toLocaleDateString('en-IN', {month:'short',day:'numeric',year:'numeric'})}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="adm-card-body" style={{flex:1,display:'flex',flexDirection:'column',gap:'10px'}}>
+                                                    <h4 style={{fontSize:'14px',fontWeight:700,color:'var(--text)',lineHeight:1.3}}>
+                                                        &ldquo;{r.title}&rdquo;
+                                                    </h4>
+                                                    <p style={{fontSize:'13px',color:'var(--text2)',lineHeight:1.6,flex:1}}>
+                                                        {r.review}
+                                                    </p>
+
+                                                    <div style={{display:'flex',gap:'8px',paddingTop:'12px',borderTop:'1px solid var(--border)',marginTop:'auto'}}>
+                                                        <button
+                                                            onClick={async () => {
+                                                                await api('/api/admin/reviews', { method: 'PATCH', body: JSON.stringify({ id: r.id, published: !r.published }) })
+                                                                fetchAll()
+                                                            }}
+                                                            className={`adm-btn adm-btn-xs ${r.published ? 'adm-btn-ghost' : 'adm-btn-confirm'}`}
+                                                            style={{flex:1,justifyContent:'center'}}
+                                                        >
+                                                            {r.published ? '⬇ Unpublish' : '🚀 Approve & Publish'}
+                                                        </button>
+                                                        <button
+                                                            onClick={async () => {
+                                                                await api('/api/admin/reviews', { method: 'PATCH', body: JSON.stringify({ id: r.id, verified: !r.verified }) })
+                                                                fetchAll()
+                                                            }}
+                                                            className="adm-btn adm-btn-ghost adm-btn-xs"
+                                                            style={{flex:1,justifyContent:'center'}}
+                                                        >
+                                                            {r.verified ? 'Remove Verified' : 'Mark Verified'}
+                                                        </button>
+                                                        <button
+                                                            onClick={async () => {
+                                                                if (confirm(`Delete review by ${r.name}?`)) {
+                                                                    await api('/api/admin/reviews', { method: 'DELETE', body: JSON.stringify({ id: r.id }) })
+                                                                    fetchAll()
+                                                                }
+                                                            }}
+                                                            className="adm-btn adm-btn-danger adm-btn-xs"
+                                                            style={{justifyContent:'center'}}
+                                                        >
+                                                            🗑 Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                </div>
+                                {reviews.length === 0 && <div className="adm-empty">No reviews found. Click "+ Add Fake Review" to create one!</div>}
+                            </div>
+                        )}
+
                         {/* ── BLOG ── */}
                         {tab === 'Blog' && (
                             <div className="adm-grid-3">
@@ -583,6 +703,7 @@ export default function AdminPage() {
             {/* ── MODALS ── */}
             <AnimatePresence>
                 {modal === 'trip' && <TripModal editing={editing} onClose={() => setModal(null)} onSave={fetchAll} />}
+                {modal === 'review' && <FakeReviewModal onClose={() => setModal(null)} onSave={fetchAll} />}
                 {modal === 'blog' && <BlogModal editing={editing} onClose={() => setModal(null)} onSave={fetchAll} />}
                 {modal === 'photo' && <PhotoModal onClose={() => setModal(null)} onSave={fetchAll} />}
                 {modal === 'photo-edit' && editing && <PhotoEditModal photo={editing as unknown as {id:string;url:string;caption:string|null;tripName:string}} onClose={() => { setModal(null); setEditing(null) }} onSave={fetchAll} />}
@@ -919,6 +1040,104 @@ function PhotoEditModal({ photo, onClose, onSave }: { photo: {id:string;url:stri
                 <button onClick={onClose} className="adm-btn adm-btn-ghost">Cancel</button>
                 <button onClick={save} disabled={saving} className="adm-btn adm-btn-primary" style={{minWidth:'120px'}}>
                     {saving ? '⏳ Saving...' : '✓ Save Changes'}
+                </button>
+            </div>
+        </Modal>
+    )
+}
+
+// ── FAKE REVIEW MODAL ──────────────────────────────────────────
+function FakeReviewModal({ onClose, onSave }: { onClose: () => void; onSave: () => void }) {
+    const [form, setForm] = useState({
+        name: '',
+        college: '',
+        location: '',
+        tripName: 'Banaras Vibes',
+        rating: 5,
+        title: '',
+        review: '',
+        verified: true
+    })
+    const [saving, setSaving] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+
+    const save = async () => {
+        if (!form.name.trim() || !form.tripName.trim() || !form.title.trim() || !form.review.trim()) {
+            setError('Name, Trip, Headline, and Review text are required.')
+            return
+        }
+        setSaving(true)
+        setError(null)
+        try {
+            await fetch('/api/admin/reviews', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: form.name.trim(),
+                    college: form.college.trim() || null,
+                    location: form.location.trim() || null,
+                    tripName: form.tripName.trim(),
+                    rating: Number(form.rating),
+                    title: form.title.trim(),
+                    review: form.review.trim(),
+                    verified: form.verified,
+                })
+            })
+            onSave()
+            onClose()
+        } catch {
+            setError('Failed to create review.')
+        } finally {
+            setSaving(false)
+        }
+    }
+
+    return (
+        <Modal title="✨ Add Fake Review" onClose={onClose}>
+            {error && (
+                <div style={{padding:'8px 12px',borderRadius:'8px',background:'rgba(239,68,68,0.1)',color:'#f87171',fontSize:'13px',marginBottom:'12px',border:'1px solid rgba(239,68,68,0.2)'}}>
+                    {error}
+                </div>
+            )}
+            <Field label="Reviewer Name *">
+                <input className={inp} value={form.name} onChange={e => setForm({...form,name:e.target.value})} placeholder="e.g. Rahul Sharma" />
+            </Field>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
+                <Field label="College / University">
+                    <input className={inp} value={form.college} onChange={e => setForm({...form,college:e.target.value})} placeholder="e.g. IIT Kanpur" />
+                </Field>
+                <Field label="City / Location">
+                    <input className={inp} value={form.location} onChange={e => setForm({...form,location:e.target.value})} placeholder="e.g. Uttar Pradesh" />
+                </Field>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:'12px'}}>
+                <Field label="Trip Name *">
+                    <input className={inp} value={form.tripName} onChange={e => setForm({...form,tripName:e.target.value})} placeholder="e.g. Banaras Vibes" />
+                </Field>
+                <Field label="Rating (1-5)">
+                    <select className="adm-select" value={form.rating} onChange={e => setForm({...form,rating:Number(e.target.value)})}>
+                        <option value={5}>★★★★★ (5)</option>
+                        <option value={4}>★★★★☆ (4)</option>
+                        <option value={3}>★★★☆☆ (3)</option>
+                        <option value={2}>★★☆☆☆ (2)</option>
+                        <option value={1}>★☆☆☆☆ (1)</option>
+                    </select>
+                </Field>
+            </div>
+            <Field label="Review Title / Headline *">
+                <input className={inp} value={form.title} onChange={e => setForm({...form,title:e.target.value})} placeholder="e.g. Incredible vibe, made lifelong friends!" />
+            </Field>
+            <Field label="Full Review *">
+                <textarea className="adm-textarea" rows={4} value={form.review} onChange={e => setForm({...form,review:e.target.value})} placeholder="Write the detailed testimonial..." />
+            </Field>
+            <div className="adm-checkbox-row">
+                <input type="checkbox" id="fake_verified" checked={form.verified} onChange={e => setForm({...form,verified:e.target.checked})} />
+                <label htmlFor="fake_verified">✅ Mark as Verified Traveler</label>
+            </div>
+            <div className="adm-modal-footer">
+                <button onClick={onClose} className="adm-btn adm-btn-ghost">Cancel</button>
+                <button onClick={save} disabled={saving} className="adm-btn adm-btn-primary" style={{minWidth:'140px'}}>
+                    {saving ? '⏳ Creating...' : '✨ Create Review'}
                 </button>
             </div>
         </Modal>

@@ -128,17 +128,37 @@ function TestimonialCard({ review, delay }: { review: typeof REVIEWS[0]; delay: 
 }
 
 export default function TestimonialsSection() {
+  const [reviewsList, setReviewsList] = useState(REVIEWS)
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
-  const total = REVIEWS.length
+  const total = reviewsList.length
   // Max offset: show groups of 3, slide by 1
-  const maxIndex = total - 3
+  const maxIndex = Math.max(0, total - 3)
 
   const next = useCallback(() => setCurrent(c => Math.min(c + 1, maxIndex)), [maxIndex])
   const prev = useCallback(() => setCurrent(c => Math.max(c - 1, 0)), [])
 
   useEffect(() => {
-    if (paused) return
+    fetch('/api/reviews')
+      .then(r => r.json())
+      .then(d => {
+        if (d.reviews && d.reviews.length > 0) {
+          const mapped = d.reviews.map((r: any) => ({
+            name: r.name,
+            location: [r.college, r.location].filter(Boolean).join(', ') || 'Verified Traveler',
+            trip: r.tripName,
+            text: r.review,
+            avatar: r.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&q=80',
+            rating: r.rating || 5,
+          }))
+          setReviewsList(mapped)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (paused || maxIndex <= 0) return
     const id = setInterval(() => {
       setCurrent(c => (c >= maxIndex ? 0 : c + 1))
     }, 3500)
@@ -253,8 +273,8 @@ export default function TestimonialsSection() {
               animate={{ x: `calc(-${current} * (100% / 3 + 7px))` }}
               transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              {REVIEWS.map((review, i) => (
-                <TestimonialCard key={review.name} review={review} delay={i * 0.06} />
+              {reviewsList.map((review, i) => (
+                <TestimonialCard key={`${review.name}-${i}`} review={review} delay={i * 0.06} />
               ))}
             </motion.div>
           </div>

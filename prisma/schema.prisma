@@ -32,6 +32,7 @@ model User {
   sessions      Session[]
   registrations TripRegistration[]
   contactMsgs   ContactMessage[]
+  reviews       Review[]
 
   @@index([email])
   @@index([role])
@@ -205,4 +206,32 @@ model ContactMessage {
   @@index([userId])
   @@index([read])
   @@index([createdAt])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  // Author info
+  name      String
+  email     String?
+  college   String?
+  location  String?
+  avatar    String?
+  // Review content
+  tripName  String
+  rating    Int      @default(5)  // 1-5
+  title     String
+  review    String
+  // Metadata
+  verified  Boolean  @default(false)  // admin can mark as verified
+  published Boolean  @default(false)  // admin must approve before showing
+  fake      Boolean  @default(false)  // marks admin-created fake reviews
+  userId    String?                   // link to real user if logged in
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([published])
+  @@index([tripName])
+  @@index([createdAt])
+  @@index([userId])
 }
