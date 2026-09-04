@@ -19,8 +19,11 @@ model User {
   password      String?
   phone         String?
   college       String?
+  city          String?
   instagram     String?
   facebook      String?
+  bio           String?   // Short traveler bio
+  interests     String[]  // e.g. ["mountain", "beach", "culture", "adventure"]
   role          String    @default("user") // "user" | "admin"
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -87,22 +90,30 @@ model PasswordResetToken {
 // ─── Core Domain Models ───────────────────────────────────────────────────────
 
 model Trip {
-  id          String   @id @default(cuid())
-  name        String
-  destination String
-  description String
-  price       Int      @default(0)
+  id            String   @id @default(cuid())
+  name          String
+  destination   String
+  description   String
+  price         Int      @default(0)
   // "completed" | "coming_soon" | "booking_open" | "yet_to_announce"
-  status      String   @default("yet_to_announce")
-  startDate   String?
-  endDate     String?
-  totalSlots  Int      @default(30)
-  bookedSlots Int      @default(0)
-  imageUrl    String?
-  featured    Boolean  @default(false)
-  category    String?  // "mountain" | "beach" | "culture" | "adventure" — for filtering
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  status        String   @default("yet_to_announce")
+  startDate     String?
+  endDate       String?
+  totalSlots    Int      @default(30)
+  bookedSlots   Int      @default(0)
+  imageUrl      String?
+  featured      Boolean  @default(false)
+  category      String?  // "mountain" | "beach" | "culture" | "adventure"
+  duration      Int?     // number of days
+  difficulty    String?  // "easy" | "moderate" | "hard" | "expert"
+  itinerary     String?  // JSON: [{day:1,title:"...",desc:"..."}]
+  inclusions    String?  // JSON: ["Hotel", "Meals", ...]
+  exclusions    String?  // JSON: ["Flights", "Insurance", ...]
+  highlights    String?  // JSON: ["Sunrise view", "Campfire", ...]
+  meetingPoint  String?  // Where to assemble
+  whatToBring   String?  // JSON: ["Warm jacket", "Trekking shoes", ...]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   registrations TripRegistration[]
 

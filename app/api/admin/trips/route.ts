@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/auth'
+import { requireAdmin } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 
-async function requireAdmin() {
-    const session = await auth()
-    if (!session || session.user?.role !== 'admin') return null
-    return session
-}
-
-export async function GET() {
-    if (!await requireAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+export async function GET(req: NextRequest) {
+    if (!await requireAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     try {
         const trips = await prisma.trip.findMany({ orderBy: { createdAt: 'desc' } })
         return NextResponse.json({ trips })
@@ -20,7 +14,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-    if (!await requireAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!await requireAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     try {
         const data = await req.json()
         if (!data.name || !data.destination || !data.description) {
@@ -35,7 +29,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-    if (!await requireAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!await requireAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     try {
         const { id, ...data } = await req.json()
         if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 })
@@ -48,7 +42,7 @@ export async function PATCH(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-    if (!await requireAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!await requireAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     try {
         const { id } = await req.json()
         if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 })

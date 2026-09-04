@@ -1,17 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/auth'
+import { requireAdmin } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 
-async function requireAdmin() {
-    const session = await auth()
-    if (!session || session.user?.role !== 'admin') return null
-    return session
-}
+
 
 const ALLOWED_TYPES = ['info', 'success', 'warning', 'urgent']
 
 export async function GET() {
-    if (!await requireAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!await requireAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     try {
         const announcements = await prisma.announcement.findMany({ orderBy: { createdAt: 'desc' } })
         return NextResponse.json({ announcements })
@@ -22,7 +18,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-    if (!await requireAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!await requireAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     try {
         const data = await req.json()
         if (!data.title?.trim() || !data.message?.trim()) {
@@ -40,7 +36,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-    if (!await requireAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!await requireAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     try {
         const { id, ...data } = await req.json()
         if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 })
@@ -56,7 +52,7 @@ export async function PATCH(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-    if (!await requireAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!await requireAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     try {
         const { id } = await req.json()
         if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 })

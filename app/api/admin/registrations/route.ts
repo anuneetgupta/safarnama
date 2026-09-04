@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/auth'
+import { requireAdmin } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 
-async function requireAdmin() {
-    const session = await auth()
-    if (!session || session.user?.role !== 'admin') return null
-    return session
-}
+
 
 export async function GET() {
-    if (!await requireAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!await requireAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     try {
         const registrations = await prisma.tripRegistration.findMany({ orderBy: { createdAt: 'desc' } })
         return NextResponse.json({ registrations })
@@ -20,7 +16,7 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
-    if (!await requireAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!await requireAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     try {
         const { id, status } = await req.json()
         if (!id || !status) return NextResponse.json({ error: 'id and status are required' }, { status: 400 })
