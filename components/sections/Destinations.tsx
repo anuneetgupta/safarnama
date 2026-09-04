@@ -2,9 +2,33 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { DEMO_TRIPS } from '@/lib/data'
+import { useEffect, useState } from 'react'
+
+type Trip = {
+  id: string
+  name: string
+  destination: string
+  description: string
+  price: number
+  status: string
+  startDate: string | null
+  endDate: string | null
+  totalSlots: number
+  bookedSlots: number
+  imageUrl: string | null
+  featured: boolean
+}
 
 export default function Destinations() {
+  const [trips, setTrips] = useState<Trip[]>([])
+
+  useEffect(() => {
+    fetch('/api/trips')
+      .then(r => r.json())
+      .then(d => setTrips((d.trips || []).slice(0, 8)))
+      .catch(() => setTrips([]))
+  }, [])
+
   return (
     <section className="section bg-[#0a0f1a]">
       <div className="container">
@@ -29,7 +53,7 @@ export default function Destinations() {
 
         {/* Destinations Grid */}
         <div className="grid grid-4 mb-64px">
-          {DEMO_TRIPS.slice(0, 8).map((trip, index) => (
+          {trips.map((trip, index) => (
             <motion.div
               key={trip.id}
               initial={{ opacity: 0, y: 24 }}
@@ -40,12 +64,18 @@ export default function Destinations() {
             >
               {/* Image */}
               <div className="relative w-full h-240px overflow-hidden rounded-12px mb-16px">
-                <Image
-                  src={trip.image}
-                  alt={trip.destination}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-300"
-                />
+                {trip.imageUrl ? (
+                  <Image
+                    src={trip.imageUrl}
+                    alt={trip.destination}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-[rgba(163,230,53,0.08)] flex items-center justify-center text-4xl">
+                    🏔️
+                  </div>
+                )}
                 {/* Status Badge */}
                 <div className="absolute top-12px right-12px">
                   <span
@@ -70,17 +100,18 @@ export default function Destinations() {
 
               {/* Content */}
               <div className="flex-1 flex flex-col">
-                <h3 className="mb-4px line-clamp-2">{trip.destination}</h3>
+                <h3 className="mb-4px line-clamp-2">{trip.name || trip.destination}</h3>
                 <p className="text-14px text-[rgba(226,232,240,0.6)] mb-12px">{trip.description}</p>
 
                 {/* Trip Details */}
                 <div className="flex items-center justify-between text-14px mb-16px mt-auto">
                   <span className="text-[rgba(226,232,240,0.5)]">
-                    {Math.ceil(
-                      (new Date(trip.endDate).getTime() - new Date(trip.startDate).getTime()) /
-                        (1000 * 60 * 60 * 24)
-                    )}{' '}
-                    days
+                    {trip.startDate && trip.endDate
+                      ? `${Math.ceil(
+                          (new Date(trip.endDate).getTime() - new Date(trip.startDate).getTime()) /
+                            (1000 * 60 * 60 * 24)
+                        )} days`
+                      : 'TBA'}
                   </span>
                   <span className="text-[#a3e635] font-600">₹{trip.price.toLocaleString()}</span>
                 </div>
@@ -90,7 +121,7 @@ export default function Destinations() {
                   <div
                     className="h-full bg-gradient-to-r from-[#a3e635] to-[#84cc16]"
                     style={{
-                      width: `${((trip.totalSlots - trip.bookedSlots) / trip.totalSlots) * 100}%`,
+                      width: `${trip.totalSlots > 0 ? ((trip.totalSlots - trip.bookedSlots) / trip.totalSlots) * 100 : 100}%`,
                     }}
                   />
                 </div>
@@ -101,6 +132,15 @@ export default function Destinations() {
                 </button>
               </div>
             </motion.div>
+          ))}
+
+          {/* Loading skeleton if no trips yet */}
+          {trips.length === 0 && Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="card overflow-hidden animate-pulse">
+              <div className="w-full h-240px bg-[rgba(255,255,255,0.05)] rounded-12px mb-16px" />
+              <div className="h-4 bg-[rgba(255,255,255,0.05)] rounded mb-8px" />
+              <div className="h-3 bg-[rgba(255,255,255,0.03)] rounded w-2/3" />
+            </div>
           ))}
         </div>
 
