@@ -358,9 +358,10 @@ export default function ReviewsPage() {
           setReviews(revRes.reviews)
         }
 
-        if (Array.isArray(tripRes)) {
-          const names = tripRes.map((t: any) => t.name).filter(Boolean)
-          setTrips(names)
+        const tripList = tripRes.trips || tripRes || []
+        if (Array.isArray(tripList) && tripList.length > 0) {
+          const names = tripList.map((t: any) => t.name).filter(Boolean)
+          setTrips(['Other', ...names])
           if (names.length > 0) setTripName(names[0])
         }
       } catch (err) {

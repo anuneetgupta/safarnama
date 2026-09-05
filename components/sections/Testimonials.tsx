@@ -172,7 +172,7 @@ export default function TestimonialsSection() {
                 </svg>
               ))}
             </span>
-            Trusted by 1,000+ Spiritual Travelers
+            Trusted by {total > 0 ? `${total}+` : 'Our'} Traveler{total !== 1 ? 's' : ''}
           </div>
 
           <h2 style={{
