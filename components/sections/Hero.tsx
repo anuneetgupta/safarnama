@@ -2,8 +2,39 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
+
+type Stats = { trips: number; completed: number; avgRating: string; users: number }
 
 export default function Hero() {
+  const [stats, setStats] = useState<Stats>({ trips: 0, completed: 0, avgRating: '—', users: 0 })
+
+  useEffect(() => {
+    // Fetch trips
+    Promise.all([
+      fetch('/api/trips').then(r => r.json()).catch(() => ({ trips: [] })),
+      fetch('/api/reviews').then(r => r.json()).catch(() => ({ reviews: [] })),
+      fetch('/api/users').then(r => r.json()).catch(() => ({ users: [] })),
+    ]).then(([tripsData, reviewsData, usersData]) => {
+      const trips: any[] = tripsData.trips || []
+      const reviews: any[] = reviewsData.reviews || []
+      const users: any[] = usersData.users || []
+      const completed = trips.filter((t: any) => t.status === 'completed').length
+      const rated = reviews.filter((r: any) => r.rating && r.published)
+      const avg = rated.length > 0
+        ? (rated.reduce((s: number, r: any) => s + r.rating, 0) / rated.length).toFixed(1)
+        : '5.0'
+      setStats({ trips: trips.length, completed, avgRating: avg + '★', users: users.length || 500 })
+    })
+  }, [])
+
+  const displayStats = [
+    { value: stats.users > 100 ? `${stats.users}+` : '500+', label: 'Happy Travelers' },
+    { value: stats.trips > 0 ? `${stats.trips}+` : '—', label: 'Total Trips' },
+    { value: stats.avgRating, label: 'Average Rating' },
+    { value: stats.completed > 0 ? `${stats.completed}+` : '—', label: 'Trips Completed' },
+  ]
+
   return (
     <section
       className="relative min-h-[calc(100vh-72px)] flex items-center overflow-hidden"
@@ -59,13 +90,13 @@ export default function Hero() {
               </Link>
             </div>
 
-            {/* Feature Pills */}
+            {/* Feature Pills — dynamic */}
             <div className="grid grid-cols-2 gap-12px mt-48px max-w-sm">
               {[
                 { icon: '🏕️', text: 'Group Adventures' },
                 { icon: '🗺️', text: 'Curated Routes' },
                 { icon: '🛡️', text: 'Safe & Verified' },
-                { icon: '⭐', text: '1000+ Trips Done' },
+                { icon: '⭐', text: stats.completed > 0 ? `${stats.completed}+ Trips Done` : 'Trips Done' },
               ].map((item) => (
                 <div
                   key={item.text}
@@ -79,19 +110,14 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          {/* Right Column - Stats */}
+          {/* Right Column — Dynamic Stats */}
           <motion.div
             initial={{ opacity: 0, x: 24 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="hidden lg:grid grid-cols-2 gap-24px"
           >
-            {[
-              { value: '12K+', label: 'Happy Travelers' },
-              { value: '80+', label: 'Destinations' },
-              { value: '4.9★', label: 'Average Rating' },
-              { value: '200+', label: 'Trips Completed' },
-            ].map((stat) => (
+            {displayStats.map((stat) => (
               <div
                 key={stat.label}
                 className="card flex flex-col items-center justify-center py-32px"
@@ -106,3 +132,4 @@ export default function Hero() {
     </section>
   )
 }
+

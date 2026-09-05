@@ -748,6 +748,51 @@ export default function AdminPage() {
     )
 }
 
+// ── TRIP IMAGE UPLOAD ─────────────────────────────────────────
+function TripImageUpload({ imageUrl, onChange }: { imageUrl: string; onChange: (url: string) => void }) {
+    const [uploading, setUploading] = useState(false)
+
+    const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        setUploading(true)
+        try {
+            const url = await uploadToCloudinary(file)
+            onChange(url)
+        } catch (err: any) {
+            alert('Upload failed: ' + (err.message || 'Unknown error'))
+        } finally { setUploading(false) }
+    }
+
+    return (
+        <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>
+            <label style={{display:'block',border:`2px dashed ${imageUrl ? 'var(--border)' : 'rgba(163,230,53,0.3)'}`,borderRadius:'12px',overflow:'hidden',cursor:'pointer',background:'rgba(163,230,53,0.02)',transition:'border-color 0.2s',position:'relative',minHeight:'160px'}}>
+                <input type="file" accept="image/*" onChange={handleFile} style={{position:'absolute',inset:0,opacity:0,cursor:'pointer',zIndex:2}} />
+                {uploading ? (
+                    <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'10px',height:'160px'}}>
+                        <div className="adm-spinner" style={{width:'28px',height:'28px'}} />
+                        <span style={{fontSize:'13px',color:'#a3e635',fontWeight:600}}>Uploading to Cloudinary...</span>
+                    </div>
+                ) : imageUrl ? (
+                    <div style={{position:'relative'}}>
+                        <img src={imageUrl} alt="Cover preview" style={{width:'100%',height:'200px',objectFit:'cover',display:'block'}} onError={e=>(e.currentTarget.style.display='none')} />
+                        <div style={{position:'absolute',bottom:'8px',right:'8px',background:'rgba(0,0,0,0.75)',padding:'6px 14px',borderRadius:'8px',fontSize:'12px',fontWeight:700,color:'#fff',backdropFilter:'blur(4px)'}}>
+                            📁 Click to replace
+                        </div>
+                    </div>
+                ) : (
+                    <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'6px',height:'160px'}}>
+                        <span style={{fontSize:'36px'}}>🏔️</span>
+                        <span style={{fontSize:'14px',fontWeight:700,color:'#a3e635'}}>Upload Cover Photo</span>
+                        <span style={{fontSize:'12px',color:'var(--text3)'}}>JPG, PNG, WebP — uploaded to Cloudinary CDN</span>
+                    </div>
+                )}
+            </label>
+            <input className={inp} value={imageUrl} onChange={e => onChange(e.target.value)} placeholder="Or paste image URL (https://...)" />
+        </div>
+    )
+}
+
 // ── TRIP MODAL ─────────────────────────────────────────────────
 function TripModal({ editing, onClose, onSave }: { editing: Record<string, unknown> | null; onClose: () => void; onSave: () => void }) {
     const parseJsonField = (val: unknown): string => {
@@ -886,13 +931,8 @@ function TripModal({ editing, onClose, onSave }: { editing: Record<string, unkno
                     <Field label="End Date"><input className={inp} style={{colorScheme:'dark'}} type="date" value={form.endDate} onChange={e => setForm({...form,endDate:e.target.value})} /></Field>
                     <Field label="Total Slots"><input className={inp} type="text" inputMode="numeric" value={form.totalSlots} onChange={e => setForm({...form,totalSlots:e.target.value.replace(/[^0-9]/g,'')})} /></Field>
                     <Field label="Booked Slots"><input className={inp} type="text" inputMode="numeric" value={form.bookedSlots} onChange={e => setForm({...form,bookedSlots:e.target.value.replace(/[^0-9]/g,'')})} /></Field>
-                    <Field label="Image URL" span2>
-                        <input className={inp} value={form.imageUrl} onChange={e => setForm({...form,imageUrl:e.target.value})} placeholder="https://images.unsplash.com/..." />
-                        {form.imageUrl && (
-                            <div style={{marginTop:'10px',borderRadius:'10px',overflow:'hidden',height:'140px',border:'1px solid var(--border)'}}>
-                                <img src={form.imageUrl} alt="Preview" style={{width:'100%',height:'100%',objectFit:'cover'}} onError={e=>(e.currentTarget.style.display='none')} />
-                            </div>
-                        )}
+                    <Field label="Cover Image" span2>
+                        <TripImageUpload imageUrl={form.imageUrl} onChange={url => setForm({...form, imageUrl: url})} />
                     </Field>
                     <div style={{gridColumn:'1/-1'}} className="adm-checkbox-row">
                         <input type="checkbox" id="featured" checked={form.featured} onChange={e => setForm({...form,featured:e.target.checked})} />

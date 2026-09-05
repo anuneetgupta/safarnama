@@ -4,9 +4,9 @@ import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'fra
 import { useRef, useState, useEffect } from 'react'
 import TestimonialsSection from '@/components/sections/Testimonials'
 
-/* ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+/* ─────────────────────────────────────────────────────────────
    TYPES & DATA
-ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */
+───────────────────────────────────────────────────────────── */
 const FOREST_BG = 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1800&q=72'
 const HERO_BG   = 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=85'
 
@@ -21,13 +21,6 @@ const FEATURES = [
 
 // No hardcoded fallback — trips are 100% database-driven
 
-const TESTIMONIALS = [
-    { name: 'Riya Sharma',  college: 'IIT Delhi',      trip: 'Banaras Vibes', text: 'Best trip of my life. The Ganga Aarti was magical. Safarnama handled everything perfectly!', avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80' },
-    { name: 'Arjun Mehta',  college: 'DU North Campus', trip: 'Banaras Vibes', text: 'At ₹3,000 for 3 nights, I expected nothing. Got everything. Will book Manali for sure!',     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80' },
-    { name: 'Priya Verma',  college: 'BITS Pilani',    trip: 'Banaras Vibes', text: 'As a solo female traveler, I felt completely safe. The group was amazing. 10/10!',             avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80' },
-    { name: 'Karan Singh',  college: 'CSJMU Kanpur',   trip: 'Banaras Vibes', text: 'Went alone, came back with 20 new friends. That is the Safarnama magic.',                      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80' },
-]
-
 const BADGE_STYLES: Record<string, { bg: string; color: string; border: string }> = {
     completed: { bg: 'rgba(20,35,3,0.88)', color: '#a3e635', border: 'rgba(163,230,53,0.45)' },
     next:      { bg: 'rgba(35,25,3,0.88)', color: '#fbbf24', border: 'rgba(251,191,36,0.45)' },
@@ -40,9 +33,9 @@ const PRICE_COLORS: Record<string, string> = {
     muted: 'rgba(200,215,160,0.65)',
 }
 
-/* ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+/* ─────────────────────────────────────────────────────────────
    HELPERS
-ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */
+───────────────────────────────────────────────────────────── */
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
     const ref = useRef(null)
     const inView = useInView(ref, { once: true, margin: '-50px' })
@@ -56,9 +49,9 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
     )
 }
 
-/* ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+/* ─────────────────────────────────────────────────────────────
    PAGE
-ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */
+───────────────────────────────────────────────────────────── */
 export default function Home() {
     const heroRef = useRef<HTMLDivElement>(null)
     const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
@@ -66,6 +59,7 @@ export default function Home() {
     const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
     const [activeT, setActiveT] = useState(0)
     const [liveTrips, setLiveTrips] = useState<any[]>([])
+    const [testimonials, setTestimonials] = useState<any[]>([])
 
     // Fetch trips dynamically
     useEffect(() => {
@@ -115,11 +109,31 @@ export default function Home() {
             .catch(err => console.error('Failed to fetch trips:', err));
     }, []);
 
+    // Fetch reviews dynamically from DB
+    useEffect(() => {
+        fetch('/api/reviews?published=true&limit=6')
+            .then(res => res.json())
+            .then(data => {
+                if (data.reviews?.length > 0) {
+                    setTestimonials(data.reviews.map((r: any) => ({
+                        name: r.name,
+                        college: r.college || '',
+                        trip: r.tripName || '',
+                        text: r.review,
+                        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(r.name)}&background=1a2e0a&color=a3e635&size=100`,
+                        rating: r.rating,
+                    })))
+                }
+            })
+            .catch(() => {})
+    }, [])
+
     // Auto-advance testimonials
     useEffect(() => {
-        const id = setInterval(() => setActiveT(p => (p + 1) % TESTIMONIALS.length), 5000)
+        if (testimonials.length === 0) return
+        const id = setInterval(() => setActiveT(p => (p + 1) % testimonials.length), 5000)
         return () => clearInterval(id)
-    }, [])
+    }, [testimonials.length])
 
     /* shared overlay layers */
     const darkOverlay    = { position: 'absolute' as const, inset: 0, background: 'rgba(6,5,1,0.80)' }
