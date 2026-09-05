@@ -31,3 +31,16 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ error: 'Failed to update registration' }, { status: 500 })
     }
 }
+
+export async function DELETE(req: NextRequest) {
+    if (!await requireAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    try {
+        const { id } = await req.json()
+        if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 })
+        await prisma.tripRegistration.delete({ where: { id } })
+        return NextResponse.json({ success: true })
+    } catch (e) {
+        console.error('[admin/registrations] DELETE error:', e)
+        return NextResponse.json({ error: 'Failed to delete registration' }, { status: 500 })
+    }
+}

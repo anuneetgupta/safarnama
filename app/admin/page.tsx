@@ -81,6 +81,7 @@ export default function AdminPage() {
     const [anns, setAnns] = useState<Ann[]>([])
     const [reviews, setReviews] = useState<ReviewItem[]>([])
     const [reviewFilter, setReviewFilter] = useState<'all' | 'pending' | 'published'>('all')
+    const [regFilter, setRegFilter] = useState<'all' | 'pending' | 'confirmed' | 'cancelled'>('all')
     const [loading, setLoading] = useState(true)
     const [modal, setModal] = useState<string | null>(null)
     const [editing, setEditing] = useState<Record<string, unknown> | null>(null)
@@ -335,8 +336,20 @@ export default function AdminPage() {
                         )}
 
                         {/* ── REGISTRATIONS ── */}
-                        {tab === 'Registrations' && (
+                        {tab === 'Registrations' && (() => {
+                            const filteredRegs = regFilter === 'all' ? regs : regs.filter(r => r.status === regFilter)
+                            return (
                             <div style={{display:'flex',flexDirection:'column',gap:'20px'}}>
+                                {/* Filter tabs */}
+                                <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
+                                    {(['all','pending','confirmed','cancelled'] as const).map(f => (
+                                        <button key={f} onClick={() => setRegFilter(f)}
+                                            className={`adm-btn adm-btn-sm ${regFilter === f ? 'adm-btn-primary' : 'adm-btn-ghost'}`}>
+                                            {f.charAt(0).toUpperCase()+f.slice(1)} ({f === 'all' ? regs.length : regs.filter(r => r.status === f).length})
+                                        </button>
+                                    ))}
+                                </div>
+                                {/* Per-trip stat cards */}
                                 <div className="adm-stat-grid">
                                     {Array.from(new Set(regs.map(r => r.tripName))).map(tripName => {
                                         const tripRegs = regs.filter(r => r.tripName === tripName)
@@ -360,7 +373,7 @@ export default function AdminPage() {
                                                 <th>User</th><th>Trip</th><th>Contact</th><th>Status</th><th style={{textAlign:'right'}}>Actions</th>
                                             </tr></thead>
                                             <tbody>
-                                                {regs.map(r => (
+                                                {filteredRegs.map(r => (
                                                     <tr key={r.id}>
                                                         <td><strong>{r.name}</strong><div style={{fontSize:'11px',color:'var(--text3)',marginTop:'2px'}}>{r.college || 'No college'}</div></td>
                                                         <td><span style={{display:'inline-flex',alignItems:'center',gap:'6px',padding:'3px 10px',borderRadius:'6px',background:'rgba(255,255,255,0.05)',fontSize:'12px',color:'var(--text2)'}}><Map size={11} style={{color:'#a3e635'}} />{r.tripName}</span></td>
@@ -368,19 +381,21 @@ export default function AdminPage() {
                                                         <td><span className={`adm-status ${r.status==='confirmed'?'adm-status-green':r.status==='cancelled'?'adm-status-red':'adm-status-amber'}`}>{r.status}</span></td>
                                                         <td style={{textAlign:'right'}}>
                                                             <div style={{display:'flex',justifyContent:'flex-end',gap:'8px'}}>
-                                                                {r.status !== 'confirmed' && <button onClick={async()=>{await api('/api/admin/registrations',{method:'PATCH',body:JSON.stringify({id:r.id,status:'confirmed'})});fetchAll()}} className="adm-btn adm-btn-confirm adm-btn-xs">Confirm</button>}
-                                                                {r.status !== 'cancelled' && <button onClick={async()=>{await api('/api/admin/registrations',{method:'PATCH',body:JSON.stringify({id:r.id,status:'cancelled'})});fetchAll()}} className="adm-btn adm-btn-danger adm-btn-xs">Cancel</button>}
+                                                                {r.status !== 'confirmed' && <button onClick={async()=>{await api('/api/admin/registrations',{method:'PATCH',body:JSON.stringify({id:r.id,status:'confirmed'})});fetchAll()}} className="adm-btn adm-btn-confirm adm-btn-xs">✓ Confirm</button>}
+                                                                {r.status !== 'cancelled' && <button onClick={async()=>{await api('/api/admin/registrations',{method:'PATCH',body:JSON.stringify({id:r.id,status:'cancelled'})});fetchAll()}} className="adm-btn adm-btn-danger adm-btn-xs">✕ Cancel</button>}
+                                                                <button onClick={async()=>{if(confirm(`Delete ${r.name}'s registration?`)){await api('/api/admin/registrations',{method:'DELETE',body:JSON.stringify({id:r.id})});fetchAll()}}} className="adm-btn adm-btn-danger adm-btn-xs" title="Delete permanently">🗑</button>
                                                             </div>
                                                         </td>
                                                     </tr>
                                                 ))}
                                             </tbody>
                                         </table>
-                                        {regs.length === 0 && <div className="adm-empty">No registrations found.</div>}
+                                        {filteredRegs.length === 0 && <div className="adm-empty">No {regFilter === 'all' ? '' : regFilter+' '}registrations found.</div>}
                                     </div>
                                 </div>
                             </div>
-                        )}
+                            )
+                        })()}
 
                         {/* ── USERS ── */}
                         {tab === 'Users' && (
@@ -388,7 +403,7 @@ export default function AdminPage() {
                                 <div className="adm-table-wrap">
                                     <table className="adm-table">
                                         <thead><tr>
-                                            <th>User</th><th>Contact</th><th>College</th><th>Role</th><th>Joined</th>
+                                            <th>User</th><th>Contact</th><th>College</th><th>Role</th><th>Joined</th><th style={{textAlign:'right'}}>Actions</th>
                                         </tr></thead>
                                         <tbody>
                                             {users.map(u => (
@@ -403,6 +418,20 @@ export default function AdminPage() {
                                                     <td>{u.college || '—'}</td>
                                                     <td><span className={`adm-status ${u.role==='admin'?'adm-status-green':'adm-status-grey'}`}>{u.role}</span></td>
                                                     <td style={{fontSize:'12px',color:'var(--text3)'}}>{new Date(u.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+                                                    <td style={{textAlign:'right'}}>
+                                                        <button
+                                                            onClick={async () => {
+                                                                const newRole = u.role === 'admin' ? 'user' : 'admin'
+                                                                if (confirm(`Make ${u.name || u.email} a ${newRole}?`)) {
+                                                                    await api('/api/admin/users', { method: 'PATCH', body: JSON.stringify({ id: u.id, role: newRole }) })
+                                                                    fetchAll()
+                                                                }
+                                                            }}
+                                                            className={`adm-btn adm-btn-xs ${u.role === 'admin' ? 'adm-btn-ghost' : 'adm-btn-confirm'}`}
+                                                        >
+                                                            {u.role === 'admin' ? '↓ Remove Admin' : '↑ Make Admin'}
+                                                        </button>
+                                                    </td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -679,16 +708,22 @@ export default function AdminPage() {
                                                     <div style={{fontSize:'12px',color:'#a3e635',marginTop:'1px'}}>{m.email}</div>
                                                 </div>
                                             </div>
-                                            <span style={{fontSize:'11px',color:'var(--text3)',flexShrink:0}}>{new Date(m.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+                                            <div style={{display:'flex',alignItems:'center',gap:'10px',flexShrink:0}}>
+                                                <span style={{fontSize:'11px',color:'var(--text3)'}}>{new Date(m.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+                                                <button
+                                                    onClick={async()=>{if(confirm('Delete this message?')){await api('/api/admin/messages',{method:'DELETE',body:JSON.stringify({id:m.id})});fetchAll()}}}
+                                                    className="adm-btn adm-btn-danger adm-btn-xs"
+                                                    title="Delete message"
+                                                >🗑</button>
+                                            </div>
                                         </div>
                                         <div className="adm-card-body">
                                             {m.subject && <div style={{fontWeight:700,fontSize:'13px',color:'var(--text2)',marginBottom:'8px',paddingBottom:'8px',borderBottom:'1px solid var(--border)'}}>{m.subject}</div>}
                                             <p style={{fontSize:'13px',color:'var(--text2)',lineHeight:1.65,whiteSpace:'pre-wrap'}}>{m.message}</p>
-                                            {!m.read && (
-                                                <div style={{display:'flex',justifyContent:'flex-end',paddingTop:'12px',marginTop:'12px',borderTop:'1px solid var(--border)'}}>
-                                                    <button onClick={async()=>{await api('/api/admin/messages',{method:'PATCH',body:JSON.stringify({id:m.id})});fetchAll()}} className="adm-btn adm-btn-confirm adm-btn-sm">✓ Mark as Read</button>
-                                                </div>
-                                            )}
+                                            <div style={{display:'flex',justifyContent:'flex-end',gap:'8px',paddingTop:'12px',marginTop:'12px',borderTop:'1px solid var(--border)'}}>
+                                                {!m.read && <button onClick={async()=>{await api('/api/admin/messages',{method:'PATCH',body:JSON.stringify({id:m.id})});fetchAll()}} className="adm-btn adm-btn-confirm adm-btn-sm">✓ Mark as Read</button>}
+                                                {m.read && <span style={{fontSize:'11px',color:'var(--text3)'}}>✓ Read</span>}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -947,32 +982,99 @@ function BlogModal({ editing, onClose, onSave }: { editing: Record<string, unkno
     )
 }
 
+// ── CLOUDINARY UPLOAD HELPER ───────────────────────────────────
+const CLD_CLOUD = 'wpypavne'
+const CLD_PRESET = 'safarnama_gallary'
+async function uploadToCloudinary(file: File): Promise<string> {
+    const reader = new FileReader()
+    const base64 = await new Promise<string>((res, rej) => {
+        reader.onload = () => res((reader.result as string).split(',')[1])
+        reader.onerror = rej
+        reader.readAsDataURL(file)
+    })
+    const form = new FormData()
+    form.append('file', `data:${file.type};base64,${base64}`)
+    form.append('upload_preset', CLD_PRESET)
+    form.append('folder', 'gallery')
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLD_CLOUD}/image/upload`, { method: 'POST', body: form })
+    const json = await res.json()
+    if (json.error) throw new Error(json.error.message)
+    return json.secure_url
+}
+
 // ── PHOTO MODAL ────────────────────────────────────────────────
 function PhotoModal({ onClose, onSave }: { onClose: () => void; onSave: () => void }) {
-    const [form, setForm] = useState({ url: '', caption: '', tripName: '' })
+    const [form, setForm] = useState({ url: '', caption: '', tripName: '', category: '' })
     const [saving, setSaving] = useState(false)
+    const [uploading, setUploading] = useState(false)
+
+    const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        setUploading(true)
+        try {
+            const url = await uploadToCloudinary(file)
+            setForm(f => ({ ...f, url }))
+        } catch (err: any) {
+            alert('Upload failed: ' + (err.message || 'Unknown error'))
+        } finally { setUploading(false) }
+    }
 
     const save = async () => {
         if (!form.url || !form.tripName) return
         setSaving(true)
-        await fetch('/api/admin/gallery', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+        await fetch('/api/admin/gallery', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, caption: form.caption || null, category: form.category || null }) })
         setSaving(false); onSave(); onClose()
     }
 
+    const CATS = ['', 'mountain', 'beach', 'culture', 'adventure']
+
     return (
         <Modal title="🖼 Add Photo to Gallery" onClose={onClose}>
-            <Field label="Photo URL *"><input className={inp} value={form.url} onChange={e => setForm({...form,url:e.target.value})} placeholder="https://..." /></Field>
-            {form.url && (
-                <div style={{borderRadius:'10px',overflow:'hidden',border:'1px solid var(--border)',height:'160px',marginBottom:'16px',background:'rgba(0,0,0,0.3)'}}>
-                    <img src={form.url} alt="Preview" style={{width:'100%',height:'100%',objectFit:'cover'}} onError={e => (e.currentTarget.style.display='none')} />
-                </div>
-            )}
+            {/* Upload zone */}
+            <div className="adm-field">
+                <label>Upload Photo</label>
+                <label style={{display:'block',border:'2px dashed var(--border)',borderRadius:'12px',padding:'24px',textAlign:'center',cursor:'pointer',background:'rgba(163,230,53,0.02)',transition:'border-color 0.2s',position:'relative'}}>
+                    <input type="file" accept="image/*" onChange={handleFile} style={{position:'absolute',inset:0,opacity:0,cursor:'pointer'}} />
+                    {uploading ? (
+                        <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'8px'}}>
+                            <div className="adm-spinner" style={{width:'24px',height:'24px'}} />
+                            <span style={{fontSize:'13px',color:'#a3e635',fontWeight:600}}>Uploading to Cloudinary...</span>
+                        </div>
+                    ) : form.url ? (
+                        <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'8px'}}>
+                            <img src={form.url} alt="Preview" style={{width:'100%',maxHeight:'180px',objectFit:'cover',borderRadius:'8px',marginBottom:'8px'}} onError={e=>(e.currentTarget.style.display='none')} />
+                            <span style={{fontSize:'12px',color:'var(--text3)'}}>Click to replace photo</span>
+                        </div>
+                    ) : (
+                        <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'6px'}}>
+                            <span style={{fontSize:'32px'}}>📷</span>
+                            <span style={{fontSize:'14px',fontWeight:700,color:'#a3e635'}}>Click to upload from computer</span>
+                            <span style={{fontSize:'12px',color:'var(--text3)'}}>JPG, PNG, WebP — uploaded to Cloudinary CDN</span>
+                        </div>
+                    )}
+                </label>
+            </div>
+            <Field label="Or paste Image URL directly">
+                <input className={inp} value={form.url} onChange={e => setForm({...form, url: e.target.value})} placeholder="https://..." />
+            </Field>
             <Field label="Trip Name *"><input className={inp} value={form.tripName} onChange={e => setForm({...form,tripName:e.target.value})} placeholder="e.g. Banaras Vibes" /></Field>
             <Field label="Caption (Optional)"><input className={inp} value={form.caption} onChange={e => setForm({...form,caption:e.target.value})} placeholder="Brief description..." /></Field>
+            <div className="adm-field">
+                <label>Category</label>
+                <div style={{display:'flex',gap:'8px',flexWrap:'wrap',marginTop:'4px'}}>
+                    {CATS.map(c => (
+                        <button key={c} type="button" onClick={() => setForm({...form, category: c})}
+                            style={{padding:'5px 14px',borderRadius:'999px',border:`1px solid ${form.category===c?'#38bdf8':'var(--border)'}`,background:form.category===c?'rgba(56,189,248,0.15)':'transparent',color:form.category===c?'#38bdf8':'var(--text3)',fontWeight:600,fontSize:'12px',cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s'}}>
+                            {c || 'None'}
+                        </button>
+                    ))}
+                </div>
+            </div>
             <div className="adm-modal-footer">
                 <button onClick={onClose} className="adm-btn adm-btn-ghost">Cancel</button>
-                <button onClick={save} disabled={saving || !form.url || !form.tripName} className="adm-btn adm-btn-primary" style={{minWidth:'120px'}}>
-                    {saving ? '⏳ Adding...' : '📸 Add Photo'}
+                <button onClick={save} disabled={saving || uploading || !form.url || !form.tripName} className="adm-btn adm-btn-primary" style={{minWidth:'130px'}}>
+                    {saving ? '⏳ Adding...' : uploading ? '⏳ Uploading...' : '📸 Add Photo'}
                 </button>
             </div>
         </Modal>
@@ -1018,28 +1120,58 @@ function AnnModal({ onClose, onSave }: { onClose: () => void; onSave: () => void
 }
 
 // ── PHOTO EDIT MODAL ───────────────────────────────────────────
-function PhotoEditModal({ photo, onClose, onSave }: { photo: {id:string;url:string;caption:string|null;tripName:string}; onClose: () => void; onSave: () => void }) {
-    const [form, setForm] = useState({ caption: photo.caption || '', tripName: photo.tripName, url: photo.url })
+function PhotoEditModal({ photo, onClose, onSave }: { photo: {id:string;url:string;caption:string|null;tripName:string;category?:string|null}; onClose: () => void; onSave: () => void }) {
+    const [form, setForm] = useState({ caption: photo.caption || '', tripName: photo.tripName, url: photo.url, category: photo.category || '' })
     const [saving, setSaving] = useState(false)
+    const [uploading, setUploading] = useState(false)
+    const CATS = ['', 'mountain', 'beach', 'culture', 'adventure']
+
+    const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        setUploading(true)
+        try {
+            const url = await uploadToCloudinary(file)
+            setForm(f => ({ ...f, url }))
+        } catch (err: any) {
+            alert('Upload failed: ' + (err.message || 'Unknown error'))
+        } finally { setUploading(false) }
+    }
 
     const save = async () => {
         setSaving(true)
-        await fetch('/api/admin/gallery', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: photo.id, ...form }) })
+        await fetch('/api/admin/gallery', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: photo.id, ...form, caption: form.caption || null, category: form.category || null }) })
         setSaving(false); onSave(); onClose()
     }
 
     return (
         <Modal title="✏️ Edit Photo" onClose={onClose}>
-            <div style={{borderRadius:'10px',overflow:'hidden',border:'1px solid var(--border)',height:'180px',marginBottom:'16px',background:'rgba(0,0,0,0.3)'}}>
+            {/* Current preview */}
+            <div style={{borderRadius:'10px',overflow:'hidden',border:'1px solid var(--border)',height:'180px',marginBottom:'12px',background:'rgba(0,0,0,0.3)',position:'relative'}}>
                 <img src={form.url} alt="Preview" style={{width:'100%',height:'100%',objectFit:'cover'}} onError={e => (e.currentTarget.style.display='none')} />
+                <label style={{position:'absolute',bottom:'8px',right:'8px',background:'rgba(0,0,0,0.7)',padding:'6px 12px',borderRadius:'8px',cursor:'pointer',fontSize:'12px',fontWeight:700,color:'#fff',backdropFilter:'blur(4px)'}}>
+                    <input type="file" accept="image/*" onChange={handleFile} style={{display:'none'}} />
+                    {uploading ? '⏳ Uploading...' : '📁 Replace Photo'}
+                </label>
             </div>
             <Field label="Image URL"><input className={inp} value={form.url} onChange={e => setForm({...form,url:e.target.value})} placeholder="https://..." /></Field>
             <Field label="Trip Name *"><input className={inp} value={form.tripName} onChange={e => setForm({...form,tripName:e.target.value})} placeholder="e.g. Banaras Vibes" /></Field>
             <Field label="Caption (Optional)"><input className={inp} value={form.caption} onChange={e => setForm({...form,caption:e.target.value})} placeholder="Add a caption..." /></Field>
+            <div className="adm-field">
+                <label>Category</label>
+                <div style={{display:'flex',gap:'8px',flexWrap:'wrap',marginTop:'4px'}}>
+                    {CATS.map(c => (
+                        <button key={c} type="button" onClick={() => setForm({...form, category: c})}
+                            style={{padding:'5px 14px',borderRadius:'999px',border:`1px solid ${form.category===c?'#38bdf8':'var(--border)'}`,background:form.category===c?'rgba(56,189,248,0.15)':'transparent',color:form.category===c?'#38bdf8':'var(--text3)',fontWeight:600,fontSize:'12px',cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s'}}>
+                            {c || 'None'}
+                        </button>
+                    ))}
+                </div>
+            </div>
             <div className="adm-modal-footer">
                 <button onClick={onClose} className="adm-btn adm-btn-ghost">Cancel</button>
-                <button onClick={save} disabled={saving} className="adm-btn adm-btn-primary" style={{minWidth:'120px'}}>
-                    {saving ? '⏳ Saving...' : '✓ Save Changes'}
+                <button onClick={save} disabled={saving || uploading} className="adm-btn adm-btn-primary" style={{minWidth:'120px'}}>
+                    {saving ? '⏳ Saving...' : uploading ? '⏳ Uploading...' : '✓ Save Changes'}
                 </button>
             </div>
         </Modal>

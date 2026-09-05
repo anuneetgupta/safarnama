@@ -4,42 +4,17 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 
-const REVIEWS = [
-  {
-    name: 'Riya Sharma',
-    location: 'IIT Delhi, Delhi',
-    trip: 'Banaras Vibes',
-    text: 'This journey changed my life completely. The Ganga Aarti at dawn was something I will never forget. Safarnama handled everything so perfectly — I just had to show up!',
-    avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=120&q=80',
-    rating: 5,
-  },
-  {
-    name: 'Arjun Mehta',
-    location: 'DU North Campus, Delhi',
-    trip: 'Banaras Vibes',
-    text: 'At ₹3,000 for 3 nights I expected nothing, yet got everything — great accommodation, amazing food, a brilliant group. Will 100% book Manali next!',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80',
-    rating: 5,
-  },
-  {
-    name: 'Priya Verma',
-    location: 'BITS Pilani, Rajasthan',
-    trip: 'Banaras Vibes',
-    text: 'As a solo female traveler I felt completely safe the entire time. The group was amazing, the itinerary was perfect. Genuinely a 10/10 experience.',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&q=80',
-    rating: 5,
-  },
-  {
-    name: 'Karan Singh',
-    location: 'CSJMU, Kanpur',
-    trip: 'Banaras Vibes',
-    text: "Went alone, came back with 20 new friends. That's the Safarnama magic — they don't just sell trips, they build communities.",
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80',
-    rating: 5,
-  },
-]
 
 const FOREST_BG = 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1800&q=72'
+
+type Review = {
+  name: string
+  location: string
+  trip: string
+  text: string
+  avatar: string
+  rating: number
+}
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -53,7 +28,7 @@ function StarRating({ rating }: { rating: number }) {
   )
 }
 
-function TestimonialCard({ review, delay }: { review: typeof REVIEWS[0]; delay: number }) {
+function TestimonialCard({ review, delay }: { review: Review; delay: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-40px' })
 
@@ -120,7 +95,8 @@ function TestimonialCard({ review, delay }: { review: typeof REVIEWS[0]; delay: 
 }
 
 export default function TestimonialsSection() {
-  const [reviewsList, setReviewsList] = useState(REVIEWS)
+  const [reviewsList, setReviewsList] = useState<Review[]>([])
+  const [loadingReviews, setLoadingReviews] = useState(true)
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
   const total = reviewsList.length
@@ -147,6 +123,7 @@ export default function TestimonialsSection() {
         }
       })
       .catch(() => {})
+      .finally(() => setLoadingReviews(false))
   }, [])
 
   useEffect(() => {
@@ -259,16 +236,28 @@ export default function TestimonialsSection() {
           </button>
 
           {/* Slide viewport */}
-          <div style={{ overflow: 'hidden' }}>
-            <motion.div
-              style={{ display: 'flex', gap: 20 }}
-              animate={{ x: `calc(-${current} * (100% / 3 + 7px))` }}
-              transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >
-              {reviewsList.map((review, i) => (
-                <TestimonialCard key={`${review.name}-${i}`} review={review} delay={i * 0.06} />
-              ))}
-            </motion.div>
+          <div style={{ overflow: 'hidden', minHeight: 220 }}>
+            {loadingReviews ? (
+              <div style={{ display: 'flex', gap: 20 }}>
+                {[0, 1, 2].map(i => (
+                  <div key={i} style={{ flex: '0 0 calc(33.333% - 14px)', borderRadius: 20, height: 220, background: 'rgba(163,230,53,0.04)', border: '1px solid rgba(163,230,53,0.08)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                ))}
+              </div>
+            ) : reviewsList.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px 24px', color: 'rgba(180,200,140,0.45)', fontSize: 15 }}>
+                No reviews published yet.
+              </div>
+            ) : (
+              <motion.div
+                style={{ display: 'flex', gap: 20 }}
+                animate={{ x: `calc(-${current} * (100% / 3 + 7px))` }}
+                transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+              >
+                {reviewsList.map((review, i) => (
+                  <TestimonialCard key={`${review.name}-${i}`} review={review} delay={i * 0.06} />
+                ))}
+              </motion.div>
+            )}
           </div>
         </div>
 
@@ -301,21 +290,27 @@ export default function TestimonialsSection() {
             flexWrap: 'wrap',
           }}
         >
-          {[
-            { value: '1,000+', label: 'Happy Travelers' },
-            { value: '4.9★',   label: 'Average Rating'  },
-            { value: '12+',    label: 'Trips Completed'  },
-            { value: '100%',   label: 'Would Recommend' },
-          ].map(stat => (
-            <div key={stat.label} style={{ textAlign: 'center' }}>
-              <p style={{ fontSize: 'clamp(22px,3vw,30px)', fontWeight: 800, color: '#a3e635', fontFamily: "'Outfit',sans-serif", lineHeight: 1.1 }}>
-                {stat.value}
-              </p>
-              <p style={{ fontSize: 12, color: 'rgba(180,200,140,0.45)', marginTop: 4, letterSpacing: '0.05em' }}>
-                {stat.label}
-              </p>
-            </div>
-          ))}
+          {(() => {
+            const total = reviewsList.length
+            const avgRating = total > 0 ? (reviewsList.reduce((s, r) => s + r.rating, 0) / total).toFixed(1) : '—'
+            const uniqueTrips = total > 0 ? new Set(reviewsList.map(r => r.trip).filter(Boolean)).size : '—'
+            const recommendPct = total > 0 ? Math.round((reviewsList.filter(r => r.rating >= 4).length / total) * 100) + '%' : '—'
+            return [
+              { value: total > 0 ? `${total}+` : '—', label: 'Happy Travelers' },
+              { value: `${avgRating}★`,                label: 'Average Rating'  },
+              { value: total > 0 ? `${uniqueTrips}+` : '—', label: 'Trips Completed'  },
+              { value: recommendPct,                   label: 'Would Recommend' },
+            ].map(stat => (
+              <div key={stat.label} style={{ textAlign: 'center' }}>
+                <p style={{ fontSize: 'clamp(22px,3vw,30px)', fontWeight: 800, color: '#a3e635', fontFamily: "'Outfit',sans-serif", lineHeight: 1.1 }}>
+                  {stat.value}
+                </p>
+                <p style={{ fontSize: 12, color: 'rgba(180,200,140,0.45)', marginTop: 4, letterSpacing: '0.05em' }}>
+                  {stat.label}
+                </p>
+              </div>
+            ))
+          })()}
         </motion.div>
 
       </div>

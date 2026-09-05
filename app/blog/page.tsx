@@ -7,12 +7,27 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 
 
-const STATS = [
-  { value: '1,000+', label: 'Happy Travelers', icon: '😊' },
-  { value: '4.9★', label: 'Average Rating', icon: '⭐' },
-  { value: '12+', label: 'Trips Completed', icon: '🗺️' },
-  { value: '100%', label: 'Would Recommend', icon: '👍' },
-]
+function computeStats(reviews: any[]) {
+  if (!reviews || reviews.length === 0) {
+    return [
+      { value: '—', label: 'Happy Travelers', icon: '😊' },
+      { value: '—', label: 'Average Rating', icon: '⭐' },
+      { value: '—', label: 'Trips Completed', icon: '🗺️' },
+      { value: '—', label: 'Would Recommend', icon: '👍' },
+    ]
+  }
+  const total = reviews.length
+  const avgRating = reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / total
+  const uniqueTrips = new Set(reviews.map((r) => r.tripName).filter(Boolean)).size
+  const recommendCount = reviews.filter((r) => (r.rating || 5) >= 4).length
+  const recommendPct = Math.round((recommendCount / total) * 100)
+  return [
+    { value: `${total}+`, label: 'Happy Travelers', icon: '😊' },
+    { value: `${avgRating.toFixed(1)}★`, label: 'Average Rating', icon: '⭐' },
+    { value: `${uniqueTrips}+`, label: 'Trips Completed', icon: '🗺️' },
+    { value: `${recommendPct}%`, label: 'Would Recommend', icon: '👍' },
+  ]
+}
 
 /* ── Star Rating display ── */
 function Stars({ n }: { n: number }) {
@@ -553,9 +568,13 @@ export default function ReviewsPage() {
                     </svg>
                   ))}
                 </div>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#f0f4e8' }}>4.9 / 5</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#f0f4e8' }}>
+                  {reviews.length > 0
+                    ? `${(reviews.reduce((s, r) => s + (r.rating || 5), 0) / reviews.length).toFixed(1)} / 5`
+                    : '— / 5'}
+                </span>
                 <span style={{ fontSize: 13, color: 'rgba(180,200,140,0.5)' }}>
-                  ({reviews.length}+ reviews)
+                  ({reviews.length} review{reviews.length !== 1 ? 's' : ''})
                 </span>
               </div>
 
@@ -598,7 +617,7 @@ export default function ReviewsPage() {
           style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}
           className="stats-grid"
         >
-          {STATS.map((s, i) => (
+          {computeStats(reviews).map((s, i) => (
             <motion.div
               key={s.label}
               initial={{ opacity: 0, y: 20 }}
