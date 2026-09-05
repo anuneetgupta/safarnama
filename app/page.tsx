@@ -69,7 +69,7 @@ export default function Home() {
 
     // Fetch trips dynamically
     useEffect(() => {
-        fetch('/api/admin/trips')
+        fetch('/api/trips')
             .then(res => res.json())
             .then(data => {
                 if (data.trips) {
