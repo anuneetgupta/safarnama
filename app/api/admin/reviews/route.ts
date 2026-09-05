@@ -56,13 +56,21 @@ export async function PATCH(req: NextRequest) {
     }
 }
 
-// DELETE
+// DELETE — single review or bulk-delete all seeded reviews
 export async function DELETE(req: NextRequest) {
     if (!await requireAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     try {
-        const { id } = await req.json()
-        if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
-        await prisma.review.delete({ where: { id } })
+        const body = await req.json()
+
+        // Bulk delete: remove ALL reviews (wipes seeded fake data)
+        if (body.deleteAll === true) {
+            const { count } = await prisma.review.deleteMany({})
+            return NextResponse.json({ success: true, deleted: count })
+        }
+
+        // Single delete by id
+        if (!body.id) return NextResponse.json({ error: 'id required' }, { status: 400 })
+        await prisma.review.delete({ where: { id: body.id } })
         return NextResponse.json({ success: true })
     } catch (e) {
         console.error('[admin/reviews] DELETE error:', e)
