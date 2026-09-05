@@ -111,9 +111,17 @@ function GalleryCard({ photo, index, onClick }: { photo:Photo; index:number; onC
         <img
           src={photo.url}
           alt={photo.caption ?? photo.tripName}
+          referrerPolicy="no-referrer"
+          crossOrigin="anonymous"
           className="object-cover group-hover:scale-[1.1] w-full h-full"
           style={{ transition:'transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94)', objectFit:'cover' }}
-          onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = '0.3' }}
+          onError={e => {
+            const img = e.currentTarget as HTMLImageElement
+            if (!img.dataset.fallback) {
+              img.dataset.fallback = '1'
+              img.src = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80'
+            }
+          }}
         />
       </div>
 
@@ -239,7 +247,21 @@ function Lightbox({ photos, index, onClose, onPrev, onNext }:{
         >
           <div className="relative w-full overflow-hidden" style={{ height:'70vh', borderRadius:20, border:'1px solid rgba(132,204,22,0.15)' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photo.url} alt={photo.caption??''} className="w-full h-full" style={{ objectFit:'contain' }} />
+            <img
+              src={photo.url}
+              alt={photo.caption??''}
+              referrerPolicy="no-referrer"
+              crossOrigin="anonymous"
+              className="w-full h-full"
+              style={{ objectFit:'contain' }}
+              onError={e => {
+                const img = e.currentTarget as HTMLImageElement
+                if (!img.dataset.fallback) {
+                  img.dataset.fallback = '1'
+                  img.src = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80'
+                }
+              }}
+            />
           </div>
           {/* Info bar */}
           <div className="flex items-center justify-between mt-4 px-1">

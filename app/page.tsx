@@ -324,8 +324,8 @@ export default function Home() {
                                             {d.status}
                                         </div>
 
-                                        {/* Image with subtle zoom on hover */}
-                                        <motion.img src={d.img} alt={d.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                                        {/* Image with subtle zoom on hover */}\r
+                                        <motion.img src={d.img} alt={d.name} referrerPolicy="no-referrer" crossOrigin="anonymous" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}\r
                                             whileHover={{ scale: 1.08 }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }} />
 
                                         {/* Gradient overlay */}
