@@ -1,10 +1,20 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { motion } from 'framer-motion'
+
+const OAUTH_ERROR_MESSAGES: Record<string, string> = {
+    OAuthSignin: 'Could not start Google sign-in. Please try again.',
+    OAuthCallback: 'Google sign-in failed. This is often caused by a redirect URI mismatch in Google Cloud Console.',
+    OAuthCreateAccount: 'Could not create account via Google. Please try again.',
+    OAuthCallbackError: 'Google sign-in was cancelled or failed. Please try again.',
+    AccessDenied: 'Access was denied. Please contact support.',
+    Verification: 'Verification failed. Please try again.',
+    Default: 'Sign-in failed. Please try again.',
+}
 
 export default function LoginPage() {
     const [email, setEmail] = useState('')
@@ -13,6 +23,11 @@ export default function LoginPage() {
     const [errors, setErrors] = useState({ email: '', password: '' })
     const [loading, setLoading] = useState(false)
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const oauthError = searchParams.get('error')
+    const oauthErrorMsg = oauthError
+        ? (OAUTH_ERROR_MESSAGES[oauthError] ?? OAUTH_ERROR_MESSAGES.Default)
+        : null
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -41,12 +56,12 @@ export default function LoginPage() {
         }
     }
 
-    const handleSocialLogin = (provider: string) => {
-        // Use absolute URL to avoid redirect loop in production (Render/Vercel)
-        const callbackUrl = typeof window !== 'undefined'
-            ? `${window.location.origin}/dashboard`
-            : '/dashboard'
-        signIn(provider, { callbackUrl })
+    const handleSocialLogin = async (provider: string) => {
+        try {
+            await signIn(provider, { callbackUrl: '/dashboard' })
+        } catch (err) {
+            console.error('[Google login]', err)
+        }
     }
 
     return (
@@ -497,6 +512,26 @@ export default function LoginPage() {
                             <button type="submit" className="lc-btn" disabled={loading}>
                                 {loading ? 'Signing in...' : 'Sign In'}
                             </button>
+
+                            {oauthErrorMsg && (
+                                <div style={{
+                                    background: 'rgba(239,68,68,0.08)',
+                                    border: '1px solid rgba(239,68,68,0.3)',
+                                    borderRadius: '12px',
+                                    padding: '12px 16px',
+                                    marginBottom: '16px',
+                                    fontSize: '13px',
+                                    color: '#f87171',
+                                    lineHeight: 1.5,
+                                }}>
+                                    ⚠️ {oauthErrorMsg}
+                                    {oauthError === 'OAuthCallback' && (
+                                        <div style={{ marginTop: '6px', fontSize: '11px', color: 'rgba(248,113,113,0.7)' }}>
+                                            Error code: <code style={{ fontFamily: 'monospace' }}>{oauthError}</code>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
 
                             <div className="lc-divider">
                                 <div className="lc-div-line" />
