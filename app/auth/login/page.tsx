@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
@@ -16,7 +16,7 @@ const OAUTH_ERROR_MESSAGES: Record<string, string> = {
     Default: 'Sign-in failed. Please try again.',
 }
 
-export default function LoginPage() {
+function LoginPageInner() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
@@ -589,5 +589,13 @@ export default function LoginPage() {
 
             </div>
         </>
+    )
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={null}>
+            <LoginPageInner />
+        </Suspense>
     )
 }
