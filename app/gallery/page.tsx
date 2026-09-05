@@ -13,7 +13,6 @@ type Photo = {
 }
 
 const FALLBACK: Photo[] = [
-  { id:'f1', url:'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800', caption:'Beach van life vibes',       tripName:'Goa Getaway',      category:'beach'     },
   { id:'f2', url:'https://images.unsplash.com/photo-1548013146-72479768bada?w=800', caption:'Taj Mahal at golden hour',  tripName:'Jaipur Royale',    category:'culture'   },
   { id:'f3', url:'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=800', caption:'Snow-capped Himalayas', tripName:'Manali Adventure', category:'mountain'  },
   { id:'f4', url:'https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?w=800', caption:'Gateway of India',      tripName:'Jaipur Royale',    category:'culture'   },
@@ -24,14 +23,50 @@ const FALLBACK: Photo[] = [
   { id:'f9', url:'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800', caption:'Mountain peak adventure', tripName:'Rishikesh Rush',   category:'adventure' },
 ]
 
-const TABS = [
-  { label:'All',              value:'all',              icon:'⊞' },
-  { label:'Banaras Vibes',    value:'Banaras Vibes',    icon:'🕌' },
-  { label:'Manali Adventure', value:'Manali Adventure', icon:'⛰️' },
-  { label:'Beaches',          value:'beach',            icon:'🌊' },
-  { label:'Culture',          value:'culture',          icon:'🏛️' },
-  { label:'Adventure',        value:'adventure',        icon:'⚡' },
-]
+// Icons for known categories — new categories get a default icon
+const CATEGORY_ICONS: Record<string, string> = {
+  all:       '⊞',
+  beach:     '🌊',
+  mountain:  '⛰️',
+  culture:   '🏛️',
+  adventure: '⚡',
+  nature:    '🌿',
+  city:      '🏙️',
+}
+
+// Trip-name → icon map (populated from category of the photo's trip)
+const TRIP_ICONS: Record<string, string> = {
+  'Banaras Vibes':    '🕌',
+  'Manali Adventure': '⛰️',
+  'Rishikesh Rush':   '⚡',
+  'Jaipur Royale':    '🏰',
+  'Udaipur Dreams':   '🌅',
+}
+
+function buildTabs(photos: Photo[]) {
+  const tripNames = [...new Set(photos.map(p => p.tripName).filter(Boolean))] as string[]
+  const categories = [...new Set(photos.map(p => p.category).filter(Boolean))] as string[]
+
+  const tripTabs = tripNames.map(name => ({
+    label: name,
+    value: name,
+    icon:  TRIP_ICONS[name] ?? '🗺️',
+  }))
+
+  const catTabs = categories.map(cat => ({
+    label: cat.charAt(0).toUpperCase() + cat.slice(1),
+    value: cat,
+    icon:  CATEGORY_ICONS[cat] ?? '📸',
+  }))
+
+  // Deduplicate: if a trip tab and category tab would filter the same photos, skip the category
+  const tripCats = new Set(photos.map(p => p.category))
+  const uniqueCatTabs = catTabs.filter(c => !tripTabs.some(t =>
+    photos.filter(p => p.tripName === t.value).every(p => p.category === c.value)
+  ))
+
+  return [{ label: 'All', value: 'all', icon: '⊞' }, ...tripTabs, ...uniqueCatTabs]
+}
 
 const EASE = [0.25, 0.46, 0.45, 0.94] as const
 
@@ -226,12 +261,20 @@ export default function GalleryPage() {
   const [loading, setLoading] = useState(true)
   const [active, setActive]   = useState('all')
   const [lbIndex, setLbIndex] = useState<number|null>(null)
+  const [tabs, setTabs]       = useState<{ label:string; value:string; icon:string }[]>([{ label:'All', value:'all', icon:'⊞' }])
 
   useEffect(()=>{
     fetch('/api/gallery')
       .then(r=>r.json())
-      .then(d=>setPhotos(d.photos || []))
-      .catch(()=>setPhotos([]))
+      .then(d=>{
+        const fetched: Photo[] = d.photos && d.photos.length > 0 ? d.photos : FALLBACK
+        setPhotos(fetched)
+        setTabs(buildTabs(fetched))
+      })
+      .catch(()=>{
+        setPhotos(FALLBACK)
+        setTabs(buildTabs(FALLBACK))
+      })
       .finally(()=>setLoading(false))
   },[])
 
@@ -316,7 +359,7 @@ export default function GalleryPage() {
           style={{ marginBottom:40 }}
           initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.5, delay:0.2 }}
         >
-          {TABS.map(tab=>(
+          {tabs.map(tab=>(
             <button
               key={tab.value}
               onClick={()=>setActive(tab.value)}

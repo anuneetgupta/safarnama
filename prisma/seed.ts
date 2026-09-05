@@ -52,20 +52,6 @@ async function main() {
             category: 'mountain',
         },
         {
-            name: 'Goa Getaway',
-            destination: 'Goa Getaway',
-            description: 'Beach parties, water sports, and endless fun under the sun. The ultimate college trip experience!',
-            price: 5500,
-            status: 'booking_open',
-            startDate: '2026-08-10',
-            endDate: '2026-08-14',
-            totalSlots: 40,
-            bookedSlots: 12,
-            imageUrl: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800',
-            featured: true,
-            category: 'beach',
-        },
-        {
             name: 'Rishikesh Rush',
             destination: 'Rishikesh Rush',
             description: 'White water rafting, camping by the Ganges, and spiritual vibes. The perfect blend of adventure and peace.',
@@ -127,9 +113,6 @@ async function main() {
         { url: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=800', caption: 'Snow-capped Himalayas', tripName: 'Manali Adventure', category: 'mountain' },
         { url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800', caption: 'Camping under the stars', tripName: 'Manali Adventure', category: 'mountain' },
         { url: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800', caption: 'Valley views from the top', tripName: 'Manali Adventure', category: 'mountain' },
-        // Beaches
-        { url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800', caption: 'Beach van life vibes', tripName: 'Goa Getaway', category: 'beach' },
-        { url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800', caption: 'Sunset at Goa beach', tripName: 'Goa Getaway', category: 'beach' },
         // Culture
         { url: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=800', caption: 'Taj Mahal at golden hour', tripName: 'Jaipur Royale', category: 'culture' },
         { url: 'https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?w=800', caption: 'Gateway of India at sunset', tripName: 'Jaipur Royale', category: 'culture' },

@@ -6,85 +6,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 
-/* ── DEFAULT CURATED REVIEWS (Fallback when DB is initially empty) ── */
-const DEFAULT_REVIEWS = [
-  {
-    id: 'd1',
-    name: 'Riya Sharma',
-    college: 'IIT Delhi',
-    location: 'New Delhi',
-    tripName: 'Banaras Vibes',
-    rating: 5,
-    createdAt: '2026-01-15T12:00:00.000Z',
-    avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=120&q=80',
-    title: 'Most spiritual experience of my life!',
-    review: 'I had zero expectations going in, but Banaras completely blew my mind. The Ganga Aarti at night was something I will never forget. Safarnama handled everything — transport, stay, food — perfectly. The group was amazing and we all became friends by day 2. Highly recommend to every student!',
-    photos: [
-      'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=400&q=80',
-      'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=400&q=80',
-    ],
-    verified: true,
-  },
-  {
-    id: 'd2',
-    name: 'Arjun Mehta',
-    college: 'DU North Campus',
-    location: 'Delhi',
-    tripName: 'Banaras Vibes',
-    rating: 5,
-    createdAt: '2026-01-18T12:00:00.000Z',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80',
-    title: 'Budget-friendly and absolutely worth it!',
-    review: 'At just ₹3,000 for 3 nights, I honestly did not expect much. But Safarnama delivered way beyond expectations. Clean accommodation, great food, and an itinerary that covered everything important. The sunrise boat ride on the Ganges was the highlight. Will definitely book the Manali trip next!',
-    photos: ['https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80'],
-    verified: true,
-  },
-  {
-    id: 'd3',
-    name: 'Priya Verma',
-    college: 'BITS Pilani',
-    location: 'Rajasthan',
-    tripName: 'Banaras Vibes',
-    rating: 5,
-    createdAt: '2026-01-20T12:00:00.000Z',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&q=80',
-    title: 'Safe, fun, and perfectly organized',
-    review: 'As a solo female traveler, safety was my top concern. Safarnama made me feel completely secure throughout the trip. The trip leader was always available, the group was respectful, and the entire experience was seamless. The street food tour in Varanasi was an absolute highlight. 10/10!',
-    photos: [
-      'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400&q=80',
-      'https://images.unsplash.com/photo-1587135941948-670b381f08ce?w=400&q=80',
-    ],
-    verified: true,
-  },
-  {
-    id: 'd4',
-    name: 'Karan Singh',
-    college: 'CSJMU Kanpur',
-    location: 'Uttar Pradesh',
-    tripName: 'Banaras Vibes',
-    rating: 5,
-    createdAt: '2026-01-25T12:00:00.000Z',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80',
-    title: 'Made 20 new friends in 3 days!',
-    review: 'I went alone and came back with a whole friend group. That is the magic of Safarnama. The team creates an environment where everyone feels welcome. Banaras itself is incredible — the energy, the culture, the food. Already waiting for the Manali trip announcement!',
-    photos: [],
-    verified: true,
-  },
-  {
-    id: 'd5',
-    name: 'Sneha Patel',
-    college: 'NIT Surat',
-    location: 'Gujarat',
-    tripName: 'Goa Getaway',
-    rating: 5,
-    createdAt: '2026-02-02T12:00:00.000Z',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&q=80',
-    title: 'Best beach trip ever on a student budget!',
-    review: 'Never thought I could afford Goa as a student. Safarnama made it happen at an unbelievable price. The sunsets, the beach parties, the food — every moment was curated beautifully. The WhatsApp group before the trip kept everyone connected and excited. Absolutely will travel with them again!',
-    photos: ['https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=80'],
-    verified: true,
-  },
-]
 
 const STATS = [
   { value: '1,000+', label: 'Happy Travelers', icon: '😊' },
@@ -388,7 +309,7 @@ export default function ReviewsPage() {
   const statsRef = useRef<HTMLDivElement>(null)
   const statsInView = useInView(statsRef, { once: true, margin: '-60px' })
 
-  const [reviews, setReviews] = useState<any[]>(DEFAULT_REVIEWS)
+  const [reviews, setReviews] = useState<any[]>([])
   const [trips, setTrips] = useState<string[]>([])
   const [loadingReviews, setLoadingReviews] = useState(true)
 
@@ -419,10 +340,7 @@ export default function ReviewsPage() {
         ])
 
         if (revRes.reviews && revRes.reviews.length > 0) {
-          // Combine DB reviews with defaults if desired, or prioritize live DB reviews
           setReviews(revRes.reviews)
-        } else {
-          setReviews(DEFAULT_REVIEWS)
         }
 
         if (Array.isArray(tripRes)) {
@@ -754,14 +672,25 @@ export default function ReviewsPage() {
         </motion.div>
 
         {/* 2-col grid */}
-        <div
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 20 }}
-          className="reviews-grid"
-        >
-          {reviews.map((r, i) => (
-            <ReviewCard key={r.id || i} r={r} i={i} />
-          ))}
-        </div>
+        {loadingReviews ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 20 }} className="reviews-grid">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} style={{ borderRadius: 22, height: 260, background: 'rgba(6,10,5,0.65)', border: '1px solid rgba(132,204,22,0.08)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            ))}
+          </div>
+        ) : reviews.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '72px 24px', borderRadius: 22, background: 'rgba(6,10,5,0.65)', border: '1px solid rgba(132,204,22,0.08)' }}>
+            <div style={{ fontSize: 52, marginBottom: 14 }}>✍️</div>
+            <p style={{ color: '#f0f4e8', fontSize: 20, fontWeight: 700, marginBottom: 8, fontFamily: 'var(--font-outfit)' }}>No reviews yet</p>
+            <p style={{ color: 'rgba(180,200,140,0.45)', fontSize: 14, marginBottom: 28 }}>Be the first to share your Safarnama experience!</p>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 20 }} className="reviews-grid">
+            {reviews.map((r, i) => (
+              <ReviewCard key={r.id || i} r={r} i={i} />
+            ))}
+          </div>
+        )}
 
         {/* ── SUBMIT REVIEW CTA ── */}
         <motion.div
@@ -1147,15 +1076,6 @@ export default function ReviewsPage() {
                           {t}
                         </option>
                       ))}
-                      <option value="Banaras Vibes" style={{ background: '#0a1208', color: '#fff' }}>
-                        Banaras Vibes
-                      </option>
-                      <option value="Manali Magic" style={{ background: '#0a1208', color: '#fff' }}>
-                        Manali Magic
-                      </option>
-                      <option value="Goa Getaway" style={{ background: '#0a1208', color: '#fff' }}>
-                        Goa Getaway
-                      </option>
                       <option value="Other" style={{ background: '#0a1208', color: '#fff' }}>
                         + Other Destination
                       </option>

@@ -25,18 +25,6 @@ export const DEMO_TRIPS = [
         status: 'coming_soon' as const,
     },
     {
-        id: '3',
-        destination: 'Goa Getaway',
-        description: 'Beach parties, water sports, and endless fun under the sun. The ultimate college trip experience!',
-        startDate: '2026-08-10',
-        endDate: '2026-08-14',
-        price: 0,
-        totalSlots: 40,
-        bookedSlots: 0,
-        image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800',
-        status: 'booking_open' as const,
-    },
-    {
         id: '4',
         destination: 'Rishikesh Rush',
         description: 'White water rafting, camping by the Ganges, and spiritual vibes. The perfect blend of adventure and peace.',

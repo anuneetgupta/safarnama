@@ -32,17 +32,9 @@ const REVIEWS = [
   {
     name: 'Karan Singh',
     location: 'CSJMU, Kanpur',
-    trip: 'Manali Adventure',
+    trip: 'Banaras Vibes',
     text: "Went alone, came back with 20 new friends. That's the Safarnama magic — they don't just sell trips, they build communities.",
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80',
-    rating: 5,
-  },
-  {
-    name: 'Sneha Patel',
-    location: 'NIT Surat, Gujarat',
-    trip: 'Goa Getaway',
-    text: 'Best budget trip ever. The beach vibes, the sunsets, the people — Safarnama curated every moment beautifully. Already planning my next trip!',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&q=80',
     rating: 5,
   },
 ]

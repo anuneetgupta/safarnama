@@ -19,12 +19,7 @@ const FEATURES = [
     { icon: '📱', title: 'Real-Time Updates',          desc: 'Live trip tracking, instant notifications, WhatsApp group for every trip.' },
 ]
 
-const DESTINATIONS = [
-    { name: 'Banaras Vibes',    price: '₹3,000',      priceCls: 'lime',  status: 'COMPLETED', badgeCls: 'completed', tag: '🏛️ Culture',   tagColor: '#f59e0b', tagBg: 'rgba(245,158,11,0.13)', date: '15 Jan – 18 Jan 2024', img: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=600&q=80' },
-    { name: 'Manali Adventure', price: 'Coming Soon',  priceCls: 'muted', status: 'NEXT',      badgeCls: 'next',      tag: '⛰️ Mountain',  tagColor: '#a3e635', tagBg: 'rgba(163,230,53,0.12)', date: '',                     img: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=600&q=80' },
-    { name: 'Goa Getaway',      price: 'Booking Open', priceCls: 'lime',  status: 'OPEN',      badgeCls: 'open',      tag: '🏖️ Beach',    tagColor: '#38bdf8', tagBg: 'rgba(56,189,248,0.12)',  date: '',                     img: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80' },
-    { name: 'Rishikesh Rush',   price: 'TBA',          priceCls: 'muted', status: 'SOON',      badgeCls: 'soon',      tag: '⚡ Adventure', tagColor: '#f87171', tagBg: 'rgba(248,113,113,0.12)', date: '',                     img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80' },
-]
+// No hardcoded fallback — trips are 100% database-driven
 
 const TESTIMONIALS = [
     { name: 'Riya Sharma',  college: 'IIT Delhi',      trip: 'Banaras Vibes', text: 'Best trip of my life. The Ganga Aarti was magical. Safarnama handled everything perfectly!', avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80' },
@@ -298,9 +293,15 @@ export default function Home() {
                         </div>
                     </Reveal>
 
-                    {/* Destination cards — 4 columns */}
+                    {/* Destination cards — 4 columns, 100% database-driven */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '20px' }} className="trips-grid">
-                        {(liveTrips.length > 0 ? liveTrips : DESTINATIONS).map((d, i) => {
+                        {liveTrips.length === 0 ? (
+                            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px' }}>
+                                <div style={{ fontSize: 48, marginBottom: 12 }}>🗺️</div>
+                                <p style={{ color: '#f0f4e8', fontSize: 18, fontWeight: 700, marginBottom: 6 }}>Coming Soon</p>
+                                <p style={{ color: 'rgba(180,200,140,0.4)', fontSize: 14 }}>New trips are being planned — check back soon!</p>
+                            </div>
+                        ) : liveTrips.map((d, i) => {
                             const bs = BADGE_STYLES[d.badgeCls] || BADGE_STYLES.soon;
                             return (
                                 <Reveal key={d.name} delay={i * 0.1}>

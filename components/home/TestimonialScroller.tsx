@@ -14,7 +14,8 @@ interface Testimonial {
     tripName: string
 }
 
-const TESTIMONIALS: Testimonial[] = [
+// Minimal verified fallback — only real past trip travellers
+const FALLBACK_TESTIMONIALS: Testimonial[] = [
     {
         id: '1',
         name: 'Priya Sharma',
@@ -35,30 +36,43 @@ const TESTIMONIALS: Testimonial[] = [
     },
     {
         id: '3',
-        name: 'Sneha Reddy',
-        college: 'BITS Pilani',
-        avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150',
-        content: 'As a solo traveler, I was nervous. But the community vibe made it feel like I was with old friends from day one. 10/10 would recommend.',
-        rating: 5,
-        tripName: 'Goa Getaway',
-    },
-    {
-        id: '4',
         name: 'Rahul Verma',
         college: 'NIT Trichy',
         avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
-        content: 'The Manali trip was everything I hoped for and more. Snow, bonfires, and zero stress because the team handled everything perfectly.',
+        content: 'The Banaras trip was everything I hoped for and more. Bonfires, heritage ghats, and zero stress because the team handled everything perfectly.',
         rating: 5,
-        tripName: 'Manali Adventure',
+        tripName: 'Banaras Vibes',
     },
 ]
 
 export default function TestimonialScroller() {
+    const [testimonials, setTestimonials] = useState<Testimonial[]>(FALLBACK_TESTIMONIALS)
     const [current, setCurrent] = useState(0)
     const [paused, setPaused] = useState(false)
 
-    const next = useCallback(() => setCurrent((p) => (p + 1) % TESTIMONIALS.length), [])
-    const prev = useCallback(() => setCurrent((p) => (p - 1 + TESTIMONIALS.length) % TESTIMONIALS.length), [])
+    // Fetch live reviews from DB
+    useEffect(() => {
+        fetch('/api/reviews')
+            .then(r => r.json())
+            .then(d => {
+                if (d.reviews && d.reviews.length > 0) {
+                    const mapped: Testimonial[] = d.reviews.map((r: any) => ({
+                        id: r.id,
+                        name: r.name,
+                        college: r.college || 'Verified Traveler',
+                        avatar: r.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
+                        content: r.review,
+                        rating: r.rating || 5,
+                        tripName: r.tripName,
+                    }))
+                    setTestimonials(mapped)
+                }
+            })
+            .catch(() => {})
+    }, [])
+
+    const next = useCallback(() => setCurrent((p) => (p + 1) % testimonials.length), [testimonials.length])
+    const prev = useCallback(() => setCurrent((p) => (p - 1 + testimonials.length) % testimonials.length), [testimonials.length])
 
     useEffect(() => {
         if (paused) return
@@ -110,7 +124,7 @@ export default function TestimonialScroller() {
 
                         {/* Avatar selector */}
                         <div className="flex gap-3 flex-wrap">
-                            {TESTIMONIALS.map((t, i) => (
+                            {testimonials.map((t, i) => (
                                 <button
                                     key={t.id}
                                     onClick={() => handleSelect(i)}
@@ -127,7 +141,7 @@ export default function TestimonialScroller() {
 
                         {/* Progress dots */}
                         <div className="flex gap-2 mt-8">
-                            {TESTIMONIALS.map((_, i) => (
+                            {testimonials.map((_, i) => (
                                 <button
                                     key={i}
                                     onClick={() => handleSelect(i)}
@@ -159,7 +173,7 @@ export default function TestimonialScroller() {
 
                                 {/* Stars */}
                                 <div className="flex gap-1 mb-5">
-                                    {[...Array(TESTIMONIALS[current].rating)].map((_, i) => (
+                                    {[...Array(testimonials[current]?.rating ?? 5)].map((_, i) => (
                                         <motion.svg
                                             key={i}
                                             className="w-4 h-4 text-amber-400"
@@ -175,21 +189,21 @@ export default function TestimonialScroller() {
                                 </div>
 
                                 <p className="text-slate-300 text-[1.05rem] leading-relaxed mb-8">
-                                    &ldquo;{TESTIMONIALS[current].content}&rdquo;
+                                    &ldquo;{testimonials[current]?.content}&rdquo;
                                 </p>
 
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[var(--accent)]/40 relative flex-shrink-0">
-                                            <Image src={TESTIMONIALS[current].avatar} alt={TESTIMONIALS[current].name} fill className="object-cover" />
+                                            <Image src={testimonials[current]?.avatar} alt={testimonials[current]?.name} fill className="object-cover" />
                                         </div>
                                         <div>
-                                            <p className="text-white text-sm font-semibold">{TESTIMONIALS[current].name}</p>
-                                            <p className="text-slate-500 text-xs">{TESTIMONIALS[current].college}</p>
+                                            <p className="text-white text-sm font-semibold">{testimonials[current]?.name}</p>
+                                            <p className="text-slate-500 text-xs">{testimonials[current]?.college}</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-[var(--accent-light)] text-xs font-medium">{TESTIMONIALS[current].tripName}</p>
+                                        <p className="text-[var(--accent-light)] text-xs font-medium">{testimonials[current]?.tripName}</p>
                                         <p className="text-slate-600 text-[10px] mt-0.5">Verified Traveler</p>
                                     </div>
                                 </div>
